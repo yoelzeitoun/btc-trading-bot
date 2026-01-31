@@ -299,273 +299,313 @@ def run_advisor():
     poly_client = ClobClient("https://clob.polymarket.com", key=PRIVATE_KEY, creds=creds, chain_id=POLYGON)
     binance = BinanceClient()
 
-    print("\n🚀 DOUBLE BARRIER MEAN REVERSION BOT")
+    print("\n🚀 DOUBLE BARRIER MEAN REVERSION BOT - CONTINUOUS MODE")
+    print("="*60)
+    print("📊 Bot will monitor markets continuously and auto-switch to new ones")
     print("="*60)
     
-    # Always auto-detect
-    print("\n🔍 Auto-detecting current BTC 15m market...")
-    market_data = find_current_btc_15m_market()
-    if not market_data:
-        print("\n❌ Could not find any active BTC 15m markets.")
-        print("   Please check: https://polymarket.com/crypto/15M")
-        return
-    
-    # === Extract market details ===
-    title = market_data.get('title', 'N/A')
-    slug = market_data.get('slug', 'N/A')
-    markets = market_data.get('markets', [])
-    end_date_str = market_data.get('end_date', '')
-    
-    # Use the time_remaining we already calculated
-    expiry_minutes = market_data.get('time_remaining', 15)
-    
-    print(f"\n✅ MARKET LOADED:")
-    print(f"   Title: {title}")
-    print(f"   URL: https://polymarket.com/event/{slug}")
-    print(f"   ⏰ Time Remaining: {expiry_minutes:.1f} minutes")
-    
-    # Extract strike price from title/question
-    strike_price = extract_strike_from_question(title)
-    
-    # If not found in title, try to fetch from market's question field
-    if not strike_price and markets:
-        first_market = markets[0]
-        question = first_market.get('question', '')
-        strike_price = extract_strike_from_question(question)
-    
-    if strike_price:
-        print(f"   🎯 Strike Price: ${strike_price:,.2f}")
-    else:
-        # Use current BTC price as the strike
-        try:
-            btc_ticker = binance.get_symbol_ticker(symbol="BTCUSDT")
-            strike_price = float(btc_ticker['price'])
-            print(f"   🎯 Strike Price (current BTC): ${strike_price:,.2f}")
-        except Exception as e:
-            strike_price = 78200.0
-            print(f"   ⚠️  Error fetching BTC price: {e}")
-            print(f"   Using default strike price: ${strike_price:,.2f}")
-    
-    # Get condition ID
-    if markets:
-        token_id = markets[0].get('condition_id')
-        print(f"   Condition ID: {token_id}")
-    else:
-        print("   ⚠️  No markets data available.")
-    
-    if expiry_minutes <= -10:
-        print(f"\n❌ Market expired {abs(expiry_minutes):.1f} minutes ago (too old)")
-        return
-    
-    if expiry_minutes < 0:
-        print(f"\n⚠️  Market expired {abs(expiry_minutes):.1f} minutes ago (just finished)")
-        try:
-            proceed = input("   Continue anyway to see final result? (y/n): ").strip().lower()
-            if proceed != 'y':
-                return
-        except EOFError:
-            print("   (Non-interactive mode: proceeding...)")
-            pass
-    
-    if expiry_minutes > 6:
-        print(f"\n⚠️  Market expires in {expiry_minutes:.1f} minutes (too far for 3-5min window)")
-        try:
-            proceed = input("   Continue anyway? (y/n): ").strip().lower()
-            if proceed != 'y':
-                return
-        except EOFError:
-            print("   (Non-interactive mode: proceeding...)")
-            pass
-    
-    # === START MONITORING ===
-    start_time = time.time()
-    end_time = start_time + (expiry_minutes * 60)
-
-    print("\n🚀 DOUBLE BARRIER MEAN REVERSION MONITORING ACTIVE")
-    print(f"📊 Target Price: ${strike_price:,.2f}")
-    print(f"⏰ Expiration in {expiry_minutes:.1f} minutes")
-    print(f"🎯 Strategy: Statistical + Kinetic + Physical + R/R Barriers")
-    print("\n" + "="*60)
-    
-    # State tracking
-    five_min_announced = False
-    three_min_announced = False
-    trade_signal_given = False
-    signal_details = {}
+    # Track results across markets
+    total_markets = 0
+    total_signals = 0
+    wins = 0
+    losses = 0
     
     while True:
-        now = time.time()
-        minutes_left = (end_time - now) / 60
-        
-        if minutes_left <= 0:
-            print("\n" + "="*60)
-            print("⏰ EXPIRATION REACHED!")
-            
-            if trade_signal_given:
-                # Check final result
-                btc_data = binance.get_symbol_ticker(symbol="BTCUSDT")
-                final_price = float(btc_data['price'])
-                
-                direction = signal_details.get('direction')
-                if direction == "YES" and final_price > strike_price:
-                    print(f"✅ TRADE WIN! Final Price ${final_price:,.2f} > ${strike_price:,.2f}")
-                elif direction == "NO" and final_price < strike_price:
-                    print(f"✅ TRADE WIN! Final Price ${final_price:,.2f} < ${strike_price:,.2f}")
-                else:
-                    print(f"❌ TRADE LOSS! Final Price ${final_price:,.2f}")
-            else:
-                print("ℹ️  No trade signal was generated during this session.")
-            
-            print("="*60)
-            break
-
         try:
-            # 1. Get Real-Time BTC Price
-            btc_data = binance.get_symbol_ticker(symbol="BTCUSDT")
-            real_price = float(btc_data['price'])
+            total_markets += 1
+            print(f"\n\n{'='*60}")
+            print(f"🔄 MARKET #{total_markets}")
+            print(f"{'='*60}")
             
-            # 2. Get Historical Candles
-            klines = binance.get_klines(symbol="BTCUSDT", interval='1m', limit=60)
-            closes = [float(k[4]) for k in klines]
-            highs = [float(k[2]) for k in klines]
-            lows = [float(k[3]) for k in klines]
+            # Auto-detect current market
+            print("\n🔍 Auto-detecting current BTC 15m market...")
+            market_data = find_current_btc_15m_market()
+            if not market_data:
+                print("\n⚠️  No active markets found. Waiting 30 seconds...")
+                time.sleep(30)
+                continue
+    
+            # === Extract market details ===
+            title = market_data.get('title', 'N/A')
+            slug = market_data.get('slug', 'N/A')
+            markets = market_data.get('markets', [])
+            end_date_str = market_data.get('end_date', '')
             
-            # 3. Time Window Announcements
-            if 4.5 < minutes_left <= 5.5 and not five_min_announced:
-                print(f"\n🔔 ENTERING 5-MINUTE WINDOW (Time Left: {minutes_left:.2f}min)")
-                print("   Starting condition monitoring...")
-                five_min_announced = True
+            # Use the time_remaining we already calculated
+            expiry_minutes = market_data.get('time_remaining', 15)
             
-            if 2.5 < minutes_left <= 3.5 and not three_min_announced:
-                print(f"\n⚠️  ENTERING 3-MINUTE WINDOW (Time Left: {minutes_left:.2f}min)")
-                print("   Critical decision zone!")
-                three_min_announced = True
+            print(f"\n✅ MARKET LOADED:")
+            print(f"   Title: {title}")
+            print(f"   URL: https://polymarket.com/event/{slug}")
+            print(f"   ⏰ Time Remaining: {expiry_minutes:.1f} minutes")
             
-            # 4. EXECUTION WINDOW CHECK (3-5 minutes)
-            if 3 <= minutes_left <= 5 and not trade_signal_given:
-                
-                print(f"\n⏱️  [T-{minutes_left:.2f}min] Evaluating Trade Conditions...")
-                print(f"   Current BTC: ${real_price:,.2f} | Target: ${strike_price:,.2f}")
-                
-                # === CONDITION A: BOLLINGER BANDS ===
-                upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=20, std_dev=2.0)
-                
-                condition_a_pass = False
-                if upper_bb and lower_bb:
-                    if real_price > strike_price:
-                        condition_a_pass = strike_price < lower_bb
-                        print(f"\n   [A] BOLLINGER BANDS (Period=20, StdDev=2.0)")
-                        print(f"       Upper: ${upper_bb:,.2f} | Middle: ${middle_bb:,.2f} | Lower: ${lower_bb:,.2f}")
-                        print(f"       Direction: UP | Target vs Lower Band: ${strike_price:,.2f} < ${lower_bb:,.2f}")
-                        print(f"       Result: {'✅ PASS' if condition_a_pass else '❌ FAIL'}")
-                    else:
-                        condition_a_pass = strike_price > upper_bb
-                        print(f"\n   [A] BOLLINGER BANDS (Period=20, StdDev=2.0)")
-                        print(f"       Upper: ${upper_bb:,.2f} | Middle: ${middle_bb:,.2f} | Lower: ${lower_bb:,.2f}")
-                        print(f"       Direction: DOWN | Target vs Upper Band: ${strike_price:,.2f} > ${upper_bb:,.2f}")
-                        print(f"       Result: {'✅ PASS' if condition_a_pass else '❌ FAIL'}")
-                else:
-                    print(f"\n   [A] BOLLINGER BANDS: ⚠️  Insufficient data")
-                
-                # === CONDITION B: ATR KINETIC BARRIER ===
-                atr = calculate_atr(highs, lows, closes, period=14)
-                
-                condition_b_pass = False
-                if atr:
-                    max_possible_move = atr * minutes_left * 1.5
-                    actual_distance = abs(real_price - strike_price)
-                    condition_b_pass = actual_distance > max_possible_move
-                    
-                    print(f"\n   [B] ATR KINETIC BARRIER (Period=14)")
-                    print(f"       ATR: ${atr:,.2f}")
-                    print(f"       Max Possible Move: ${max_possible_move:,.2f} (ATR × {minutes_left:.1f}min × 1.5)")
-                    print(f"       Actual Distance: ${actual_distance:,.2f}")
-                    print(f"       Result: {'✅ PASS' if condition_b_pass else '❌ FAIL'}")
-                else:
-                    print(f"\n   [B] ATR KINETIC BARRIER: ⚠️  Insufficient data")
-                
-                # === CONDITION C: ORDER BOOK DEPTH ===
-                order_book = binance.get_order_book(symbol="BTCUSDT", limit=1000)
-                bid_vol, ask_vol, ratio, direction = analyze_order_book_barrier(order_book, real_price, strike_price)
-                
-                condition_c_pass = ratio >= 1.5
-                
-                print(f"\n   [C] ORDER BOOK DEPTH BARRIER")
-                print(f"       Direction: {direction}")
-                if direction == "UP":
-                    print(f"       BID Volume (Support): {bid_vol:,.2f} BTC")
-                    print(f"       ASK Volume (Threat): {ask_vol:,.2f} BTC")
-                else:
-                    print(f"       ASK Volume (Resistance): {ask_vol:,.2f} BTC")
-                    print(f"       BID Volume (Threat): {bid_vol:,.2f} BTC")
-                print(f"       Ratio: {ratio:.2f}x (Need >= 1.5x)")
-                print(f"       Result: {'✅ PASS' if condition_c_pass else '❌ FAIL'}")
-                
-                # === CONDITION D: PRICE / R/R FILTER ===
+            # Extract strike price from title/question
+            strike_price = extract_strike_from_question(title)
+            
+            # If not found in title, try to fetch from market's question field
+            if not strike_price and markets:
+                first_market = markets[0]
+                question = first_market.get('question', '')
+                strike_price = extract_strike_from_question(question)
+            
+            if strike_price:
+                print(f"   🎯 Strike Price: ${strike_price:,.2f}")
+            else:
+                # Use current BTC price as the strike
                 try:
-                    market_info = poly_client.get_market(token_id)
-                    
-                    if real_price > strike_price:
-                        share_price = float(market_info.get('best_ask', 0.5))
-                        share_type = "YES"
-                    else:
-                        share_price = 1.0 - float(market_info.get('best_bid', 0.5))
-                        share_type = "NO"
-                    
-                    condition_d_pass = 0.60 <= share_price <= 0.85
-                    
-                    print(f"\n   [D] RISK/REWARD FILTER")
-                    print(f"       Share Type: {share_type}")
-                    print(f"       Share Price: ${share_price:.2f} (${share_price*100:.0f}¢)")
-                    print(f"       Valid Range: $0.60 - $0.85")
-                    print(f"       Result: {'✅ PASS' if condition_d_pass else '❌ FAIL'}")
-                    
-                except Exception as api_err:
-                    print(f"\n   [D] RISK/REWARD FILTER: ⚠️  API Error")
-                    condition_d_pass = False
-                    share_price = 0.5
-                    share_type = "UNKNOWN"
-                
-                # === FINAL DECISION ===
-                all_conditions_met = (condition_a_pass and condition_b_pass and 
-                                     condition_c_pass and condition_d_pass)
-                
-                print("\n" + "-"*60)
-                if all_conditions_met:
-                    trade_direction = "YES" if real_price > strike_price else "NO"
-                    print(f"🎯 ✅✅ TRADE CONDITIONS MET! ✅✅")
-                    print(f"   📈 SIGNAL: BUY {trade_direction} @ ${share_price:.2f} ({share_price*100:.0f}¢)")
-                    print(f"   💰 Risk: ${share_price:.2f} | Potential: ${1-share_price:.2f} | ROI: {((1/share_price)-1)*100:.1f}%")
-                    print(f"   🎲 Strategy: Price stays {'ABOVE' if real_price > strike_price else 'BELOW'} ${strike_price:,.2f}")
-                    
-                    trade_signal_given = True
-                    signal_details = {
-                        'direction': trade_direction,
-                        'price': share_price,
-                        'entry_time': minutes_left,
-                        'btc_price': real_price
-                    }
-                else:
-                    conditions_summary = f"A:{condition_a_pass} B:{condition_b_pass} C:{condition_c_pass} D:{condition_d_pass}"
-                    print(f"❌ CONDITIONS NOT MET [{conditions_summary}]")
-                    print(f"   No trade signal. Continuing monitoring...")
-                print("-"*60)
+                    btc_ticker = binance.get_symbol_ticker(symbol="BTCUSDT")
+                    strike_price = float(btc_ticker['price'])
+                    print(f"   🎯 Strike Price (current BTC): ${strike_price:,.2f}")
+                except Exception as e:
+                    strike_price = 78200.0
+                    print(f"   ⚠️  Error fetching BTC price: {e}")
+                    print(f"   Using default strike price: ${strike_price:,.2f}")
             
-            elif minutes_left > 5:
-                if not five_min_announced:
-                    print(f"⏳ Waiting... {minutes_left:.1f} minutes until 5-min window", end='\r')
+            # Skip if market already expired
+            if expiry_minutes <= -10:
+                print(f"\n⚠️  Market expired {abs(expiry_minutes):.1f} minutes ago. Waiting for next market...")
+                time.sleep(60)
+                continue
             
-            elif minutes_left < 3 and not trade_signal_given:
-                if not three_min_announced:
-                    print(f"\n⚠️  Below 3-minute threshold. Window closed without signal.")
-                    three_min_announced = True
+            # === START MONITORING ===
+            end_timestamp = market_data.get('end_timestamp')
 
+            print("\n🚀 MONITORING ACTIVE")
+            print(f"📊 Strike Price: ${strike_price:,.2f}")
+            print(f"⏰ Time Remaining: {expiry_minutes:.1f} minutes")
+            print(f"🎯 Strategy: Statistical + Kinetic + Physical + R/R Barriers")
+            print("\n" + "="*60)
+            
+            # State tracking
+            five_min_announced = False
+            three_min_announced = False
+            trade_signal_given = False
+            signal_details = {}
+            
+            while True:
+                now = time.time()
+                minutes_left = (end_timestamp - now) / 60
+                
+                if minutes_left <= 0:
+                    print("\n" + "="*60)
+                    print("⏰ MARKET EXPIRED!")
+                    print("="*60)
+                    
+                    # Check final result
+                    btc_data = binance.get_symbol_ticker(symbol="BTCUSDT")
+                    final_price = float(btc_data['price'])
+                    
+                    print(f"\n📊 FINAL RESULTS:")
+                    print(f"   Strike Price: ${strike_price:,.2f}")
+                    print(f"   Final BTC: ${final_price:,.2f}")
+                    print(f"   Change: ${final_price - strike_price:,.2f} ({((final_price/strike_price - 1) * 100):+.2f}%)")
+                    
+                    if trade_signal_given:
+                        total_signals += 1
+                        direction = signal_details.get('direction')
+                        entry_price = signal_details.get('price')
+                        
+                        # Determine win/loss
+                        is_win = False
+                        if direction == "YES" and final_price > strike_price:
+                            is_win = True
+                            wins += 1
+                        elif direction == "NO" and final_price < strike_price:
+                            is_win = True
+                            wins += 1
+                        else:
+                            losses += 1
+                        
+                        # Calculate P&L (assuming $100 trade)
+                        trade_amount = 100
+                        if is_win:
+                            payout = trade_amount / entry_price
+                            profit = payout - trade_amount
+                            print(f"\n✅ TRADE WIN!")
+                            print(f"   Direction: {direction}")
+                            print(f"   Entry: ${entry_price:.2f}")
+                            print(f"   Profit: ${profit:.2f} (+{(profit/trade_amount)*100:.1f}%)")
+                        else:
+                            print(f"\n❌ TRADE LOSS!")
+                            print(f"   Direction: {direction}")
+                            print(f"   Entry: ${entry_price:.2f}")
+                            print(f"   Loss: -${trade_amount:.2f}")
+                    else:
+                        print(f"\n⏸️  NO TRADE SIGNAL - Conditions not met")
+                    
+                    # Print session stats
+                    print(f"\n📈 SESSION STATS:")
+                    print(f"   Markets: {total_markets} | Signals: {total_signals}")
+                    if total_signals > 0:
+                        print(f"   W/L: {wins}/{losses} | Win Rate: {(wins/total_signals)*100:.1f}%")
+                    
+                    print("="*60)
+                    print("⏭️  Moving to next market in 10 seconds...\n")
+                    time.sleep(10)
+                    break
+
+                try:
+                    # 1. Get Real-Time BTC Price
+                    btc_data = binance.get_symbol_ticker(symbol="BTCUSDT")
+                    real_price = float(btc_data['price'])
+                    
+                    # 2. Get Historical Candles
+                    klines = binance.get_klines(symbol="BTCUSDT", interval='1m', limit=60)
+                    closes = [float(k[4]) for k in klines]
+                    highs = [float(k[2]) for k in klines]
+                    lows = [float(k[3]) for k in klines]
+                    
+                    # 3. Time Window Announcements
+                    if 4.5 < minutes_left <= 5.5 and not five_min_announced:
+                        print(f"\n🔔 ENTERING 5-MINUTE WINDOW (Time Left: {minutes_left:.2f}min)")
+                        print("   Starting condition monitoring...")
+                        five_min_announced = True
+                    
+                    if 2.5 < minutes_left <= 3.5 and not three_min_announced:
+                        print(f"\n⚠️  ENTERING 3-MINUTE WINDOW (Time Left: {minutes_left:.2f}min)")
+                        print("   Critical decision zone!")
+                        three_min_announced = True
+                    
+                    # 4. EXECUTION WINDOW CHECK (3-5 minutes)
+                    if 3 <= minutes_left <= 5 and not trade_signal_given:
+                        
+                        print(f"\n⏱️  [T-{minutes_left:.2f}min] Evaluating Trade Conditions...")
+                        print(f"   Current BTC: ${real_price:,.2f} | Target: ${strike_price:,.2f}")
+                        
+                        # === CONDITION A: BOLLINGER BANDS ===
+                        upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=20, std_dev=2.0)
+                        
+                        condition_a_pass = False
+                        if upper_bb and lower_bb:
+                            if real_price > strike_price:
+                                condition_a_pass = strike_price < lower_bb
+                                print(f"\n   [A] BOLLINGER BANDS (Period=20, StdDev=2.0)")
+                                print(f"       Upper: ${upper_bb:,.2f} | Middle: ${middle_bb:,.2f} | Lower: ${lower_bb:,.2f}")
+                                print(f"       Direction: UP | Target vs Lower Band: ${strike_price:,.2f} < ${lower_bb:,.2f}")
+                                print(f"       Result: {'✅ PASS' if condition_a_pass else '❌ FAIL'}")
+                            else:
+                                condition_a_pass = strike_price > upper_bb
+                                print(f"\n   [A] BOLLINGER BANDS (Period=20, StdDev=2.0)")
+                                print(f"       Upper: ${upper_bb:,.2f} | Middle: ${middle_bb:,.2f} | Lower: ${lower_bb:,.2f}")
+                                print(f"       Direction: DOWN | Target vs Upper Band: ${strike_price:,.2f} > ${upper_bb:,.2f}")
+                                print(f"       Result: {'✅ PASS' if condition_a_pass else '❌ FAIL'}")
+                        else:
+                            print(f"\n   [A] BOLLINGER BANDS: ⚠️  Insufficient data")
+                        
+                        # === CONDITION B: ATR KINETIC BARRIER ===
+                        atr = calculate_atr(highs, lows, closes, period=14)
+                        
+                        condition_b_pass = False
+                        if atr:
+                            max_possible_move = atr * minutes_left * 1.5
+                            actual_distance = abs(real_price - strike_price)
+                            condition_b_pass = actual_distance > max_possible_move
+                            
+                            print(f"\n   [B] ATR KINETIC BARRIER (Period=14)")
+                            print(f"       ATR: ${atr:,.2f}")
+                            print(f"       Max Possible Move: ${max_possible_move:,.2f} (ATR × {minutes_left:.1f}min × 1.5)")
+                            print(f"       Actual Distance: ${actual_distance:,.2f}")
+                            print(f"       Result: {'✅ PASS' if condition_b_pass else '❌ FAIL'}")
+                        else:
+                            print(f"\n   [B] ATR KINETIC BARRIER: ⚠️  Insufficient data")
+                        
+                        # === CONDITION C: ORDER BOOK DEPTH ===
+                        order_book = binance.get_order_book(symbol="BTCUSDT", limit=1000)
+                        bid_vol, ask_vol, ratio, direction = analyze_order_book_barrier(order_book, real_price, strike_price)
+                        
+                        condition_c_pass = ratio >= 1.5
+                        
+                        print(f"\n   [C] ORDER BOOK DEPTH BARRIER")
+                        print(f"       Direction: {direction}")
+                        if direction == "UP":
+                            print(f"       BID Volume (Support): {bid_vol:,.2f} BTC")
+                            print(f"       ASK Volume (Threat): {ask_vol:,.2f} BTC")
+                        else:
+                            print(f"       ASK Volume (Resistance): {ask_vol:,.2f} BTC")
+                            print(f"       BID Volume (Threat): {bid_vol:,.2f} BTC")
+                        print(f"       Ratio: {ratio:.2f}x (Need >= 1.5x)")
+                        print(f"       Result: {'✅ PASS' if condition_c_pass else '❌ FAIL'}")
+                        
+                        # === CONDITION D: PRICE / R/R FILTER ===
+                        try:
+                            market_info = poly_client.get_market(token_id)
+                            
+                            if real_price > strike_price:
+                                share_price = float(market_info.get('best_ask', 0.5))
+                                share_type = "YES"
+                            else:
+                                share_price = 1.0 - float(market_info.get('best_bid', 0.5))
+                                share_type = "NO"
+                            
+                            condition_d_pass = 0.60 <= share_price <= 0.85
+                            
+                            print(f"\n   [D] RISK/REWARD FILTER")
+                            print(f"       Share Type: {share_type}")
+                            print(f"       Share Price: ${share_price:.2f} (${share_price*100:.0f}¢)")
+                            print(f"       Valid Range: $0.60 - $0.85")
+                            print(f"       Result: {'✅ PASS' if condition_d_pass else '❌ FAIL'}")
+                            
+                        except Exception as api_err:
+                            print(f"\n   [D] RISK/REWARD FILTER: ⚠️  API Error")
+                            condition_d_pass = False
+                            share_price = 0.5
+                            share_type = "UNKNOWN"
+                        
+                        # === FINAL DECISION ===
+                        all_conditions_met = (condition_a_pass and condition_b_pass and 
+                                             condition_c_pass and condition_d_pass)
+                        
+                        print("\n" + "-"*60)
+                        if all_conditions_met:
+                            trade_direction = "YES" if real_price > strike_price else "NO"
+                            print(f"🎯 ✅✅ TRADE CONDITIONS MET! ✅✅")
+                            print(f"   📈 SIGNAL: BUY {trade_direction} @ ${share_price:.2f} ({share_price*100:.0f}¢)")
+                            print(f"   💰 Risk: ${share_price:.2f} | Potential: ${1-share_price:.2f} | ROI: {((1/share_price)-1)*100:.1f}%")
+                            print(f"   🎲 Strategy: Price stays {'ABOVE' if real_price > strike_price else 'BELOW'} ${strike_price:,.2f}")
+                            
+                            trade_signal_given = True
+                            signal_details = {
+                                'direction': trade_direction,
+                                'price': share_price,
+                                'entry_time': minutes_left,
+                                'btc_price': real_price
+                            }
+                        else:
+                            conditions_summary = f"A:{condition_a_pass} B:{condition_b_pass} C:{condition_c_pass} D:{condition_d_pass}"
+                            print(f"❌ CONDITIONS NOT MET [{conditions_summary}]")
+                            print(f"   No trade signal. Continuing monitoring...")
+                        print("-"*60)
+                    
+                    elif minutes_left > 5:
+                        if not five_min_announced:
+                            print(f"⏳ Waiting... {minutes_left:.1f} minutes until expiration", end='\r')
+                    
+                    elif minutes_left < 3 and not trade_signal_given:
+                        if not three_min_announced:
+                            print(f"\n⚠️  Below 3-minute threshold. Window closed without signal.")
+                        three_min_announced = True
+
+                except Exception as e:
+                    print(f"\n❌ Error in loop: {e}")
+                    import traceback
+                    traceback.print_exc()
+
+                time.sleep(5)
+                
         except Exception as e:
-            print(f"\n❌ Error in loop: {e}")
+            print(f"\n❌ Error processing market: {e}")
             import traceback
             traceback.print_exc()
-
-        time.sleep(5)
+            print("\n⏭️  Trying next market in 30 seconds...")
+            time.sleep(30)
 
 if __name__ == "__main__":
+    try:
+        run_advisor()
+    except KeyboardInterrupt:
+        print("\n\n🛑 Bot stopped by user")
+    except Exception as e:
+        print(f"\n❌ Fatal error: {e}")
+        import traceback
+        traceback.print_exc()
     run_advisor()
