@@ -12,6 +12,16 @@ from datetime import datetime, timezone
 # Load environment variables
 load_dotenv()
 
+# Load configuration
+from config import (
+    TRADE_WINDOW_MIN, TRADE_WINDOW_MAX,
+    BOLLINGER_PERIOD, BOLLINGER_STD_DEV,
+    ATR_PERIOD, ATR_MULTIPLIER,
+    ORDER_BOOK_RATIO_MIN,
+    SHARE_PRICE_MIN, SHARE_PRICE_MAX,
+    LOOP_SLEEP_SECONDS, NEXT_MARKET_WAIT_SECONDS
+)
+
 # --- 1. API IMPORTS ---
 try:
     from py_clob_client.client import ClobClient
@@ -440,8 +450,8 @@ def run_advisor():
                         print(f"   W/L: {wins}/{losses} | Win Rate: {(wins/total_signals)*100:.1f}%")
                     
                     print("="*60)
-                    print("⏭️  Moving to next market in 10 seconds...\n")
-                    time.sleep(10)
+                    print(f"⏭️  Moving to next market in {NEXT_MARKET_WAIT_SECONDS} seconds...\n")
+                    time.sleep(NEXT_MARKET_WAIT_SECONDS)
                     break
 
                 try:
@@ -456,36 +466,38 @@ def run_advisor():
                     lows = [float(k[3]) for k in klines]
                     
                     # 3. Time Window Announcements
-                    if 4.5 < minutes_left <= 5.5 and not five_min_announced:
-                        print(f"\n🔔 ENTERING 5-MINUTE WINDOW (Time Left: {minutes_left:.2f}min)")
+                    window_midpoint = (TRADE_WINDOW_MIN + TRADE_WINDOW_MAX) / 2
+                    if TRADE_WINDOW_MAX - 0.5 < minutes_left <= TRADE_WINDOW_MAX + 0.5 and not five_min_announced:
+                        print(f"\n🔔 ENTERING TRADING WINDOW (Time Left: {minutes_left:.2f}min)")
+                        print(f"   Window: {TRADE_WINDOW_MIN}-{TRADE_WINDOW_MAX} minutes before expiration")
                         print("   Starting condition monitoring...")
                         five_min_announced = True
                     
-                    if 2.5 < minutes_left <= 3.5 and not three_min_announced:
-                        print(f"\n⚠️  ENTERING 3-MINUTE WINDOW (Time Left: {minutes_left:.2f}min)")
-                        print("   Critical decision zone!")
+                    if TRADE_WINDOW_MIN - 0.5 < minutes_left <= TRADE_WINDOW_MIN + 0.5 and not three_min_announced:
+                        print(f"\n⚠️  APPROACHING MINIMUM WINDOW (Time Left: {minutes_left:.2f}min)")
+                        print("   Final opportunity zone!")
                         three_min_announced = True
                     
-                    # 4. EXECUTION WINDOW CHECK (3-5 minutes)
-                    if 3 <= minutes_left <= 5 and not trade_signal_given:
+                    # 4. EXECUTION WINDOW CHECK
+                    if TRADE_WINDOW_MIN <= minutes_left <= TRADE_WINDOW_MAX and not trade_signal_given:
                         
                         print(f"\n⏱️  [T-{minutes_left:.2f}min] Evaluating Trade Conditions...")
                         print(f"   Current BTC: ${real_price:,.2f} | Target: ${strike_price:,.2f}")
                         
                         # === CONDITION A: BOLLINGER BANDS ===
-                        upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=20, std_dev=2.0)
+                        upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=BOLLINGER_PERIOD, std_dev=BOLLINGER_STD_DEV)
                         
                         condition_a_pass = False
                         if upper_bb and lower_bb:
                             if real_price > strike_price:
                                 condition_a_pass = strike_price < lower_bb
-                                print(f"\n   [A] BOLLINGER BANDS (Period=20, StdDev=2.0)")
+                                print(f"\n   [A] BOLLINGER BANDS (Period={BOLLINGER_PERIOD}, StdDev={BOLLINGER_STD_DEV})")
                                 print(f"       Upper: ${upper_bb:,.2f} | Middle: ${middle_bb:,.2f} | Lower: ${lower_bb:,.2f}")
                                 print(f"       Direction: UP | Target vs Lower Band: ${strike_price:,.2f} < ${lower_bb:,.2f}")
                                 print(f"       Result: {'✅ PASS' if condition_a_pass else '❌ FAIL'}")
                             else:
                                 condition_a_pass = strike_price > upper_bb
-                                print(f"\n   [A] BOLLINGER BANDS (Period=20, StdDev=2.0)")
+                                print(f"\n   [A] BOLLINGER BANDS (Period={BOLLINGER_PERIOD}, StdDev={BOLLINGER_STD_DEV})")
                                 print(f"       Upper: ${upper_bb:,.2f} | Middle: ${middle_bb:,.2f} | Lower: ${lower_bb:,.2f}")
                                 print(f"       Direction: DOWN | Target vs Upper Band: ${strike_price:,.2f} > ${upper_bb:,.2f}")
                                 print(f"       Result: {'✅ PASS' if condition_a_pass else '❌ FAIL'}")
@@ -493,17 +505,17 @@ def run_advisor():
                             print(f"\n   [A] BOLLINGER BANDS: ⚠️  Insufficient data")
                         
                         # === CONDITION B: ATR KINETIC BARRIER ===
-                        atr = calculate_atr(highs, lows, closes, period=14)
+                        atr = calculate_atr(highs, lows, closes, period=ATR_PERIOD)
                         
                         condition_b_pass = False
                         if atr:
-                            max_possible_move = atr * minutes_left * 1.5
+                            max_possible_move = atr * minutes_left * ATR_MULTIPLIER
                             actual_distance = abs(real_price - strike_price)
                             condition_b_pass = actual_distance > max_possible_move
                             
-                            print(f"\n   [B] ATR KINETIC BARRIER (Period=14)")
+                            print(f"\n   [B] ATR KINETIC BARRIER (Period={ATR_PERIOD})")
                             print(f"       ATR: ${atr:,.2f}")
-                            print(f"       Max Possible Move: ${max_possible_move:,.2f} (ATR × {minutes_left:.1f}min × 1.5)")
+                            print(f"       Max Possible Move: ${max_possible_move:,.2f} (ATR × {minutes_left:.1f}min × {ATR_MULTIPLIER})")
                             print(f"       Actual Distance: ${actual_distance:,.2f}")
                             print(f"       Result: {'✅ PASS' if condition_b_pass else '❌ FAIL'}")
                         else:
@@ -513,7 +525,7 @@ def run_advisor():
                         order_book = binance.get_order_book(symbol="BTCUSDT", limit=1000)
                         bid_vol, ask_vol, ratio, direction = analyze_order_book_barrier(order_book, real_price, strike_price)
                         
-                        condition_c_pass = ratio >= 1.5
+                        condition_c_pass = ratio >= ORDER_BOOK_RATIO_MIN
                         
                         print(f"\n   [C] ORDER BOOK DEPTH BARRIER")
                         print(f"       Direction: {direction}")
@@ -523,7 +535,7 @@ def run_advisor():
                         else:
                             print(f"       ASK Volume (Resistance): {ask_vol:,.2f} BTC")
                             print(f"       BID Volume (Threat): {bid_vol:,.2f} BTC")
-                        print(f"       Ratio: {ratio:.2f}x (Need >= 1.5x)")
+                        print(f"       Ratio: {ratio:.2f}x (Need >= {ORDER_BOOK_RATIO_MIN}x)")
                         print(f"       Result: {'✅ PASS' if condition_c_pass else '❌ FAIL'}")
                         
                         # === CONDITION D: PRICE / R/R FILTER ===
@@ -537,12 +549,12 @@ def run_advisor():
                                 share_price = 1.0 - float(market_info.get('best_bid', 0.5))
                                 share_type = "NO"
                             
-                            condition_d_pass = 0.60 <= share_price <= 0.85
+                            condition_d_pass = SHARE_PRICE_MIN <= share_price <= SHARE_PRICE_MAX
                             
                             print(f"\n   [D] RISK/REWARD FILTER")
                             print(f"       Share Type: {share_type}")
                             print(f"       Share Price: ${share_price:.2f} (${share_price*100:.0f}¢)")
-                            print(f"       Valid Range: $0.60 - $0.85")
+                            print(f"       Valid Range: ${SHARE_PRICE_MIN:.2f} - ${SHARE_PRICE_MAX:.2f}")
                             print(f"       Result: {'✅ PASS' if condition_d_pass else '❌ FAIL'}")
                             
                         except Exception as api_err:
@@ -576,13 +588,13 @@ def run_advisor():
                             print(f"   No trade signal. Continuing monitoring...")
                         print("-"*60)
                     
-                    elif minutes_left > 5:
+                    elif minutes_left > TRADE_WINDOW_MAX:
                         if not five_min_announced:
                             print(f"⏳ Waiting... {minutes_left:.1f} minutes until expiration", end='\r')
                     
-                    elif minutes_left < 3 and not trade_signal_given:
+                    elif minutes_left < TRADE_WINDOW_MIN and not trade_signal_given:
                         if not three_min_announced:
-                            print(f"\n⚠️  Below 3-minute threshold. Window closed without signal.")
+                            print(f"\n⚠️  Below {TRADE_WINDOW_MIN}-minute threshold. Window closed without signal.")
                         three_min_announced = True
 
                 except Exception as e:
@@ -590,7 +602,7 @@ def run_advisor():
                     import traceback
                     traceback.print_exc()
 
-                time.sleep(5)
+                time.sleep(LOOP_SLEEP_SECONDS)
                 
         except Exception as e:
             print(f"\n❌ Error processing market: {e}")
