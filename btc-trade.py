@@ -478,6 +478,12 @@ def run_advisor():
             trade_signal_given = False
             signal_details = {}
             
+            # Initialize condition tracking for the evaluation loop
+            if not hasattr(run_advisor, 'last_conditions'):
+                run_advisor.last_conditions = None
+            if not hasattr(run_advisor, 'last_print_time'):
+                run_advisor.last_print_time = 0
+            
             while True:
                 now = time.time()
                 minutes_left = (end_timestamp - now) / 60
@@ -584,7 +590,7 @@ def run_advisor():
                             run_advisor.last_condition_eval = None
                         
                         # Build the evaluation output
-                        eval_output = f"\r⏱️  [T-{minutes_left:.2f}min] Evaluating Trade Conditions..."
+                        eval_output = f"⏱️  [T-{minutes_left:.2f}min] Evaluating Trade Conditions..."
                         eval_output += f"\n   Current BTC: ${real_price:,.2f} | Target: ${strike_price:,.2f}"
                         
                         # Show outcome prices
@@ -704,24 +710,34 @@ def run_advisor():
                         
                         eval_output += "\n" + "-"*60
                         
-                        # Only print if conditions have changed (to avoid duplicate output)
-                        # Only hash the actual condition results, NOT the time
-                        conditions_hash = f"{condition_a_pass}:{condition_b_pass}:{condition_c_pass}:{condition_d_pass}"
-                        if run_advisor.last_condition_eval != conditions_hash:
-                            # Clear previous evaluation output by moving cursor up and clearing lines
-                            # Always clear 35 lines (more than enough for any evaluation block)
-                            clear_code = ''
-                            for _ in range(35):
-                                clear_code += '\033[A\033[2K'  # Move up one line and clear it
-                            sys.stdout.write(clear_code + '\r')
-                            sys.stdout.flush()
+                        # Check if ANY condition has CHANGED from last evaluation
+                        current_conditions = (condition_a_pass, condition_b_pass, condition_c_pass, condition_d_pass)
+                        current_time = time.time()
+                        time_since_last_print = current_time - run_advisor.last_print_time
+                        
+                        # Print if conditions changed OR 10 seconds have passed
+                        if run_advisor.last_conditions != current_conditions or time_since_last_print >= 10:
+                            # Clear previous evaluation output ONLY if we've printed before
+                            if run_advisor.last_conditions is not None and hasattr(run_advisor, 'last_line_count'):
+                                # Clear exact number of lines from last print
+                                clear_code = ''
+                                for _ in range(run_advisor.last_line_count):
+                                    clear_code += '\033[A\033[2K'  # Move up one line and clear it
+                                sys.stdout.write(clear_code)
+                                sys.stdout.flush()
+                            
+                            # Calculate the exact number of lines in current output AFTER building it
+                            # Count newlines in the eval_output, then +1 for the \n we add, then +1 for cursor position
+                            current_line_count = eval_output.count('\n') + 2
                             
                             # Print the new evaluation output
                             sys.stdout.write(eval_output + '\n')
                             sys.stdout.flush()
                             
-                            # Store the hash for next iteration
-                            run_advisor.last_condition_eval = conditions_hash
+                            # Store the new conditions, time, and line count for next iteration
+                            run_advisor.last_conditions = current_conditions
+                            run_advisor.last_print_time = current_time
+                            run_advisor.last_line_count = current_line_count
                     
                     elif minutes_left > TRADE_WINDOW_MAX:
                         if not five_min_announced:
