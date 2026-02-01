@@ -562,6 +562,10 @@ def run_advisor():
                         highs = [float(k[2]) for k in klines]
                         lows = [float(k[3]) for k in klines]
                         
+                        # Track if this is a new evaluation (conditions exist now vs before)
+                        if not hasattr(run_advisor, 'last_condition_eval'):
+                            run_advisor.last_condition_eval = None
+                        
                         # Build the evaluation output
                         eval_output = f"\r⏱️  [T-{minutes_left:.2f}min] Evaluating Trade Conditions..."
                         eval_output += f"\n   Current BTC: ${real_price:,.2f} | Target: ${strike_price:,.2f}"
@@ -627,25 +631,32 @@ def run_advisor():
                         
                         # === CONDITION D: PRICE / R/R FILTER ===
                         try:
-                            market_info = poly_client.get_market(token_id)
+                            # Get share prices from outcome prices we already extracted
+                            outcome_prices = market_data.get('outcome_prices', {})
                             
-                            if real_price > strike_price:
-                                share_price = float(market_info.get('best_ask', 0.5))
-                                share_type = "YES"
+                            if outcome_prices.get('up') is not None and outcome_prices.get('down') is not None:
+                                # We have outcome prices - use them for R/R analysis
+                                if real_price > strike_price:
+                                    share_price = outcome_prices['up']  # YES shares (Up)
+                                    share_type = "YES"
+                                else:
+                                    share_price = outcome_prices['down']  # NO shares (Down)
+                                    share_type = "NO"
                             else:
-                                share_price = 1.0 - float(market_info.get('best_bid', 0.5))
-                                share_type = "NO"
+                                # Fallback: use generic prices
+                                share_price = 0.5
+                                share_type = "UNKNOWN"
                             
                             condition_d_pass = SHARE_PRICE_MIN <= share_price <= SHARE_PRICE_MAX
                             
                             eval_output += f"\n\n   [D] RISK/REWARD FILTER"
                             eval_output += f"\n       Share Type: {share_type}"
-                            eval_output += f"\n       Share Price: ${share_price:.2f} (${share_price*100:.0f}¢)"
+                            eval_output += f"\n       Share Price: ${share_price:.2f} ({int(share_price*100)}¢)"
                             eval_output += f"\n       Valid Range: ${SHARE_PRICE_MIN:.2f} - ${SHARE_PRICE_MAX:.2f}"
                             eval_output += f"\n       Result: {'✅ PASS' if condition_d_pass else '❌ FAIL'}"
                             
                         except Exception as api_err:
-                            eval_output += f"\n\n   [D] RISK/REWARD FILTER: ⚠️  API Error"
+                            eval_output += f"\n\n   [D] RISK/REWARD FILTER: ⚠️  Error - {str(api_err)}"
                             condition_d_pass = False
                             share_price = 0.5
                             share_type = "UNKNOWN"
@@ -676,25 +687,24 @@ def run_advisor():
                         
                         eval_output += "\n" + "-"*60
                         
-                        # Store previous output line count for clearing
-                        if not hasattr(run_advisor, 'prev_eval_lines'):
-                            run_advisor.prev_eval_lines = 0
-                        
-                        # Calculate number of lines in current output
-                        current_lines = eval_output.count('\n') + 1
-                        
-                        # Clear previous evaluation output by moving cursor up and clearing lines
-                        if run_advisor.prev_eval_lines > 0:
-                            # Move cursor up by previous line count and clear those lines
-                            for _ in range(run_advisor.prev_eval_lines):
-                                print('\033[A\033[2K', end='')  # Move up one line and clear it
-                            print('\r', end='')  # Return to start of line
-                        
-                        # Print the new evaluation output
-                        print(eval_output)
-                        
-                        # Store current line count for next iteration
-                        run_advisor.prev_eval_lines = current_lines
+                        # Only print if conditions have changed (to avoid duplicate output)
+                        # Only hash the actual condition results, NOT the time
+                        conditions_hash = f"{condition_a_pass}:{condition_b_pass}:{condition_c_pass}:{condition_d_pass}"
+                        if run_advisor.last_condition_eval != conditions_hash:
+                            # Clear previous evaluation output by moving cursor up and clearing lines
+                            # Always clear 35 lines (more than enough for any evaluation block)
+                            clear_code = ''
+                            for _ in range(35):
+                                clear_code += '\033[A\033[2K'  # Move up one line and clear it
+                            sys.stdout.write(clear_code + '\r')
+                            sys.stdout.flush()
+                            
+                            # Print the new evaluation output
+                            sys.stdout.write(eval_output + '\n')
+                            sys.stdout.flush()
+                            
+                            # Store the hash for next iteration
+                            run_advisor.last_condition_eval = conditions_hash
                     
                     elif minutes_left > TRADE_WINDOW_MAX:
                         if not five_min_announced:
