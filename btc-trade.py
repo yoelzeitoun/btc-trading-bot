@@ -3,6 +3,7 @@ import math
 import sys
 import os
 import re
+import json
 import numpy as np
 import requests
 from binance.client import Client as BinanceClient
@@ -143,56 +144,103 @@ def find_current_btc_15m_market():
             # Fetch the individual market page to get strike price and outcome prices
             strike_price = None
             outcome_prices = {'up': None, 'down': None}
-            try:
-                import json
-                from datetime import datetime
-                
-                market_url = f"https://polymarket.com/event/{live_slug}"
-                market_page_response = requests.get(market_url, headers=headers, timeout=10)
-                market_page_response.raise_for_status()
-                
-                # Extract market start timestamp to find the CORRECT price to beat
-                timestamp_match = re.search(r'-(\d{10})$', live_slug)
-                if timestamp_match:
-                    market_start_timestamp = int(timestamp_match.group(1))
-                    # Convert to ISO format - we want the closePrice where endTime = market start time
-                    from datetime import datetime, timezone
-                    dt = datetime.fromtimestamp(market_start_timestamp, tz=timezone.utc)
-                    target_end_time = dt.strftime('%Y-%m-%dT%H:%M:%S')
-                    
+            page_clob_token_ids = None
+
+            market_url = f"https://polymarket.com/event/{live_slug}"
+            timestamp_match = re.search(r'-(\d{10})$', live_slug)
+            target_end_time = None
+            if timestamp_match:
+                market_start_timestamp = int(timestamp_match.group(1))
+                from datetime import datetime, timezone
+                dt = datetime.fromtimestamp(market_start_timestamp, tz=timezone.utc)
+                target_end_time = dt.strftime('%Y-%m-%dT%H:%M:%S')
+
+            for attempt in range(1, 6):
+                try:
+                    market_page_response = requests.get(market_url, headers=headers, timeout=10)
+                    market_page_response.raise_for_status()
+
                     # Find all historical closePrice entries with their endTimes
                     pattern = r'\{"startTime":"([^"]+)","endTime":"([^"]+)","openPrice":([\d.]+),"closePrice":([\d.]+),"outcome":"([^"]+)","percentChange":([^}]+)\}'
                     matches = re.findall(pattern, market_page_response.text)
-                    
+
                     # Find the closePrice for the window that ENDS at market start time
-                    for start_time, end_time, open_price, close_price, outcome, pct in matches:
-                        if target_end_time in end_time:
-                            strike_price = float(close_price)
-                            print(f"   💰 Strike Price (Price to Beat): ${strike_price:,.2f}")
-                            break
-                    
-                    # If not found by exact match, take the last one (fallback)
-                    if not strike_price and matches:
-                        strike_price = float(matches[-1][3])  # closePrice is at index 3
-                        print(f"   ⚠️  Using latest historical price: ${strike_price:,.2f}")
-                
-                # Also extract outcome prices from the page (Up/Down market prices)
-                # Look for "outcomePrices" field in the JSON data
-                outcome_prices_match = re.search(r'"outcomePrices"\s*:\s*\[([^\]]+)\]', market_page_response.text)
-                if outcome_prices_match:
-                    prices_str = outcome_prices_match.group(1)
-                    # Extract quoted strings
-                    price_values = re.findall(r'"([0-9.]+)"', prices_str)
-                    if len(price_values) >= 2:
-                        outcome_prices['up'] = float(price_values[0])
-                        outcome_prices['down'] = float(price_values[1])
-                        print(f"   📊 Outcome Prices - Up: {int(float(price_values[0])*100)}¢ | Down: {int(float(price_values[1])*100)}¢")
-            except Exception as e:
-                print(f"   ⚠️  Could not extract data from page: {e}")
+                    if target_end_time:
+                        for start_time, end_time, open_price, close_price, outcome, pct in matches:
+                            if target_end_time in end_time:
+                                strike_price = float(close_price)
+                                print(f"   💰 Strike Price (Price to Beat): ${strike_price:,.2f}")
+                                break
+
+                    # Also extract outcome prices from the page (Up/Down market prices)
+                    outcome_prices_match = re.search(r'"outcomePrices"\s*:\s*\[([^\]]+)\]', market_page_response.text)
+                    if outcome_prices_match:
+                        prices_str = outcome_prices_match.group(1)
+                        price_values = re.findall(r'"([0-9.]+)"', prices_str)
+                        if len(price_values) >= 2:
+                            outcome_prices['up'] = float(price_values[0])
+                            outcome_prices['down'] = float(price_values[1])
+
+                    # Extract clobTokenIds from page as fallback
+                    clob_ids_match = re.search(r'"clobTokenIds"\s*:\s*\[([^\]]+)\]', market_page_response.text)
+                    if clob_ids_match:
+                        ids_str = clob_ids_match.group(1)
+                        id_values = re.findall(r'"([0-9a-fx]+)"', ids_str, re.IGNORECASE)
+                        if len(id_values) >= 2:
+                            page_clob_token_ids = {'yes': id_values[0], 'no': id_values[1]}
+
+                    if strike_price is not None:
+                        break
+                except Exception as e:
+                    print(f"   ⚠️  Could not extract data from page (attempt {attempt}/5): {e}")
+
+                time.sleep(2)
+
+            if strike_price is None:
+                print("   ❌ Price to Beat not found. Retrying market discovery...")
+                return None
             
             # Now fetch details from Gamma API
             api_url = "https://gamma-api.polymarket.com"
             print(f"   Fetching market details from API...")
+
+            # Try direct slug lookup first (more reliable for active markets)
+            try:
+                slug_response = requests.get(
+                    f"{api_url}/events",
+                    params={"slug": live_slug},
+                    timeout=10
+                )
+                slug_response.raise_for_status()
+                slug_data = slug_response.json()
+                if slug_data:
+                    event = slug_data[0] if isinstance(slug_data, list) else slug_data
+                    now = time.time()
+                    timestamp_match = re.search(r'-(\d{10})$', live_slug)
+                    if timestamp_match:
+                        market_start_timestamp = int(timestamp_match.group(1))
+                        market_end_timestamp = market_start_timestamp + 900
+                        time_remaining = (market_end_timestamp - now) / 60
+
+                        clob_token_ids = extract_clob_token_ids(event.get('markets', []))
+                        clob_token_ids = clob_token_ids or page_clob_token_ids
+                        market_data = {
+                            'slug': live_slug,
+                            'title': event.get('title', '').upper(),
+                            'event': event,
+                            'markets': event.get('markets', []),
+                            'end_date': event.get('end_date_iso', ''),
+                            'time_remaining': time_remaining,
+                            'end_timestamp': market_end_timestamp,
+                            'strike_price': strike_price,
+                            'outcome_prices': outcome_prices,
+                            'clob_token_ids': clob_token_ids
+                        }
+                        print(f"   🎯 Selected LIVE market: {live_slug}")
+                        print(f"      Time remaining: {time_remaining:.1f} minutes")
+                        return market_data
+            except Exception:
+                pass
             
             # Search for this specific market
             events_response = requests.get(
@@ -218,6 +266,9 @@ def find_current_btc_15m_market():
                         market_end_timestamp = market_start_timestamp + 900
                         time_remaining = (market_end_timestamp - now) / 60
                         
+                        clob_token_ids = extract_clob_token_ids(event.get('markets', []))
+                        clob_token_ids = clob_token_ids or page_clob_token_ids
+
                         market_data = {
                             'slug': live_slug,
                             'title': event.get('title', '').upper(),
@@ -227,7 +278,8 @@ def find_current_btc_15m_market():
                             'time_remaining': time_remaining,
                             'end_timestamp': market_end_timestamp,
                             'strike_price': strike_price,  # Include scraped strike price
-                            'outcome_prices': outcome_prices  # Include outcome prices
+                            'outcome_prices': outcome_prices,  # Include outcome prices
+                            'clob_token_ids': clob_token_ids
                         }
                         
                         print(f"   🎯 Selected LIVE market: {live_slug}")
@@ -253,7 +305,8 @@ def find_current_btc_15m_market():
                     'time_remaining': time_remaining,
                     'end_timestamp': market_end_timestamp,
                     'strike_price': strike_price,  # Include scraped strike price
-                    'outcome_prices': outcome_prices  # Include outcome prices
+                    'outcome_prices': outcome_prices,  # Include outcome prices
+                    'clob_token_ids': page_clob_token_ids
                 }
         
         print("   ⚠️  Could not find live market on website, trying API...")
@@ -356,6 +409,56 @@ def extract_strike_from_question(question):
     
     return None
 
+def extract_clob_token_ids(markets):
+    """Extract YES/NO token IDs from Gamma market data."""
+    if not markets:
+        return None
+
+    for market in markets:
+        clob_token_ids = market.get('clobTokenIds')
+        if not clob_token_ids:
+            continue
+        try:
+            if isinstance(clob_token_ids, str):
+                clob_token_ids = json.loads(clob_token_ids)
+            if isinstance(clob_token_ids, list) and len(clob_token_ids) >= 2:
+                return {'yes': clob_token_ids[0], 'no': clob_token_ids[1]}
+        except Exception:
+            continue
+
+    return None
+
+def fetch_clob_best_ask(token_id):
+    """Fetch best ask price from Polymarket CLOB book."""
+    if not token_id:
+        return None
+    try:
+        response = requests.get(
+            "https://clob.polymarket.com/book",
+            params={"token_id": token_id},
+            timeout=10
+        )
+        response.raise_for_status()
+        data = response.json()
+        asks = data.get("asks", [])
+        if not asks:
+            return None
+        best_ask = min(float(a.get("price", 1)) for a in asks if a.get("price") is not None)
+        return best_ask
+    except Exception:
+        return None
+
+def fetch_clob_outcome_prices(yes_token_id, no_token_id):
+    """Fetch YES/NO outcome prices from CLOB order books."""
+    yes_price = fetch_clob_best_ask(yes_token_id)
+    no_price = fetch_clob_best_ask(no_token_id)
+    if yes_price is None and no_price is None:
+        return None
+    return {
+        'up': yes_price,
+        'down': no_price
+    }
+
 # --- 6. MAIN TRADING ENGINE ---
 def run_advisor():
     # Setup API connections
@@ -397,6 +500,16 @@ def run_advisor():
             
             # Use the time_remaining we already calculated
             expiry_minutes = market_data.get('time_remaining', 15)
+
+            # Refresh outcome prices from CLOB if token IDs are available
+            clob_token_ids = market_data.get('clob_token_ids')
+            if clob_token_ids and clob_token_ids.get('yes') and clob_token_ids.get('no'):
+                clob_prices = fetch_clob_outcome_prices(clob_token_ids['yes'], clob_token_ids['no'])
+                if clob_prices:
+                    market_data['outcome_prices'] = {
+                        'up': clob_prices.get('up', market_data.get('outcome_prices', {}).get('up')),
+                        'down': clob_prices.get('down', market_data.get('outcome_prices', {}).get('down'))
+                    }
             
             print(f"\n✅ MARKET LOADED:")
             print(f"   Title: {title}")
@@ -406,7 +519,7 @@ def run_advisor():
             # Display outcome prices if available
             outcome_prices = market_data.get('outcome_prices', {})
             if outcome_prices.get('up') is not None and outcome_prices.get('down') is not None:
-                print(f"   📊 Market Prices - Up: {int(outcome_prices['up']*100)}¢ | Down: {int(outcome_prices['down']*100)}¢")
+                print(f"   📊 Market Prices - Up: {outcome_prices['up']*100:.1f}¢ | Down: {outcome_prices['down']*100:.1f}¢")
             
             # Try to use the scraped strike price first
             strike_price = market_data.get('strike_price')
@@ -449,7 +562,7 @@ def run_advisor():
             # Display outcome prices in monitoring status
             outcome_prices = market_data.get('outcome_prices', {})
             if outcome_prices.get('up') is not None and outcome_prices.get('down') is not None:
-                print(f"💹 Market Prices - Up: {int(outcome_prices['up']*100)}¢ | Down: {int(outcome_prices['down']*100)}¢")
+                print(f"💹 Market Prices - Up: {outcome_prices['up']*100:.1f}¢ | Down: {outcome_prices['down']*100:.1f}¢")
             
             print(f"⏰ Time Remaining: {expiry_minutes:.1f} minutes")
             print(f"🎯 Strategy: Statistical + Kinetic + Physical + R/R Barriers")
@@ -549,14 +662,24 @@ def run_advisor():
                     
                     # 4. EXECUTION WINDOW CHECK
                     if TRADE_WINDOW_MIN <= minutes_left <= TRADE_WINDOW_MAX and not trade_signal_given:
+
+                        # Refresh outcome prices from CLOB each evaluation (for live prices)
+                        clob_token_ids = market_data.get('clob_token_ids')
+                        if clob_token_ids and clob_token_ids.get('yes') and clob_token_ids.get('no'):
+                            clob_prices = fetch_clob_outcome_prices(clob_token_ids['yes'], clob_token_ids['no'])
+                            if clob_prices:
+                                market_data['outcome_prices'] = {
+                                    'up': clob_prices.get('up', market_data.get('outcome_prices', {}).get('up')),
+                                    'down': clob_prices.get('down', market_data.get('outcome_prices', {}).get('down'))
+                                }
                         
                         print(f"\n⏱️  [T-{minutes_left:.2f}min] Evaluating Trade Conditions...")
                         print(f"   Current BTC: ${real_price:,.2f} | Target: ${strike_price:,.2f}")
                         
-                        # Use current outcome prices from market data
+                        # Show outcome prices at each evaluation
                         outcome_prices = market_data.get('outcome_prices', {})
                         if outcome_prices.get('up') is not None and outcome_prices.get('down') is not None:
-                            print(f"   💹 Market Prices - Up: {int(outcome_prices['up']*100)}¢ | Down: {int(outcome_prices['down']*100)}¢")
+                            print(f"   💹 Market Prices - Up: {outcome_prices['up']*100:.1f}¢ | Down: {outcome_prices['down']*100:.1f}¢")
                         
                         # === CONDITION A: BOLLINGER BANDS ===
                         upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=BOLLINGER_PERIOD, std_dev=BOLLINGER_STD_DEV)
@@ -627,12 +750,15 @@ def run_advisor():
                                 else:
                                     share_price = down_price
                                     share_type = "NO"
-                                
+
+                                if share_price is None:
+                                    raise ValueError("Missing outcome price from CLOB")
+
                                 condition_d_pass = SHARE_PRICE_MIN <= share_price <= SHARE_PRICE_MAX
-                                
+
                                 print(f"\n   [D] RISK/REWARD FILTER")
                                 print(f"       Share Type: {share_type}")
-                                print(f"       Share Price: ${share_price:.2f} ({int(share_price*100)}¢)")
+                                print(f"       Share Price: ${share_price:.3f} ({share_price*100:.1f}¢)")
                                 print(f"       Valid Range: ${SHARE_PRICE_MIN:.2f} - ${SHARE_PRICE_MAX:.2f}")
                                 print(f"       Result: {'✅ PASS' if condition_d_pass else '❌ FAIL'}")
                             else:
