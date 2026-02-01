@@ -151,30 +151,47 @@ def find_current_btc_15m_market():
                 market_page_response = requests.get(market_url, headers=headers, timeout=10)
                 market_page_response.raise_for_status()
                 
-                # Extract market start timestamp to find the CORRECT price to beat
-                timestamp_match = re.search(r'-(\d{10})$', live_slug)
-                if timestamp_match:
-                    market_start_timestamp = int(timestamp_match.group(1))
-                    # Convert to ISO format - we want the closePrice where endTime = market start time
-                    from datetime import datetime, timezone
-                    dt = datetime.fromtimestamp(market_start_timestamp, tz=timezone.utc)
-                    target_end_time = dt.strftime('%Y-%m-%dT%H:%M:%S')
-                    
-                    # Find all historical closePrice entries with their endTimes
-                    pattern = r'\{"startTime":"([^"]+)","endTime":"([^"]+)","openPrice":([\d.]+),"closePrice":([\d.]+),"outcome":"([^"]+)","percentChange":([^}]+)\}'
-                    matches = re.findall(pattern, market_page_response.text)
-                    
-                    # Find the closePrice for the window that ENDS at market start time
-                    for start_time, end_time, open_price, close_price, outcome, pct in matches:
-                        if target_end_time in end_time:
-                            strike_price = float(close_price)
-                            print(f"   💰 Strike Price (Price to Beat): ${strike_price:,.2f}")
-                            break
-                    
-                    # If not found by exact match, take the last one (fallback)
-                    if not strike_price and matches:
-                        strike_price = float(matches[-1][3])  # closePrice is at index 3
-                        print(f"   ⚠️  Using latest historical price: ${strike_price:,.2f}")
+                # First try to extract "Price to Beat" directly from the page
+                # Look for it in various possible formats in the HTML
+                price_patterns = [
+                    r'"label"\s*:\s*"[Pp]rice to beat"[^}]*?"value"\s*:\s*"?\$?([0-9.]+)"?',
+                    r'price["\']?\s*to["\']?\s*beat[^:]*:\s*[^$]*\$([0-9,]+\.?\d*)',
+                    r'Price to Beat.*?\$([0-9,]+\.?\d*)',
+                ]
+                
+                for pattern in price_patterns:
+                    price_match = re.search(pattern, market_page_response.text, re.IGNORECASE)
+                    if price_match:
+                        price_str = price_match.group(1).replace(',', '')
+                        strike_price = float(price_str)
+                        print(f"   💰 Strike Price (Price to Beat): ${strike_price:,.2f}")
+                        break
+                
+                if not strike_price:
+                    # Fallback: Extract market start timestamp to find the CORRECT price to beat from historical data
+                    timestamp_match = re.search(r'-(\d{10})$', live_slug)
+                    if timestamp_match:
+                        market_start_timestamp = int(timestamp_match.group(1))
+                        # Convert to ISO format - we want the closePrice where endTime = market start time
+                        from datetime import datetime, timezone
+                        dt = datetime.fromtimestamp(market_start_timestamp, tz=timezone.utc)
+                        target_end_time = dt.strftime('%Y-%m-%dT%H:%M:%S')
+                        
+                        # Find all historical closePrice entries with their endTimes
+                        pattern = r'\{"startTime":"([^"]+)","endTime":"([^"]+)","openPrice":([\d.]+),"closePrice":([\d.]+),"outcome":"([^"]+)","percentChange":([^}]+)\}'
+                        matches = re.findall(pattern, market_page_response.text)
+                        
+                        # Find the closePrice for the window that ENDS at market start time
+                        for start_time, end_time, open_price, close_price, outcome, pct in matches:
+                            if target_end_time in end_time:
+                                strike_price = float(close_price)
+                                print(f"   💰 Strike Price (Price to Beat): ${strike_price:,.2f}")
+                                break
+                        
+                        # If not found by exact match, take the last one (fallback)
+                        if not strike_price and matches:
+                            strike_price = float(matches[-1][3])  # closePrice is at index 3
+                            print(f"   ⚠️  Using latest historical price: ${strike_price:,.2f}")
                 
                 # Also extract outcome prices from the page (Up/Down market prices)
                 # Look for "outcomePrices" field in the JSON data
