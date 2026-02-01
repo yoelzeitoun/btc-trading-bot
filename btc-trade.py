@@ -553,7 +553,7 @@ def run_advisor():
                         print(f"\n⏱️  [T-{minutes_left:.2f}min] Evaluating Trade Conditions...")
                         print(f"   Current BTC: ${real_price:,.2f} | Target: ${strike_price:,.2f}")
                         
-                        # Show outcome prices at each evaluation
+                        # Use current outcome prices from market data
                         outcome_prices = market_data.get('outcome_prices', {})
                         if outcome_prices.get('up') is not None and outcome_prices.get('down') is not None:
                             print(f"   💹 Market Prices - Up: {int(outcome_prices['up']*100)}¢ | Down: {int(outcome_prices['down']*100)}¢")
