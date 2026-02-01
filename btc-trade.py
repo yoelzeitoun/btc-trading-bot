@@ -676,8 +676,25 @@ def run_advisor():
                         
                         eval_output += "\n" + "-"*60
                         
-                        # Print the evaluation output (updates in place with carriage return)
+                        # Store previous output line count for clearing
+                        if not hasattr(run_advisor, 'prev_eval_lines'):
+                            run_advisor.prev_eval_lines = 0
+                        
+                        # Calculate number of lines in current output
+                        current_lines = eval_output.count('\n') + 1
+                        
+                        # Clear previous evaluation output by moving cursor up and clearing lines
+                        if run_advisor.prev_eval_lines > 0:
+                            # Move cursor up by previous line count and clear those lines
+                            for _ in range(run_advisor.prev_eval_lines):
+                                print('\033[A\033[2K', end='')  # Move up one line and clear it
+                            print('\r', end='')  # Return to start of line
+                        
+                        # Print the new evaluation output
                         print(eval_output)
+                        
+                        # Store current line count for next iteration
+                        run_advisor.prev_eval_lines = current_lines
                     
                     elif minutes_left > TRADE_WINDOW_MAX:
                         if not five_min_announced:
