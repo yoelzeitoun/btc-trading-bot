@@ -550,13 +550,26 @@ def run_advisor():
                     # 4. EXECUTION WINDOW CHECK
                     if TRADE_WINDOW_MIN <= minutes_left <= TRADE_WINDOW_MAX and not trade_signal_given:
                         
-                        print(f"\n⏱️  [T-{minutes_left:.2f}min] Evaluating Trade Conditions...")
-                        print(f"   Current BTC: ${real_price:,.2f} | Target: ${strike_price:,.2f}")
+                        # Print header only once per monitoring loop
+                        import sys
                         
-                        # Show outcome prices at each evaluation
+                        # Fetch market data once
+                        btc_data = binance.get_symbol_ticker(symbol="BTCUSDT")
+                        real_price = float(btc_data['price'])
+                        
+                        klines = binance.get_klines(symbol="BTCUSDT", interval='1m', limit=60)
+                        closes = [float(k[4]) for k in klines]
+                        highs = [float(k[2]) for k in klines]
+                        lows = [float(k[3]) for k in klines]
+                        
+                        # Build the evaluation output
+                        eval_output = f"\r⏱️  [T-{minutes_left:.2f}min] Evaluating Trade Conditions..."
+                        eval_output += f"\n   Current BTC: ${real_price:,.2f} | Target: ${strike_price:,.2f}"
+                        
+                        # Show outcome prices
                         outcome_prices = market_data.get('outcome_prices', {})
                         if outcome_prices.get('up') is not None and outcome_prices.get('down') is not None:
-                            print(f"   💹 Market Prices - Up: {int(outcome_prices['up']*100)}¢ | Down: {int(outcome_prices['down']*100)}¢")
+                            eval_output += f"\n   💹 Market Prices - Up: {int(outcome_prices['up']*100)}¢ | Down: {int(outcome_prices['down']*100)}¢"
                         
                         # === CONDITION A: BOLLINGER BANDS ===
                         upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=BOLLINGER_PERIOD, std_dev=BOLLINGER_STD_DEV)
@@ -565,18 +578,18 @@ def run_advisor():
                         if upper_bb and lower_bb:
                             if real_price > strike_price:
                                 condition_a_pass = strike_price < lower_bb
-                                print(f"\n   [A] BOLLINGER BANDS (Period={BOLLINGER_PERIOD}, StdDev={BOLLINGER_STD_DEV})")
-                                print(f"       Upper: ${upper_bb:,.2f} | Middle: ${middle_bb:,.2f} | Lower: ${lower_bb:,.2f}")
-                                print(f"       Direction: UP | Target vs Lower Band: ${strike_price:,.2f} < ${lower_bb:,.2f}")
-                                print(f"       Result: {'✅ PASS' if condition_a_pass else '❌ FAIL'}")
+                                eval_output += f"\n\n   [A] BOLLINGER BANDS (Period={BOLLINGER_PERIOD}, StdDev={BOLLINGER_STD_DEV})"
+                                eval_output += f"\n       Upper: ${upper_bb:,.2f} | Middle: ${middle_bb:,.2f} | Lower: ${lower_bb:,.2f}"
+                                eval_output += f"\n       Direction: UP | Target vs Lower Band: ${strike_price:,.2f} < ${lower_bb:,.2f}"
+                                eval_output += f"\n       Result: {'✅ PASS' if condition_a_pass else '❌ FAIL'}"
                             else:
                                 condition_a_pass = strike_price > upper_bb
-                                print(f"\n   [A] BOLLINGER BANDS (Period={BOLLINGER_PERIOD}, StdDev={BOLLINGER_STD_DEV})")
-                                print(f"       Upper: ${upper_bb:,.2f} | Middle: ${middle_bb:,.2f} | Lower: ${lower_bb:,.2f}")
-                                print(f"       Direction: DOWN | Target vs Upper Band: ${strike_price:,.2f} > ${upper_bb:,.2f}")
-                                print(f"       Result: {'✅ PASS' if condition_a_pass else '❌ FAIL'}")
+                                eval_output += f"\n\n   [A] BOLLINGER BANDS (Period={BOLLINGER_PERIOD}, StdDev={BOLLINGER_STD_DEV})"
+                                eval_output += f"\n       Upper: ${upper_bb:,.2f} | Middle: ${middle_bb:,.2f} | Lower: ${lower_bb:,.2f}"
+                                eval_output += f"\n       Direction: DOWN | Target vs Upper Band: ${strike_price:,.2f} > ${upper_bb:,.2f}"
+                                eval_output += f"\n       Result: {'✅ PASS' if condition_a_pass else '❌ FAIL'}"
                         else:
-                            print(f"\n   [A] BOLLINGER BANDS: ⚠️  Insufficient data")
+                            eval_output += f"\n\n   [A] BOLLINGER BANDS: ⚠️  Insufficient data"
                         
                         # === CONDITION B: ATR KINETIC BARRIER ===
                         atr = calculate_atr(highs, lows, closes, period=ATR_PERIOD)
@@ -587,13 +600,13 @@ def run_advisor():
                             actual_distance = abs(real_price - strike_price)
                             condition_b_pass = actual_distance > max_possible_move
                             
-                            print(f"\n   [B] ATR KINETIC BARRIER (Period={ATR_PERIOD})")
-                            print(f"       ATR: ${atr:,.2f}")
-                            print(f"       Max Possible Move: ${max_possible_move:,.2f} (ATR × {minutes_left:.1f}min × {ATR_MULTIPLIER})")
-                            print(f"       Actual Distance: ${actual_distance:,.2f}")
-                            print(f"       Result: {'✅ PASS' if condition_b_pass else '❌ FAIL'}")
+                            eval_output += f"\n\n   [B] ATR KINETIC BARRIER (Period={ATR_PERIOD})"
+                            eval_output += f"\n       ATR: ${atr:,.2f}"
+                            eval_output += f"\n       Max Possible Move: ${max_possible_move:,.2f} (ATR × {minutes_left:.1f}min × {ATR_MULTIPLIER})"
+                            eval_output += f"\n       Actual Distance: ${actual_distance:,.2f}"
+                            eval_output += f"\n       Result: {'✅ PASS' if condition_b_pass else '❌ FAIL'}"
                         else:
-                            print(f"\n   [B] ATR KINETIC BARRIER: ⚠️  Insufficient data")
+                            eval_output += f"\n\n   [B] ATR KINETIC BARRIER: ⚠️  Insufficient data"
                         
                         # === CONDITION C: ORDER BOOK DEPTH ===
                         order_book = binance.get_order_book(symbol="BTCUSDT", limit=1000)
@@ -601,16 +614,16 @@ def run_advisor():
                         
                         condition_c_pass = ratio >= ORDER_BOOK_RATIO_MIN
                         
-                        print(f"\n   [C] ORDER BOOK DEPTH BARRIER")
-                        print(f"       Direction: {direction}")
+                        eval_output += f"\n\n   [C] ORDER BOOK DEPTH BARRIER"
+                        eval_output += f"\n       Direction: {direction}"
                         if direction == "UP":
-                            print(f"       BID Volume (Support): {bid_vol:,.2f} BTC")
-                            print(f"       ASK Volume (Threat): {ask_vol:,.2f} BTC")
+                            eval_output += f"\n       BID Volume (Support): {bid_vol:,.2f} BTC"
+                            eval_output += f"\n       ASK Volume (Threat): {ask_vol:,.2f} BTC"
                         else:
-                            print(f"       ASK Volume (Resistance): {ask_vol:,.2f} BTC")
-                            print(f"       BID Volume (Threat): {bid_vol:,.2f} BTC")
-                        print(f"       Ratio: {ratio:.2f}x (Need >= {ORDER_BOOK_RATIO_MIN}x)")
-                        print(f"       Result: {'✅ PASS' if condition_c_pass else '❌ FAIL'}")
+                            eval_output += f"\n       ASK Volume (Resistance): {ask_vol:,.2f} BTC"
+                            eval_output += f"\n       BID Volume (Threat): {bid_vol:,.2f} BTC"
+                        eval_output += f"\n       Ratio: {ratio:.2f}x (Need >= {ORDER_BOOK_RATIO_MIN}x)"
+                        eval_output += f"\n       Result: {'✅ PASS' if condition_c_pass else '❌ FAIL'}"
                         
                         # === CONDITION D: PRICE / R/R FILTER ===
                         try:
@@ -625,14 +638,14 @@ def run_advisor():
                             
                             condition_d_pass = SHARE_PRICE_MIN <= share_price <= SHARE_PRICE_MAX
                             
-                            print(f"\n   [D] RISK/REWARD FILTER")
-                            print(f"       Share Type: {share_type}")
-                            print(f"       Share Price: ${share_price:.2f} (${share_price*100:.0f}¢)")
-                            print(f"       Valid Range: ${SHARE_PRICE_MIN:.2f} - ${SHARE_PRICE_MAX:.2f}")
-                            print(f"       Result: {'✅ PASS' if condition_d_pass else '❌ FAIL'}")
+                            eval_output += f"\n\n   [D] RISK/REWARD FILTER"
+                            eval_output += f"\n       Share Type: {share_type}"
+                            eval_output += f"\n       Share Price: ${share_price:.2f} (${share_price*100:.0f}¢)"
+                            eval_output += f"\n       Valid Range: ${SHARE_PRICE_MIN:.2f} - ${SHARE_PRICE_MAX:.2f}"
+                            eval_output += f"\n       Result: {'✅ PASS' if condition_d_pass else '❌ FAIL'}"
                             
                         except Exception as api_err:
-                            print(f"\n   [D] RISK/REWARD FILTER: ⚠️  API Error")
+                            eval_output += f"\n\n   [D] RISK/REWARD FILTER: ⚠️  API Error"
                             condition_d_pass = False
                             share_price = 0.5
                             share_type = "UNKNOWN"
@@ -641,13 +654,13 @@ def run_advisor():
                         all_conditions_met = (condition_a_pass and condition_b_pass and 
                                              condition_c_pass and condition_d_pass)
                         
-                        print("\n" + "-"*60)
+                        eval_output += "\n" + "-"*60
                         if all_conditions_met:
                             trade_direction = "YES" if real_price > strike_price else "NO"
-                            print(f"🎯 ✅✅ TRADE CONDITIONS MET! ✅✅")
-                            print(f"   📈 SIGNAL: BUY {trade_direction} @ ${share_price:.2f} ({share_price*100:.0f}¢)")
-                            print(f"   💰 Risk: ${share_price:.2f} | Potential: ${1-share_price:.2f} | ROI: {((1/share_price)-1)*100:.1f}%")
-                            print(f"   🎲 Strategy: Price stays {'ABOVE' if real_price > strike_price else 'BELOW'} ${strike_price:,.2f}")
+                            eval_output += f"\n🎯 ✅✅ TRADE CONDITIONS MET! ✅✅"
+                            eval_output += f"\n   📈 SIGNAL: BUY {trade_direction} @ ${share_price:.2f} ({share_price*100:.0f}¢)"
+                            eval_output += f"\n   💰 Risk: ${share_price:.2f} | Potential: ${1-share_price:.2f} | ROI: {((1/share_price)-1)*100:.1f}%"
+                            eval_output += f"\n   🎲 Strategy: Price stays {'ABOVE' if real_price > strike_price else 'BELOW'} ${strike_price:,.2f}"
                             
                             trade_signal_given = True
                             signal_details = {
@@ -658,9 +671,13 @@ def run_advisor():
                             }
                         else:
                             conditions_summary = f"A:{condition_a_pass} B:{condition_b_pass} C:{condition_c_pass} D:{condition_d_pass}"
-                            print(f"❌ CONDITIONS NOT MET [{conditions_summary}]")
-                            print(f"   No trade signal. Continuing monitoring...")
-                        print("-"*60)
+                            eval_output += f"\n❌ CONDITIONS NOT MET [{conditions_summary}]"
+                            eval_output += f"\n   No trade signal. Continuing monitoring..."
+                        
+                        eval_output += "\n" + "-"*60
+                        
+                        # Print the evaluation output (updates in place with carriage return)
+                        print(eval_output)
                     
                     elif minutes_left > TRADE_WINDOW_MAX:
                         if not five_min_announced:
