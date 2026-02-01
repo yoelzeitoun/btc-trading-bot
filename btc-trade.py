@@ -151,47 +151,30 @@ def find_current_btc_15m_market():
                 market_page_response = requests.get(market_url, headers=headers, timeout=10)
                 market_page_response.raise_for_status()
                 
-                # First try to extract "Price to Beat" directly from the page
-                # Look for it in various possible formats in the HTML
-                price_patterns = [
-                    r'"label"\s*:\s*"[Pp]rice to beat"[^}]*?"value"\s*:\s*"?\$?([0-9.]+)"?',
-                    r'price["\']?\s*to["\']?\s*beat[^:]*:\s*[^$]*\$([0-9,]+\.?\d*)',
-                    r'Price to Beat.*?\$([0-9,]+\.?\d*)',
-                ]
-                
-                for pattern in price_patterns:
-                    price_match = re.search(pattern, market_page_response.text, re.IGNORECASE)
-                    if price_match:
-                        price_str = price_match.group(1).replace(',', '')
-                        strike_price = float(price_str)
-                        print(f"   💰 Strike Price (Price to Beat): ${strike_price:,.2f}")
-                        break
-                
-                if not strike_price:
-                    # Fallback: Extract market start timestamp to find the CORRECT price to beat from historical data
-                    timestamp_match = re.search(r'-(\d{10})$', live_slug)
-                    if timestamp_match:
-                        market_start_timestamp = int(timestamp_match.group(1))
-                        # Convert to ISO format - we want the closePrice where endTime = market start time
-                        from datetime import datetime, timezone
-                        dt = datetime.fromtimestamp(market_start_timestamp, tz=timezone.utc)
-                        target_end_time = dt.strftime('%Y-%m-%dT%H:%M:%S')
-                        
-                        # Find all historical closePrice entries with their endTimes
-                        pattern = r'\{"startTime":"([^"]+)","endTime":"([^"]+)","openPrice":([\d.]+),"closePrice":([\d.]+),"outcome":"([^"]+)","percentChange":([^}]+)\}'
-                        matches = re.findall(pattern, market_page_response.text)
-                        
-                        # Find the closePrice for the window that ENDS at market start time
-                        for start_time, end_time, open_price, close_price, outcome, pct in matches:
-                            if target_end_time in end_time:
-                                strike_price = float(close_price)
-                                print(f"   💰 Strike Price (Price to Beat): ${strike_price:,.2f}")
-                                break
-                        
-                        # If not found by exact match, take the last one (fallback)
-                        if not strike_price and matches:
-                            strike_price = float(matches[-1][3])  # closePrice is at index 3
-                            print(f"   ⚠️  Using latest historical price: ${strike_price:,.2f}")
+                # Extract market start timestamp to find the CORRECT price to beat
+                timestamp_match = re.search(r'-(\d{10})$', live_slug)
+                if timestamp_match:
+                    market_start_timestamp = int(timestamp_match.group(1))
+                    # Convert to ISO format - we want the closePrice where endTime = market start time
+                    from datetime import datetime, timezone
+                    dt = datetime.fromtimestamp(market_start_timestamp, tz=timezone.utc)
+                    target_end_time = dt.strftime('%Y-%m-%dT%H:%M:%S')
+                    
+                    # Find all historical closePrice entries with their endTimes
+                    pattern = r'\{"startTime":"([^"]+)","endTime":"([^"]+)","openPrice":([\d.]+),"closePrice":([\d.]+),"outcome":"([^"]+)","percentChange":([^}]+)\}'
+                    matches = re.findall(pattern, market_page_response.text)
+                    
+                    # Find the closePrice for the window that ENDS at market start time
+                    for start_time, end_time, open_price, close_price, outcome, pct in matches:
+                        if target_end_time in end_time:
+                            strike_price = float(close_price)
+                            print(f"   💰 Strike Price (Price to Beat): ${strike_price:,.2f}")
+                            break
+                    
+                    # If not found by exact match, take the last one (fallback)
+                    if not strike_price and matches:
+                        strike_price = float(matches[-1][3])  # closePrice is at index 3
+                        print(f"   ⚠️  Using latest historical price: ${strike_price:,.2f}")
                 
                 # Also extract outcome prices from the page (Up/Down market prices)
                 # Look for "outcomePrices" field in the JSON data
@@ -478,12 +461,6 @@ def run_advisor():
             trade_signal_given = False
             signal_details = {}
             
-            # Initialize condition tracking for the evaluation loop
-            if not hasattr(run_advisor, 'last_conditions'):
-                run_advisor.last_conditions = None
-            if not hasattr(run_advisor, 'last_print_time'):
-                run_advisor.last_print_time = 0
-            
             while True:
                 now = time.time()
                 minutes_left = (end_timestamp - now) / 60
@@ -573,30 +550,13 @@ def run_advisor():
                     # 4. EXECUTION WINDOW CHECK
                     if TRADE_WINDOW_MIN <= minutes_left <= TRADE_WINDOW_MAX and not trade_signal_given:
                         
-                        # Print header only once per monitoring loop
-                        import sys
+                        print(f"\n⏱️  [T-{minutes_left:.2f}min] Evaluating Trade Conditions...")
+                        print(f"   Current BTC: ${real_price:,.2f} | Target: ${strike_price:,.2f}")
                         
-                        # Fetch market data once
-                        btc_data = binance.get_symbol_ticker(symbol="BTCUSDT")
-                        real_price = float(btc_data['price'])
-                        
-                        klines = binance.get_klines(symbol="BTCUSDT", interval='1m', limit=60)
-                        closes = [float(k[4]) for k in klines]
-                        highs = [float(k[2]) for k in klines]
-                        lows = [float(k[3]) for k in klines]
-                        
-                        # Track if this is a new evaluation (conditions exist now vs before)
-                        if not hasattr(run_advisor, 'last_condition_eval'):
-                            run_advisor.last_condition_eval = None
-                        
-                        # Build the evaluation output
-                        eval_output = f"⏱️  [T-{minutes_left:.2f}min] Evaluating Trade Conditions..."
-                        eval_output += f"\n   Current BTC: ${real_price:,.2f} | Target: ${strike_price:,.2f}"
-                        
-                        # Show outcome prices
+                        # Show outcome prices at each evaluation
                         outcome_prices = market_data.get('outcome_prices', {})
                         if outcome_prices.get('up') is not None and outcome_prices.get('down') is not None:
-                            eval_output += f"\n   💹 Market Prices - Up: {int(outcome_prices['up']*100)}¢ | Down: {int(outcome_prices['down']*100)}¢"
+                            print(f"   💹 Market Prices - Up: {int(outcome_prices['up']*100)}¢ | Down: {int(outcome_prices['down']*100)}¢")
                         
                         # === CONDITION A: BOLLINGER BANDS ===
                         upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=BOLLINGER_PERIOD, std_dev=BOLLINGER_STD_DEV)
@@ -605,18 +565,18 @@ def run_advisor():
                         if upper_bb and lower_bb:
                             if real_price > strike_price:
                                 condition_a_pass = strike_price < lower_bb
-                                eval_output += f"\n\n   [A] BOLLINGER BANDS (Period={BOLLINGER_PERIOD}, StdDev={BOLLINGER_STD_DEV})"
-                                eval_output += f"\n       Upper: ${upper_bb:,.2f} | Middle: ${middle_bb:,.2f} | Lower: ${lower_bb:,.2f}"
-                                eval_output += f"\n       Direction: UP | Target vs Lower Band: ${strike_price:,.2f} < ${lower_bb:,.2f}"
-                                eval_output += f"\n       Result: {'✅ PASS' if condition_a_pass else '❌ FAIL'}"
+                                print(f"\n   [A] BOLLINGER BANDS (Period={BOLLINGER_PERIOD}, StdDev={BOLLINGER_STD_DEV})")
+                                print(f"       Upper: ${upper_bb:,.2f} | Middle: ${middle_bb:,.2f} | Lower: ${lower_bb:,.2f}")
+                                print(f"       Direction: UP | Target vs Lower Band: ${strike_price:,.2f} < ${lower_bb:,.2f}")
+                                print(f"       Result: {'✅ PASS' if condition_a_pass else '❌ FAIL'}")
                             else:
                                 condition_a_pass = strike_price > upper_bb
-                                eval_output += f"\n\n   [A] BOLLINGER BANDS (Period={BOLLINGER_PERIOD}, StdDev={BOLLINGER_STD_DEV})"
-                                eval_output += f"\n       Upper: ${upper_bb:,.2f} | Middle: ${middle_bb:,.2f} | Lower: ${lower_bb:,.2f}"
-                                eval_output += f"\n       Direction: DOWN | Target vs Upper Band: ${strike_price:,.2f} > ${upper_bb:,.2f}"
-                                eval_output += f"\n       Result: {'✅ PASS' if condition_a_pass else '❌ FAIL'}"
+                                print(f"\n   [A] BOLLINGER BANDS (Period={BOLLINGER_PERIOD}, StdDev={BOLLINGER_STD_DEV})")
+                                print(f"       Upper: ${upper_bb:,.2f} | Middle: ${middle_bb:,.2f} | Lower: ${lower_bb:,.2f}")
+                                print(f"       Direction: DOWN | Target vs Upper Band: ${strike_price:,.2f} > ${upper_bb:,.2f}")
+                                print(f"       Result: {'✅ PASS' if condition_a_pass else '❌ FAIL'}")
                         else:
-                            eval_output += f"\n\n   [A] BOLLINGER BANDS: ⚠️  Insufficient data"
+                            print(f"\n   [A] BOLLINGER BANDS: ⚠️  Insufficient data")
                         
                         # === CONDITION B: ATR KINETIC BARRIER ===
                         atr = calculate_atr(highs, lows, closes, period=ATR_PERIOD)
@@ -627,13 +587,13 @@ def run_advisor():
                             actual_distance = abs(real_price - strike_price)
                             condition_b_pass = actual_distance > max_possible_move
                             
-                            eval_output += f"\n\n   [B] ATR KINETIC BARRIER (Period={ATR_PERIOD})"
-                            eval_output += f"\n       ATR: ${atr:,.2f}"
-                            eval_output += f"\n       Max Possible Move: ${max_possible_move:,.2f} (ATR × {minutes_left:.1f}min × {ATR_MULTIPLIER})"
-                            eval_output += f"\n       Actual Distance: ${actual_distance:,.2f}"
-                            eval_output += f"\n       Result: {'✅ PASS' if condition_b_pass else '❌ FAIL'}"
+                            print(f"\n   [B] ATR KINETIC BARRIER (Period={ATR_PERIOD})")
+                            print(f"       ATR: ${atr:,.2f}")
+                            print(f"       Max Possible Move: ${max_possible_move:,.2f} (ATR × {minutes_left:.1f}min × {ATR_MULTIPLIER})")
+                            print(f"       Actual Distance: ${actual_distance:,.2f}")
+                            print(f"       Result: {'✅ PASS' if condition_b_pass else '❌ FAIL'}")
                         else:
-                            eval_output += f"\n\n   [B] ATR KINETIC BARRIER: ⚠️  Insufficient data"
+                            print(f"\n   [B] ATR KINETIC BARRIER: ⚠️  Insufficient data")
                         
                         # === CONDITION C: ORDER BOOK DEPTH ===
                         order_book = binance.get_order_book(symbol="BTCUSDT", limit=1000)
@@ -641,45 +601,49 @@ def run_advisor():
                         
                         condition_c_pass = ratio >= ORDER_BOOK_RATIO_MIN
                         
-                        eval_output += f"\n\n   [C] ORDER BOOK DEPTH BARRIER"
-                        eval_output += f"\n       Direction: {direction}"
+                        print(f"\n   [C] ORDER BOOK DEPTH BARRIER")
+                        print(f"       Direction: {direction}")
                         if direction == "UP":
-                            eval_output += f"\n       BID Volume (Support): {bid_vol:,.2f} BTC"
-                            eval_output += f"\n       ASK Volume (Threat): {ask_vol:,.2f} BTC"
+                            print(f"       BID Volume (Support): {bid_vol:,.2f} BTC")
+                            print(f"       ASK Volume (Threat): {ask_vol:,.2f} BTC")
                         else:
-                            eval_output += f"\n       ASK Volume (Resistance): {ask_vol:,.2f} BTC"
-                            eval_output += f"\n       BID Volume (Threat): {bid_vol:,.2f} BTC"
-                        eval_output += f"\n       Ratio: {ratio:.2f}x (Need >= {ORDER_BOOK_RATIO_MIN}x)"
-                        eval_output += f"\n       Result: {'✅ PASS' if condition_c_pass else '❌ FAIL'}"
+                            print(f"       ASK Volume (Resistance): {ask_vol:,.2f} BTC")
+                            print(f"       BID Volume (Threat): {bid_vol:,.2f} BTC")
+                        print(f"       Ratio: {ratio:.2f}x (Need >= {ORDER_BOOK_RATIO_MIN}x)")
+                        print(f"       Result: {'✅ PASS' if condition_c_pass else '❌ FAIL'}")
                         
                         # === CONDITION D: PRICE / R/R FILTER ===
                         try:
-                            # Get share prices from outcome prices we already extracted
                             outcome_prices = market_data.get('outcome_prices', {})
                             
+                            # Use the outcome prices we already scraped
                             if outcome_prices.get('up') is not None and outcome_prices.get('down') is not None:
-                                # We have outcome prices - use them for R/R analysis
+                                up_price = outcome_prices['up']
+                                down_price = outcome_prices['down']
+                                
                                 if real_price > strike_price:
-                                    share_price = outcome_prices['up']  # YES shares (Up)
+                                    share_price = up_price
                                     share_type = "YES"
                                 else:
-                                    share_price = outcome_prices['down']  # NO shares (Down)
+                                    share_price = down_price
                                     share_type = "NO"
+                                
+                                condition_d_pass = SHARE_PRICE_MIN <= share_price <= SHARE_PRICE_MAX
+                                
+                                print(f"\n   [D] RISK/REWARD FILTER")
+                                print(f"       Share Type: {share_type}")
+                                print(f"       Share Price: ${share_price:.2f} ({int(share_price*100)}¢)")
+                                print(f"       Valid Range: ${SHARE_PRICE_MIN:.2f} - ${SHARE_PRICE_MAX:.2f}")
+                                print(f"       Result: {'✅ PASS' if condition_d_pass else '❌ FAIL'}")
                             else:
-                                # Fallback: use generic prices
+                                # Fallback: use default share price
                                 share_price = 0.5
                                 share_type = "UNKNOWN"
-                            
-                            condition_d_pass = SHARE_PRICE_MIN <= share_price <= SHARE_PRICE_MAX
-                            
-                            eval_output += f"\n\n   [D] RISK/REWARD FILTER"
-                            eval_output += f"\n       Share Type: {share_type}"
-                            eval_output += f"\n       Share Price: ${share_price:.2f} ({int(share_price*100)}¢)"
-                            eval_output += f"\n       Valid Range: ${SHARE_PRICE_MIN:.2f} - ${SHARE_PRICE_MAX:.2f}"
-                            eval_output += f"\n       Result: {'✅ PASS' if condition_d_pass else '❌ FAIL'}"
-                            
+                                condition_d_pass = True
+                                print(f"\n   [D] RISK/REWARD FILTER: ℹ️  Using default price")
+                                
                         except Exception as api_err:
-                            eval_output += f"\n\n   [D] RISK/REWARD FILTER: ⚠️  Error - {str(api_err)}"
+                            print(f"\n   [D] RISK/REWARD FILTER: ⚠️  Error - {api_err}")
                             condition_d_pass = False
                             share_price = 0.5
                             share_type = "UNKNOWN"
@@ -688,13 +652,13 @@ def run_advisor():
                         all_conditions_met = (condition_a_pass and condition_b_pass and 
                                              condition_c_pass and condition_d_pass)
                         
-                        eval_output += "\n" + "-"*60
+                        print("\n" + "-"*60)
                         if all_conditions_met:
                             trade_direction = "YES" if real_price > strike_price else "NO"
-                            eval_output += f"\n🎯 ✅✅ TRADE CONDITIONS MET! ✅✅"
-                            eval_output += f"\n   📈 SIGNAL: BUY {trade_direction} @ ${share_price:.2f} ({share_price*100:.0f}¢)"
-                            eval_output += f"\n   💰 Risk: ${share_price:.2f} | Potential: ${1-share_price:.2f} | ROI: {((1/share_price)-1)*100:.1f}%"
-                            eval_output += f"\n   🎲 Strategy: Price stays {'ABOVE' if real_price > strike_price else 'BELOW'} ${strike_price:,.2f}"
+                            print(f"🎯 ✅✅ TRADE CONDITIONS MET! ✅✅")
+                            print(f"   📈 SIGNAL: BUY {trade_direction} @ ${share_price:.2f} ({share_price*100:.0f}¢)")
+                            print(f"   💰 Risk: ${share_price:.2f} | Potential: ${1-share_price:.2f} | ROI: {((1/share_price)-1)*100:.1f}%")
+                            print(f"   🎲 Strategy: Price stays {'ABOVE' if real_price > strike_price else 'BELOW'} ${strike_price:,.2f}")
                             
                             trade_signal_given = True
                             signal_details = {
@@ -705,39 +669,9 @@ def run_advisor():
                             }
                         else:
                             conditions_summary = f"A:{condition_a_pass} B:{condition_b_pass} C:{condition_c_pass} D:{condition_d_pass}"
-                            eval_output += f"\n❌ CONDITIONS NOT MET [{conditions_summary}]"
-                            eval_output += f"\n   No trade signal. Continuing monitoring..."
-                        
-                        eval_output += "\n" + "-"*60
-                        
-                        # Check if ANY condition has CHANGED from last evaluation
-                        current_conditions = (condition_a_pass, condition_b_pass, condition_c_pass, condition_d_pass)
-                        current_time = time.time()
-                        time_since_last_print = current_time - run_advisor.last_print_time
-                        
-                        # Print if conditions changed OR 10 seconds have passed
-                        if run_advisor.last_conditions != current_conditions or time_since_last_print >= 10:
-                            # Clear previous evaluation output ONLY if we've printed before
-                            if run_advisor.last_conditions is not None and hasattr(run_advisor, 'last_line_count'):
-                                # Clear exact number of lines from last print
-                                clear_code = ''
-                                for _ in range(run_advisor.last_line_count):
-                                    clear_code += '\033[A\033[2K'  # Move up one line and clear it
-                                sys.stdout.write(clear_code)
-                                sys.stdout.flush()
-                            
-                            # Calculate the exact number of lines in current output AFTER building it
-                            # Count newlines in the eval_output, then +1 for the \n we add, then +1 for cursor position
-                            current_line_count = eval_output.count('\n') + 2
-                            
-                            # Print the new evaluation output
-                            sys.stdout.write(eval_output + '\n')
-                            sys.stdout.flush()
-                            
-                            # Store the new conditions, time, and line count for next iteration
-                            run_advisor.last_conditions = current_conditions
-                            run_advisor.last_print_time = current_time
-                            run_advisor.last_line_count = current_line_count
+                            print(f"❌ CONDITIONS NOT MET [{conditions_summary}]")
+                            print(f"   No trade signal. Continuing monitoring...")
+                        print("-"*60)
                     
                     elif minutes_left > TRADE_WINDOW_MAX:
                         if not five_min_announced:
