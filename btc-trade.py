@@ -140,6 +140,37 @@ def find_current_btc_15m_market():
             live_slug = market_links[0]
             print(f"   ✅ Found LIVE market on website: {live_slug}")
             
+            # Fetch the individual market page to get strike price and outcome prices
+            strike_price = None
+            outcome_prices = {'up': None, 'down': None}
+            try:
+                import json
+                market_url = f"https://polymarket.com/event/{live_slug}"
+                market_page_response = requests.get(market_url, headers=headers, timeout=10)
+                market_page_response.raise_for_status()
+                
+                # The page contains historical data with closePrice from previous window
+                # Pattern: "closePrice":78749.6045195 (this is the "price to beat")
+                all_prices = re.findall(r'"closePrice":([\d.]+)', market_page_response.text)
+                
+                if all_prices:
+                    strike_price = float(all_prices[-1])  # Last closePrice is the strike
+                    print(f"   💰 Strike Price (Price to Beat): ${strike_price:,.2f}")
+                
+                # Also extract outcome prices from the page (Up/Down market prices)
+                # Look for "outcomePrices" field in the JSON data
+                outcome_prices_match = re.search(r'"outcomePrices"\s*:\s*\[([^\]]+)\]', market_page_response.text)
+                if outcome_prices_match:
+                    prices_str = outcome_prices_match.group(1)
+                    # Extract quoted strings
+                    price_values = re.findall(r'"([0-9.]+)"', prices_str)
+                    if len(price_values) >= 2:
+                        outcome_prices['up'] = float(price_values[0])
+                        outcome_prices['down'] = float(price_values[1])
+                        print(f"   📊 Outcome Prices - Up: {int(float(price_values[0])*100)}¢ | Down: {int(float(price_values[1])*100)}¢")
+            except Exception as e:
+                print(f"   ⚠️  Could not extract data from page: {e}")
+            
             # Now fetch details from Gamma API
             api_url = "https://gamma-api.polymarket.com"
             print(f"   Fetching market details from API...")
@@ -175,7 +206,9 @@ def find_current_btc_15m_market():
                             'markets': event.get('markets', []),
                             'end_date': event.get('end_date_iso', ''),
                             'time_remaining': time_remaining,
-                            'end_timestamp': market_end_timestamp
+                            'end_timestamp': market_end_timestamp,
+                            'strike_price': strike_price,  # Include scraped strike price
+                            'outcome_prices': outcome_prices  # Include outcome prices
                         }
                         
                         print(f"   🎯 Selected LIVE market: {live_slug}")
@@ -199,7 +232,9 @@ def find_current_btc_15m_market():
                     'markets': [{}],
                     'end_date': '',
                     'time_remaining': time_remaining,
-                    'end_timestamp': market_end_timestamp
+                    'end_timestamp': market_end_timestamp,
+                    'strike_price': strike_price,  # Include scraped strike price
+                    'outcome_prices': outcome_prices  # Include outcome prices
                 }
         
         print("   ⚠️  Could not find live market on website, trying API...")
@@ -349,23 +384,32 @@ def run_advisor():
             print(f"   URL: https://polymarket.com/event/{slug}")
             print(f"   ⏰ Time Remaining: {expiry_minutes:.1f} minutes")
             
-            # Extract strike price from title/question
-            strike_price = extract_strike_from_question(title)
+            # Display outcome prices if available
+            outcome_prices = market_data.get('outcome_prices', {})
+            if outcome_prices.get('up') is not None and outcome_prices.get('down') is not None:
+                print(f"   📊 Market Prices - Up: {int(outcome_prices['up']*100)}¢ | Down: {int(outcome_prices['down']*100)}¢")
             
-            # If not found in title, try to fetch from market's question field
+            # Try to use the scraped strike price first
+            strike_price = market_data.get('strike_price')
+            
+            # If not scraped, try to extract from title/question
+            if not strike_price:
+                strike_price = extract_strike_from_question(title)
+            
+            # If still not found, try to fetch from market's question field
             if not strike_price and markets:
                 first_market = markets[0]
                 question = first_market.get('question', '')
                 strike_price = extract_strike_from_question(question)
             
             if strike_price:
-                print(f"   🎯 Strike Price: ${strike_price:,.2f}")
+                print(f"   🎯 Strike Price (Price to Beat): ${strike_price:,.2f}")
             else:
-                # Use current BTC price as the strike
+                # Use current BTC price as fallback
                 try:
                     btc_ticker = binance.get_symbol_ticker(symbol="BTCUSDT")
                     strike_price = float(btc_ticker['price'])
-                    print(f"   🎯 Strike Price (current BTC): ${strike_price:,.2f}")
+                    print(f"   🎯 Strike Price (current BTC fallback): ${strike_price:,.2f}")
                 except Exception as e:
                     strike_price = 78200.0
                     print(f"   ⚠️  Error fetching BTC price: {e}")
@@ -382,6 +426,12 @@ def run_advisor():
 
             print("\n🚀 MONITORING ACTIVE")
             print(f"📊 Strike Price: ${strike_price:,.2f}")
+            
+            # Display outcome prices in monitoring status
+            outcome_prices = market_data.get('outcome_prices', {})
+            if outcome_prices.get('up') is not None and outcome_prices.get('down') is not None:
+                print(f"💹 Market Prices - Up: {int(outcome_prices['up']*100)}¢ | Down: {int(outcome_prices['down']*100)}¢")
+            
             print(f"⏰ Time Remaining: {expiry_minutes:.1f} minutes")
             print(f"🎯 Strategy: Statistical + Kinetic + Physical + R/R Barriers")
             print("\n" + "="*60)
@@ -483,6 +533,11 @@ def run_advisor():
                         
                         print(f"\n⏱️  [T-{minutes_left:.2f}min] Evaluating Trade Conditions...")
                         print(f"   Current BTC: ${real_price:,.2f} | Target: ${strike_price:,.2f}")
+                        
+                        # Show outcome prices at each evaluation
+                        outcome_prices = market_data.get('outcome_prices', {})
+                        if outcome_prices.get('up') is not None and outcome_prices.get('down') is not None:
+                            print(f"   💹 Market Prices - Up: {int(outcome_prices['up']*100)}¢ | Down: {int(outcome_prices['down']*100)}¢")
                         
                         # === CONDITION A: BOLLINGER BANDS ===
                         upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=BOLLINGER_PERIOD, std_dev=BOLLINGER_STD_DEV)
