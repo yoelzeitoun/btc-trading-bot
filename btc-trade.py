@@ -537,15 +537,9 @@ def run_advisor():
             if strike_price:
                 print(f"   🎯 Strike Price (Price to Beat): ${strike_price:,.2f}")
             else:
-                # Use current BTC price as fallback
-                try:
-                    btc_ticker = binance.get_symbol_ticker(symbol="BTCUSDT")
-                    strike_price = float(btc_ticker['price'])
-                    print(f"   🎯 Strike Price (current BTC fallback): ${strike_price:,.2f}")
-                except Exception as e:
-                    strike_price = 78200.0
-                    print(f"   ⚠️  Error fetching BTC price: {e}")
-                    print(f"   Using default strike price: ${strike_price:,.2f}")
+                print(f"   ❌ ALERT: Price to Beat not available. Skipping this market.")
+                time.sleep(30)
+                continue
             
             # Skip if market already expired
             if expiry_minutes <= -10:
@@ -706,7 +700,7 @@ def run_advisor():
                         
                         condition_b_pass = False
                         if atr:
-                            max_possible_move = atr * minutes_left * ATR_MULTIPLIER
+                            max_possible_move = atr * math.sqrt(minutes_left) * ATR_MULTIPLIER
                             actual_distance = abs(real_price - strike_price)
                             condition_b_pass = actual_distance > max_possible_move
                             
@@ -762,16 +756,16 @@ def run_advisor():
                                 print(f"       Valid Range: ${SHARE_PRICE_MIN:.2f} - ${SHARE_PRICE_MAX:.2f}")
                                 print(f"       Result: {'✅ PASS' if condition_d_pass else '❌ FAIL'}")
                             else:
-                                # Fallback: use default share price
-                                share_price = 0.5
+                                # No outcome prices available - fail the condition
+                                share_price = None
                                 share_type = "UNKNOWN"
-                                condition_d_pass = True
-                                print(f"\n   [D] RISK/REWARD FILTER: ℹ️  Using default price")
+                                condition_d_pass = False
+                                print(f"\n   [D] RISK/REWARD FILTER: ❌ ALERT - Could not fetch market outcome prices from CLOB")
                                 
                         except Exception as api_err:
-                            print(f"\n   [D] RISK/REWARD FILTER: ⚠️  Error - {api_err}")
+                            print(f"\n   [D] RISK/REWARD FILTER: ❌ ERROR - {api_err}")
                             condition_d_pass = False
-                            share_price = 0.5
+                            share_price = None
                             share_type = "UNKNOWN"
                         
                         # === FINAL DECISION ===

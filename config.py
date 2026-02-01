@@ -7,13 +7,13 @@ TRADE_WINDOW_MAX = 14  # Stop checking conditions at this many minutes before ex
 
 # === TECHNICAL INDICATORS ===
 BOLLINGER_PERIOD = 20
-BOLLINGER_STD_DEV = 2.0
+BOLLINGER_STD_DEV = 1.75
 
 ATR_PERIOD = 14
 ATR_MULTIPLIER = 1.5
 
 # === BARRIER THRESHOLDS ===
-ORDER_BOOK_RATIO_MIN = 1.5  # Minimum ratio for order book depth barrier
+ORDER_BOOK_RATIO_MIN = 2  # Minimum ratio for order book depth barrier
 
 SHARE_PRICE_MIN = 0.60  # Minimum acceptable share price
 SHARE_PRICE_MAX = 0.85  # Maximum acceptable share price
