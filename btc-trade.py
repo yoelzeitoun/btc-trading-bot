@@ -105,58 +105,55 @@ def calculate_rsi(closes, period=14):
     
     return rsi
 
-def analyze_order_book_barrier(order_book, current_price, target_price):
-    """Analyze order book depth with physics-aware barrier detection."""
+def analyze_order_book_barrier(order_book, current_price, target_price, atr_value):
+    """
+    Analyze order book but ONLY look at depth within the immediate ATR range.
+    This prevents huge walls far away from scaring the bot.
+    Only the orders within volatility range matter.
+    """
     bids = order_book.get('bids', [])
     asks = order_book.get('asks', [])
     
-    # Define the "Danger Zone" distance
-    distance = abs(current_price - target_price)
+    # We only care about walls within the "Volatility Range"
+    # If ATR is None, default to a tight range (e.g. 0.1% of price)
+    scan_depth = atr_value if atr_value else current_price * 0.001
     
     if current_price > target_price:
-        # BETTING UP (We want price to stay HIGH)
-        
-        # 1. Support: Bids strictly between Target and Current Price (The shield)
-        relevant_bids = [float(bid[1]) for bid in bids if target_price <= float(bid[0]) < current_price]
-        
-        # 2. Resistance: Asks in the symmetrical range ABOVE current price (The enemy)
-        # We look at the same distance upwards to see balanced pressure
-        upper_limit = current_price + distance
-        relevant_asks = [float(ask[1]) for ask in asks if current_price < float(ask[0]) <= upper_limit]
-        
-        bid_volume = sum(relevant_bids)
-        ask_volume = sum(relevant_asks)
-        
+        # BETTING UP (Hold the line)
         direction = "UP"
-
+        
+        # Support: Bids close to current price (cushion)
+        # Scan from Current Price down to (Current - Scan Depth)
+        relevant_bids = [float(bid[1]) for bid in bids 
+                         if (current_price - scan_depth) < float(bid[0]) < current_price]
+        
+        # Resistance: Asks immediately above (roof)
+        # Scan from Current Price up to (Current + Scan Depth)
+        relevant_asks = [float(ask[1]) for ask in asks 
+                         if current_price < float(ask[0]) < (current_price + scan_depth)]
+        
     else:
-        # BETTING DOWN (We want price to stay LOW)
-        
-        # 1. Resistance: Asks strictly between Current Price and Target (The shield)
-        relevant_asks = [float(ask[1]) for ask in asks if current_price < float(ask[0]) <= target_price]
-        
-        # 2. Support: Bids in the symmetrical range BELOW current price (The enemy)
-        lower_limit = current_price - distance
-        relevant_bids = [float(bid[1]) for bid in bids if lower_limit <= float(bid[0]) < current_price]
-        
-        bid_volume = sum(relevant_bids)
-        ask_volume = sum(relevant_asks)
-        
+        # BETTING DOWN
         direction = "DOWN"
+        
+        # Resistance: Asks close to current price
+        relevant_asks = [float(ask[1]) for ask in asks 
+                         if current_price < float(ask[0]) < (current_price + scan_depth)]
+        
+        # Support: Bids immediately below
+        relevant_bids = [float(bid[1]) for bid in bids 
+                         if (current_price - scan_depth) < float(bid[0]) < current_price]
 
-    # Calculate Ratio with cap instead of infinity
+    bid_volume = sum(relevant_bids)
+    ask_volume = sum(relevant_asks)
+
+    # Calculate Ratio
     if direction == "UP":
-        # Support / Resistance
-        if ask_volume > 0:
-            ratio = bid_volume / ask_volume
-        else:
-            ratio = 999.0  # Max cap instead of Inf
+        # We want high Bid Volume relative to Ask Volume immediate overhead
+        ratio = bid_volume / ask_volume if ask_volume > 0 else 10.0
     else: 
-        # Resistance / Support
-        if bid_volume > 0:
-            ratio = ask_volume / bid_volume
-        else:
-            ratio = 999.0
+        # We want high Ask Volume relative to Bid Volume immediate underfoot
+        ratio = ask_volume / bid_volume if bid_volume > 0 else 10.0
 
     return bid_volume, ask_volume, ratio, direction
 
@@ -667,10 +664,15 @@ def run_advisor():
             signal_details = {}
             
             # Window statistics tracking
+            # Use market end time in readable format (correlates to when the 15min window closes)
+            end_timestamp = market_data.get('end_timestamp')
+            end_datetime = datetime.fromtimestamp(end_timestamp, tz=timezone.utc)
+            end_time_readable = end_datetime.strftime('%Y-%m-%d %H:%M')
+            
             window_stats = {
                 'market_slug': slug,
                 'strike_price': strike_price,
-                'start_time': datetime.now(timezone.utc).isoformat(),
+                'start_time': end_time_readable,
                 'condition_a_count': 0,
                 'condition_b_count': 0,
                 'condition_c_count': 0,
@@ -689,8 +691,11 @@ def run_advisor():
                     print("="*60)
                     
                     # Check final result
-                    btc_data = binance.get_symbol_ticker(symbol="BTCUSDT")
-                    final_price = float(btc_data['price'])
+                    ticker = binance.get_order_book(symbol="BTCUSDT", limit=5)
+                    # Determine direction and select appropriate price
+                    final_price_ask = float(ticker['asks'][0][0])
+                    final_price_bid = float(ticker['bids'][0][0])
+                    final_price = final_price_ask if final_price_ask > strike_price else final_price_bid
                     
                     print(f"\n📊 FINAL RESULTS:")
                     print(f"   Strike Price: ${strike_price:,.2f}")
@@ -730,8 +735,9 @@ def run_advisor():
                     else:
                         print(f"\n⏸️  NO TRADE SIGNAL - Conditions not met")
                     
-                    # === WRITE WINDOW STATISTICS ===
-                    write_window_statistics(window_stats)
+                    # === WRITE WINDOW STATISTICS (only if evaluations occurred) ===
+                    if window_stats['total_evaluations'] > 0:
+                        write_window_statistics(window_stats)
                     
                     # Print session stats
                     print(f"\n📈 SESSION STATS:")
@@ -745,9 +751,12 @@ def run_advisor():
                     break
 
                 try:
-                    # 1. Get Real-Time BTC Price
-                    btc_data = binance.get_symbol_ticker(symbol="BTCUSDT")
-                    real_price = float(btc_data['price'])
+                    # 1. Get Real-Time BTC Price (Directional)
+                    ticker = binance.get_order_book(symbol="BTCUSDT", limit=5)
+                    real_price_ask = float(ticker['asks'][0][0])
+                    real_price_bid = float(ticker['bids'][0][0])
+                    # Direction unknown yet—use Ask if ask > strike, else Bid (refined after Condition A)
+                    real_price = real_price_ask if real_price_ask > strike_price else real_price_bid
                     
                     # 2. Get Historical Candles
                     klines = binance.get_klines(symbol="BTCUSDT", interval='1m', limit=60)
@@ -789,50 +798,40 @@ def run_advisor():
                         if outcome_prices.get('up') is not None and outcome_prices.get('down') is not None:
                             print(f"   💹 Market Prices - Up: {outcome_prices['up']*100:.1f}¢ | Down: {outcome_prices['down']*100:.1f}¢")
                         
-                        # === CONDITION A: BOLLINGER BANDS + RSI HYBRID ===
+                        # === CONDITION A: BOLLINGER BANDS RELAXED ===
                         upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=BOLLINGER_PERIOD, std_dev=BOLLINGER_STD_DEV)
-                        rsi = calculate_rsi(closes, period=14)
                         
                         condition_a_pass = False
-                        bollinger_pass = False
-                        rsi_salvation = False
                         
-                        if upper_bb and lower_bb and rsi is not None:
-                            # Determine direction and check Bollinger
-                            if real_price > strike_price:
-                                bollinger_pass = strike_price < lower_bb
-                                direction_name = "UP"
-                            else:
-                                bollinger_pass = strike_price > upper_bb
-                                direction_name = "DOWN"
-                            
-                            # Check RSI salvation condition
-                            if not bollinger_pass:
-                                if (direction_name == "UP" and rsi < 30) or (direction_name == "DOWN" and rsi > 70):
-                                    rsi_salvation = True
-                            
-                            # Final decision
-                            condition_a_pass = bollinger_pass or rsi_salvation
+                        if upper_bb and lower_bb:
+                            # Calculate where the Target is relative to the bands (0 = Lower, 1 = Upper)
+                            bb_range = upper_bb - lower_bb
+                            target_position = (strike_price - lower_bb) / bb_range
                             
                             # Print diagnostics
-                            print(f"\n   [A] BOLLINGER BANDS + RSI HYBRID (BB Period={BOLLINGER_PERIOD}, RSI Period=14)")
+                            print(f"\n   [A] BOLLINGER BANDS RELAXED (BB Period={BOLLINGER_PERIOD})")
                             print(f"       Upper: ${upper_bb:,.2f} | Middle: ${middle_bb:,.2f} | Lower: ${lower_bb:,.2f}")
-                            print(f"       RSI: {rsi:.1f}")
+                            print(f"       Target Position in Bands: {target_position:.2f} (0=Lower, 1=Upper)")
                             
-                            if direction_name == "UP":
-                                print(f"       Direction: UP | Target vs Lower Band: ${strike_price:,.2f} < ${lower_bb:,.2f}")
+                            if real_price > strike_price:
+                                # BETTING UP: We just need Target to be in the lower 40% of the bands
+                                # or fully below them. We don't need it strictly below Lower BB.
+                                print(f"       Direction: UP | Target should be in lower safe zone (< 0.40)")
+                                if target_position < 0.40:
+                                    condition_a_pass = True
+                                    print(f"       Result: ✅ PASS (Target in lower safe zone: {target_position:.2f})")
+                                else:
+                                    print(f"       Result: ❌ FAIL (Target too high in bands: {target_position:.2f})")
                             else:
-                                print(f"       Direction: DOWN | Target vs Upper Band: ${strike_price:,.2f} > ${upper_bb:,.2f}")
-                            
-                            if bollinger_pass:
-                                print(f"       Result: ✅ PASS (Bollinger Bands)")
-                            elif rsi_salvation:
-                                rsi_condition = "Oversold (RSI < 30)" if direction_name == "UP" else "Overbought (RSI > 70)"
-                                print(f"       Result: ✅ PASS (RSI Salvation - {rsi_condition})")
-                            else:
-                                print(f"       Result: ❌ FAIL (Bollinger + RSI)")
+                                # BETTING DOWN: We need Target to be in the upper 40% or above
+                                print(f"       Direction: DOWN | Target should be in upper safe zone (> 0.60)")
+                                if target_position > 0.60:
+                                    condition_a_pass = True
+                                    print(f"       Result: ✅ PASS (Target in upper safe zone: {target_position:.2f})")
+                                else:
+                                    print(f"       Result: ❌ FAIL (Target too low in bands: {target_position:.2f})")
                         else:
-                            print(f"\n   [A] BOLLINGER BANDS + RSI: ⚠️  Insufficient data")
+                            print(f"\n   [A] BOLLINGER BANDS RELAXED: ⚠️  Insufficient data")
                         
                         # Store direction for later use
                         trade_direction_name = "UP" if real_price > strike_price else "DOWN"
@@ -856,7 +855,7 @@ def run_advisor():
                         
                         # === CONDITION C: ORDER BOOK DEPTH ===
                         order_book = binance.get_order_book(symbol="BTCUSDT", limit=1000)
-                        bid_vol, ask_vol, ratio, direction = analyze_order_book_barrier(order_book, real_price, strike_price)
+                        bid_vol, ask_vol, ratio, direction = analyze_order_book_barrier(order_book, real_price, strike_price, atr)
                         
                         condition_c_pass = ratio >= ORDER_BOOK_RATIO_MIN
                         
