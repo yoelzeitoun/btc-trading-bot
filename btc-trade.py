@@ -696,8 +696,8 @@ def run_advisor():
             print("\n🔍 Auto-detecting current BTC 15m market...")
             market_data = find_current_btc_15m_market()
             if not market_data:
-                print("\n⚠️  No active markets found. Waiting 30 seconds...")
-                time.sleep(30)
+                print("\n⚠️  No active markets found. Waiting 15 seconds...")
+                time.sleep(15)
                 continue
     
             # === Extract market details ===
@@ -793,6 +793,13 @@ def run_advisor():
                 'total_evaluations': 0,
                 'all_four_pass_count': 0
             }
+            
+            # === POIDS DES INDICATEURS (Scoring System) ===
+            WEIGHT_BOLLINGER = 30
+            WEIGHT_ATR = 25
+            WEIGHT_ORDERBOOK = 15
+            WEIGHT_PRICE = 30
+            SCORE_THRESHOLD = 75
             
             while True:
                 now = time.time()
@@ -935,7 +942,7 @@ def run_advisor():
                                     'down': clob_prices.get('down', market_data.get('outcome_prices', {}).get('down'))
                                 }
                         
-                        print(f"\n⏱️  [T-{minutes_left:.2f}min] Evaluating Trade Conditions...")
+                        print(f"\n⏱️  [T-{minutes_left:.2f}min] Calculating Score...")
                         print(f"   Current BTC: ${real_price:,.2f} | Target: ${strike_price:,.2f}")
                         
                         # Show outcome prices at each evaluation
@@ -943,154 +950,128 @@ def run_advisor():
                         if outcome_prices.get('up') is not None and outcome_prices.get('down') is not None:
                             print(f"   💹 Market Prices - Up: {outcome_prices['up']*100:.1f}¢ | Down: {outcome_prices['down']*100:.1f}¢")
                         
-                        # === CONDITION A: BOLLINGER BANDS RELAXED ===
-                        upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=BOLLINGER_PERIOD, std_dev=BOLLINGER_STD_DEV)
+                        trade_score = 0
+                        details = []
                         
-                        condition_a_pass = False
+                        # === A. BOLLINGER BANDS SCORE (Max 30) ===
+                        upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=BOLLINGER_PERIOD, std_dev=2.0)
                         
+                        score_a = 0
                         if upper_bb and lower_bb:
-                            # Calculate where the Target is relative to the bands (0 = Lower, 1 = Upper)
                             bb_range = upper_bb - lower_bb
                             target_position = (strike_price - lower_bb) / bb_range
                             
-                            # Print diagnostics
-                            print(f"\n   [A] BOLLINGER BANDS RELAXED (BB Period={BOLLINGER_PERIOD})")
-                            print(f"       Upper: ${upper_bb:,.2f} | Middle: ${middle_bb:,.2f} | Lower: ${lower_bb:,.2f}")
-                            print(f"       Target Position in Bands: {target_position:.2f} (0=Lower, 1=Upper)")
-                            
-                            if real_price > strike_price:
-                                # BETTING UP: We just need Target to be in the lower 40% of the bands
-                                # or fully below them. We don't need it strictly below Lower BB.
-                                print(f"       Direction: UP | Target should be in lower safe zone (< 0.40)")
-                                if target_position < 0.40:
-                                    condition_a_pass = True
-                                    print(f"       Result: ✅ PASS (Target in lower safe zone: {target_position:.2f})")
+                            if real_price > strike_price:  # UP scenario
+                                # Target should be LOW (in Lower Band)
+                                if target_position < 0.2:
+                                    score_a = 30  # Excellent
+                                elif target_position < 0.4:
+                                    score_a = 15  # Good
                                 else:
-                                    print(f"       Result: ❌ FAIL (Target too high in bands: {target_position:.2f})")
-                            else:
-                                # BETTING DOWN: We need Target to be in the upper 40% or above
-                                print(f"       Direction: DOWN | Target should be in upper safe zone (> 0.60)")
-                                if target_position > 0.60:
-                                    condition_a_pass = True
-                                    print(f"       Result: ✅ PASS (Target in upper safe zone: {target_position:.2f})")
+                                    score_a = 0   # Risky
+                            else:  # DOWN scenario
+                                # Target should be HIGH (in Upper Band)
+                                if target_position > 0.8:
+                                    score_a = 30  # Excellent
+                                elif target_position > 0.6:
+                                    score_a = 15  # Good
                                 else:
-                                    print(f"       Result: ❌ FAIL (Target too low in bands: {target_position:.2f})")
-                        else:
-                            print(f"\n   [A] BOLLINGER BANDS RELAXED: ⚠️  Insufficient data")
+                                    score_a = 0   # Risky
                         
-                        # Store direction for later use
-                        trade_direction_name = "UP" if real_price > strike_price else "DOWN"
+                        trade_score += score_a
+                        details.append(f"BB: {score_a}/30")
                         
-                        # === CONDITION B: ATR KINETIC BARRIER ===
+                        # === B. ATR KINETIC BARRIER SCORE (Max 25) ===
                         atr = calculate_atr(highs, lows, closes, period=ATR_PERIOD)
                         
-                        condition_b_pass = False
+                        score_b = 0
                         if atr:
-                            max_possible_move = atr * math.sqrt(minutes_left) * ATR_MULTIPLIER
-                            actual_distance = abs(real_price - strike_price)
-                            condition_b_pass = actual_distance > max_possible_move
+                            max_move = atr * math.sqrt(minutes_left) * ATR_MULTIPLIER
+                            dist = abs(real_price - strike_price)
                             
-                            print(f"\n   [B] ATR KINETIC BARRIER (Period={ATR_PERIOD})")
-                            print(f"       ATR: ${atr:,.2f}")
-                            print(f"       Max Possible Move: ${max_possible_move:,.2f} (ATR × {minutes_left:.1f}min × {ATR_MULTIPLIER})")
-                            print(f"       Actual Distance: ${actual_distance:,.2f}")
-                            print(f"       Result: {'✅ PASS' if condition_b_pass else '❌ FAIL'}")
-                        else:
-                            print(f"\n   [B] ATR KINETIC BARRIER: ⚠️  Insufficient data")
+                            if dist > (max_move * 1.5):
+                                score_b = 25  # Very safe (1.5x required distance)
+                            elif dist > max_move:
+                                score_b = 15  # Safe
+                            elif dist > (max_move * 0.8):
+                                score_b = 5   # Risky but possible
+                            else:
+                                score_b = 0   # Too close
                         
-                        # === CONDITION C: ORDER BOOK DEPTH ===
+                        trade_score += score_b
+                        details.append(f"ATR: {score_b}/25")
+                        
+                        # === C. ORDER BOOK DEPTH SCORE (Max 15) ===
                         order_book = binance.get_order_book(symbol="BTCUSDT", limit=1000)
                         bid_vol, ask_vol, ratio, direction = analyze_order_book_barrier(order_book, real_price, strike_price, atr)
                         
-                        condition_c_pass = ratio >= ORDER_BOOK_RATIO_MIN
-                        
-                        print(f"\n   [C] ORDER BOOK DEPTH BARRIER")
-                        print(f"       Direction: {direction}")
-                        if direction == "UP":
-                            print(f"       BID Volume (Support): {bid_vol:,.2f} BTC")
-                            print(f"       ASK Volume (Threat): {ask_vol:,.2f} BTC")
+                        score_c = 0
+                        if ratio >= 2.0:
+                            score_c = 15  # Huge wall
+                        elif ratio >= 1.2:
+                            score_c = 10  # Good wall
+                        elif ratio >= 0.8:
+                            score_c = 5   # Neutral
                         else:
-                            print(f"       ASK Volume (Resistance): {ask_vol:,.2f} BTC")
-                            print(f"       BID Volume (Threat): {bid_vol:,.2f} BTC")
-                        print(f"       Ratio: {ratio:.2f}x (Need >= {ORDER_BOOK_RATIO_MIN}x)")
-                        print(f"       Result: {'✅ PASS' if condition_c_pass else '❌ FAIL'}")
+                            score_c = 0   # Wall against us
                         
-                        # === CONDITION D: PRICE / R/R FILTER ===
+                        trade_score += score_c
+                        details.append(f"Book: {score_c}/15")
+                        
+                        # === D. PRICE / VALUE SCORE (Max 30) ===
+                        score_d = 0
+                        share_price = None
+                        share_type = "UNKNOWN"
+                        
                         try:
                             outcome_prices = market_data.get('outcome_prices', {})
-                            
-                            # Use the outcome prices we already scraped
                             if outcome_prices.get('up') is not None and outcome_prices.get('down') is not None:
-                                up_price = outcome_prices['up']
-                                down_price = outcome_prices['down']
+                                share_price = outcome_prices['up'] if real_price > strike_price else outcome_prices['down']
+                                share_type = "YES" if real_price > strike_price else "NO"
                                 
-                                if real_price > strike_price:
-                                    share_price = up_price
-                                    share_type = "YES"
+                                # Price valuation scoring
+                                if 0.30 <= share_price <= 0.50:
+                                    score_d = 30      # Jackpot (ROI > 100%)
+                                elif 0.50 < share_price <= 0.70:
+                                    score_d = 20      # Very good
+                                elif 0.70 < share_price <= 0.85:
+                                    score_d = 10      # Fair
+                                elif share_price > 0.92:
+                                    score_d = -100    # KILL SWITCH (Too expensive, ruin risk)
                                 else:
-                                    share_price = down_price
-                                    share_type = "NO"
-
-                                if share_price is None:
-                                    raise ValueError("Missing outcome price from CLOB")
-
-                                condition_d_pass = SHARE_PRICE_MIN <= share_price <= SHARE_PRICE_MAX
-
-                                print(f"\n   [D] RISK/REWARD FILTER")
-                                print(f"       Share Type: {share_type}")
-                                print(f"       Share Price: ${share_price:.3f} ({share_price*100:.1f}¢)")
-                                print(f"       Valid Range: ${SHARE_PRICE_MIN:.2f} - ${SHARE_PRICE_MAX:.2f}")
-                                print(f"       Result: {'✅ PASS' if condition_d_pass else '❌ FAIL'}")
-                            else:
-                                # No outcome prices available - fail the condition
-                                share_price = None
-                                share_type = "UNKNOWN"
-                                condition_d_pass = False
-                                print(f"\n   [D] RISK/REWARD FILTER: ❌ ALERT - Could not fetch market outcome prices from CLOB")
-                                
+                                    score_d = 0
                         except Exception as api_err:
-                            print(f"\n   [D] RISK/REWARD FILTER: ❌ ERROR - {api_err}")
-                            condition_d_pass = False
-                            share_price = None
-                            share_type = "UNKNOWN"
+                            print(f"   ⚠️  Error calculating price score: {api_err}")
                         
-                        # === TRACK STATISTICS ===
+                        trade_score += score_d
+                        if score_d == -100:
+                            details.append(f"Price({share_price:.2f}): BLOCKED")
+                        else:
+                            details.append(f"Price({share_price:.2f}): {score_d}/30")
+                        
+                        # === DECISION ===
                         window_stats['total_evaluations'] += 1
-                        if condition_a_pass:
-                            window_stats['condition_a_count'] += 1
-                        if condition_b_pass:
-                            window_stats['condition_b_count'] += 1
-                        if condition_c_pass:
-                            window_stats['condition_c_count'] += 1
-                        if condition_d_pass:
-                            window_stats['condition_d_count'] += 1
                         
-                        # === FINAL DECISION ===
-                        all_conditions_met = (condition_a_pass and condition_b_pass and 
-                                             condition_c_pass and condition_d_pass)
-                        
-                        if all_conditions_met:
-                            window_stats['all_four_pass_count'] += 1
+                        print(f"\n   📊 SCORE TOTAL: {trade_score}/100  (Seuil: {SCORE_THRESHOLD})")
+                        print(f"      {' | '.join(details)}")
                         
                         print("\n" + "-"*60)
-                        if all_conditions_met:
-                            trade_direction = "YES" if real_price > strike_price else "NO"
-                            print(f"🎯 ✅✅ TRADE CONDITIONS MET! ✅✅")
-                            print(f"   📈 SIGNAL: BUY {trade_direction} @ ${share_price:.2f} ({share_price*100:.0f}¢)")
+                        if trade_score >= SCORE_THRESHOLD:
+                            window_stats['all_four_pass_count'] += 1
+                            print(f"🎯 ✅ TRADE CONFIRMÉ (Score {trade_score})")
+                            print(f"   📈 SIGNAL: BUY {share_type} @ ${share_price:.2f} ({share_price*100:.0f}¢)")
                             print(f"   💰 Risk: ${share_price:.2f} | Potential: ${1-share_price:.2f} | ROI: {((1/share_price)-1)*100:.1f}%")
                             print(f"   🎲 Strategy: Price stays {'ABOVE' if real_price > strike_price else 'BELOW'} ${strike_price:,.2f}")
                             
                             trade_signal_given = True
                             signal_details = {
-                                'direction': trade_direction,
+                                'direction': share_type,
                                 'price': share_price,
                                 'entry_time': minutes_left,
                                 'btc_price': real_price
                             }
                         else:
-                            conditions_summary = f"A:{condition_a_pass} B:{condition_b_pass} C:{condition_c_pass} D:{condition_d_pass}"
-                            print(f"❌ CONDITIONS NOT MET [{conditions_summary}]")
-                            print(f"   No trade signal. Continuing monitoring...")
+                            print(f"❌ Score insuffisant ({trade_score}/100). Attente...")
                         print("-"*60)
                     
                     elif minutes_left > TRADE_WINDOW_MAX:
