@@ -618,9 +618,9 @@ def fetch_clob_outcome_prices(yes_token_id, no_token_id):
     }
 
 # --- 6. WINDOW STATISTICS TRACKING ---
-def write_window_statistics(stats):
-    """Write 15-minute window statistics to CSV file."""
-    stats_file = "window_statistics.csv"
+def write_window_statistics(stats, trade_result=None):
+    """Write 15-minute window statistics + trade result to CSV file."""
+    stats_file = "results.csv"
     
     # Check if file exists to write headers
     file_exists = os.path.exists(stats_file)
@@ -629,43 +629,67 @@ def write_window_statistics(stats):
         with open(stats_file, 'a', newline='') as f:
             writer = csv.DictWriter(f, fieldnames=[
                 'timestamp', 'market_slug', 'strike_price',
-                'condition_a', 'condition_b', 'condition_c', 'condition_d',
-                'total_evaluations', 'all_four_pass_count'
+                'avg_score_a', 'avg_score_b', 'avg_score_c', 'avg_score_d',
+                'avg_total_score', 'total_evaluations', 'signals_triggered',
+                'direction', 'entry_price', 'final_price', 'result',
+                'profit_loss_pct', 'profit_loss_usd', 'trade_amount'
             ])
             
             # Write header if file is new
             if not file_exists:
                 writer.writeheader()
             
-            # Calculate pass percentages
+            # Calculate average scores
             total = stats['total_evaluations']
             if total == 0:
-                a_pct = b_pct = c_pct = d_pct = "0/0"
+                avg_a = avg_b = avg_c = avg_d = avg_total = 0
             else:
-                a_pct = f"{stats['condition_a_count']}/{total}"
-                b_pct = f"{stats['condition_b_count']}/{total}"
-                c_pct = f"{stats['condition_c_count']}/{total}"
-                d_pct = f"{stats['condition_d_count']}/{total}"
+                avg_a = stats['total_score_a'] / total
+                avg_b = stats['total_score_b'] / total
+                avg_c = stats['total_score_c'] / total
+                avg_d = stats['total_score_d'] / total
+                avg_total = stats['total_score_sum'] / total
             
-            # Write window stats
-            writer.writerow({
+            # Build row with stats
+            row = {
                 'timestamp': stats['start_time'],
                 'market_slug': stats['market_slug'],
                 'strike_price': f"${stats['strike_price']:,.2f}",
-                'condition_a': a_pct,
-                'condition_b': b_pct,
-                'condition_c': c_pct,
-                'condition_d': d_pct,
+                'avg_score_a': f"{avg_a:.1f}",
+                'avg_score_b': f"{avg_b:.1f}",
+                'avg_score_c': f"{avg_c:.1f}",
+                'avg_score_d': f"{avg_d:.1f}",
+                'avg_total_score': f"{avg_total:.1f}",
                 'total_evaluations': total,
-                'all_four_pass_count': stats['all_four_pass_count']
-            })
-        
-        print(f"\n📊 WINDOW STATISTICS SAVED:")
-        print(f"   A: {a_pct} | B: {b_pct} | C: {c_pct} | D: {d_pct}")
-        print(f"   4-PASS (Signals): {stats['all_four_pass_count']} | Total Evaluations: {total}")
+                'signals_triggered': stats['signals_triggered']
+            }
+            
+            # Add trade result if available
+            if trade_result:
+                row.update({
+                    'direction': trade_result['direction'],
+                    'entry_price': f"${trade_result['entry_price']:.3f}",
+                    'final_price': f"${trade_result['final_price']:,.2f}",
+                    'result': trade_result['result'],
+                    'profit_loss_pct': f"{trade_result['profit_loss_pct']:+.2f}%",
+                    'profit_loss_usd': f"${trade_result['profit_loss_usd']:+.2f}",
+                    'trade_amount': f"${trade_result['trade_amount']:.2f}"
+                })
+                
+                print(f"\n📊 WINDOW STATISTICS + TRADE RESULT SAVED:")
+                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f} | C: {avg_c:.1f} | D: {avg_d:.1f}")
+                print(f"   Avg Total Score: {avg_total:.1f}/100 | Signals: {stats['signals_triggered']}")
+                print(f"   Trade Result: {trade_result['result']} ({trade_result['profit_loss_pct']:+.2f}%)")
+            else:
+                print(f"\n📊 WINDOW STATISTICS SAVED:")
+                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f} | C: {avg_c:.1f} | D: {avg_d:.1f}")
+                print(f"   Avg Total Score: {avg_total:.1f}/100 | Signals: {stats['signals_triggered']} | Evaluations: {total}")
+            
+            writer.writerow(row)
         
     except Exception as e:
         print(f"❌ Error writing statistics: {e}")
+
 
 # --- 7. MAIN TRADING ENGINE ---
 def run_advisor():
@@ -786,12 +810,13 @@ def run_advisor():
                 'market_slug': slug,
                 'strike_price': strike_price,
                 'start_time': end_time_readable,
-                'condition_a_count': 0,
-                'condition_b_count': 0,
-                'condition_c_count': 0,
-                'condition_d_count': 0,
+                'total_score_a': 0,
+                'total_score_b': 0,
+                'total_score_c': 0,
+                'total_score_d': 0,
+                'total_score_sum': 0,
                 'total_evaluations': 0,
-                'all_four_pass_count': 0
+                'signals_triggered': 0
             }
             
             # === POIDS DES INDICATEURS (Scoring System) ===
@@ -842,21 +867,44 @@ def run_advisor():
                         if is_win:
                             payout = trade_amount / entry_price
                             profit = payout - trade_amount
+                            profit_pct = (profit / trade_amount) * 100
+                            result_status = "WIN"
                             print(f"\n✅ TRADE WIN!")
                             print(f"   Direction: {direction}")
                             print(f"   Entry: ${entry_price:.2f}")
-                            print(f"   Profit: ${profit:.2f} (+{(profit/trade_amount)*100:.1f}%)")
+                            print(f"   Profit: ${profit:.2f} (+{profit_pct:.1f}%)")
                         else:
+                            profit = -trade_amount
+                            profit_pct = -100
+                            result_status = "LOSS"
                             print(f"\n❌ TRADE LOSS!")
                             print(f"   Direction: {direction}")
                             print(f"   Entry: ${entry_price:.2f}")
                             print(f"   Loss: -${trade_amount:.2f}")
+                        
+                        # === WRITE TRADE RESULT ===
+                        result_data = {
+                            'timestamp': end_time_readable,
+                            'market_slug': slug,
+                            'strike_price': strike_price,
+                            'direction': direction,
+                            'entry_price': entry_price,
+                            'final_price': final_price,
+                            'result': result_status,
+                            'profit_loss_pct': profit_pct,
+                            'profit_loss_usd': profit,
+                            'trade_amount': trade_amount
+                        }
+                        write_trade_result(result_data)
                     else:
                         print(f"\n⏸️  NO TRADE SIGNAL - Conditions not met")
                     
-                    # === WRITE WINDOW STATISTICS (only if evaluations occurred) ===
+                    # === WRITE WINDOW STATISTICS + TRADE RESULT ===
                     if window_stats['total_evaluations'] > 0:
-                        write_window_statistics(window_stats)
+                        if trade_signal_given and 'result_data' in locals():
+                            write_window_statistics(window_stats, result_data)
+                        else:
+                            write_window_statistics(window_stats)
                     
                     # Print session stats
                     print(f"\n📈 SESSION STATS:")
@@ -1051,13 +1099,18 @@ def run_advisor():
                         
                         # === DECISION ===
                         window_stats['total_evaluations'] += 1
+                        window_stats['total_score_a'] += score_a
+                        window_stats['total_score_b'] += score_b
+                        window_stats['total_score_c'] += score_c
+                        window_stats['total_score_d'] += score_d
+                        window_stats['total_score_sum'] += trade_score
                         
                         print(f"\n   📊 SCORE TOTAL: {trade_score}/100  (Seuil: {SCORE_THRESHOLD})")
                         print(f"      {' | '.join(details)}")
                         
                         print("\n" + "-"*60)
                         if trade_score >= SCORE_THRESHOLD:
-                            window_stats['all_four_pass_count'] += 1
+                            window_stats['signals_triggered'] += 1
                             print(f"🎯 ✅ TRADE CONFIRMÉ (Score {trade_score})")
                             print(f"   📈 SIGNAL: BUY {share_type} @ ${share_price:.2f} ({share_price*100:.0f}¢)")
                             print(f"   💰 Risk: ${share_price:.2f} | Potential: ${1-share_price:.2f} | ROI: {((1/share_price)-1)*100:.1f}%")
