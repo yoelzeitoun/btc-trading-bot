@@ -839,14 +839,13 @@ def run_advisor():
                     final_price = fetch_chainlink_btc_usd_price()
                     if final_price is None:
                         print("⚠️  Chainlink price unavailable. Skipping final resolution check.")
-                        break
+                    else:
+                        print(f"\n📊 FINAL RESULTS:")
+                        print(f"   Strike Price: ${strike_price:,.2f}")
+                        print(f"   Final BTC: ${final_price:,.2f}")
+                        print(f"   Change: ${final_price - strike_price:,.2f} ({((final_price/strike_price - 1) * 100):+.2f}%)")
                     
-                    print(f"\n📊 FINAL RESULTS:")
-                    print(f"   Strike Price: ${strike_price:,.2f}")
-                    print(f"   Final BTC: ${final_price:,.2f}")
-                    print(f"   Change: ${final_price - strike_price:,.2f} ({((final_price/strike_price - 1) * 100):+.2f}%)")
-                    
-                    if trade_signal_given:
+                    if trade_signal_given and final_price is not None:
                         total_signals += 1
                         direction = signal_details.get('direction')
                         entry_price = signal_details.get('price')
@@ -882,7 +881,7 @@ def run_advisor():
                             print(f"   Entry: ${entry_price:.2f}")
                             print(f"   Loss: -${trade_amount:.2f}")
                         
-                        # === WRITE TRADE RESULT ===
+                        # Prepare trade result for CSV
                         result_data = {
                             'timestamp': end_time_readable,
                             'market_slug': slug,
@@ -895,13 +894,12 @@ def run_advisor():
                             'profit_loss_usd': profit,
                             'trade_amount': trade_amount
                         }
-                        write_trade_result(result_data)
                     else:
                         print(f"\n⏸️  NO TRADE SIGNAL - Conditions not met")
                     
                     # === WRITE WINDOW STATISTICS + TRADE RESULT ===
                     if window_stats['total_evaluations'] > 0:
-                        if trade_signal_given and 'result_data' in locals():
+                        if trade_signal_given and final_price is not None and 'result_data' in locals():
                             write_window_statistics(window_stats, result_data)
                         else:
                             write_window_statistics(window_stats)
@@ -1092,7 +1090,9 @@ def run_advisor():
                             print(f"   ⚠️  Error calculating price score: {api_err}")
                         
                         trade_score += score_d
-                        if score_d == -100:
+                        if share_price is None:
+                            details.append("Price(n/a): 0/30")
+                        elif score_d == -100:
                             details.append(f"Price({share_price:.2f}): BLOCKED")
                         else:
                             details.append(f"Price({share_price:.2f}): {score_d}/30")

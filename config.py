@@ -2,8 +2,8 @@
 
 # === TRADING WINDOW ===
 # The time window (in minutes before expiration) to execute trades
-TRADE_WINDOW_MIN = 1   # Start checking conditions at this many minutes before expiration
-TRADE_WINDOW_MAX = 14  # Stop checking conditions at this many minutes before expiration
+TRADE_WINDOW_MIN = 2   # Start checking conditions at this many minutes before expiration
+TRADE_WINDOW_MAX = 8  # Stop checking conditions at this many minutes before expiration
 
 # === TECHNICAL INDICATORS ===
 BOLLINGER_PERIOD = 20
