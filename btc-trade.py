@@ -45,6 +45,20 @@ API_PASSPHRASE = os.getenv("API_PASSPHRASE")
 MY_ADDRESS = os.getenv("MY_ADDRESS")
 PRIVATE_KEY = os.getenv("PRIVATE_KEY")
 
+# --- 2B. CHAINLINK BTC/USD STREAM CONFIG ---
+CHAINLINK_STREAM_URLS = [
+    os.getenv("CHAINLINK_STREAM_API_URL", "").strip(),
+    "https://data.chain.link/api/streams/btc-usd",
+    "https://data.chain.link/api/streams/btc-usd-cexprice-streams",
+    "https://data.chain.link/streams/btc-usd-cexprice-streams",
+    "https://data.chain.link/streams/btc-usd",
+]
+
+CHAINLINK_FEED_FALLBACK_URLS = [
+    os.getenv("CHAINLINK_FEED_API_URL", "").strip(),
+    "https://data.chain.link/feeds/ethereum/mainnet/btc-usd",
+]
+
 # --- 3. TECHNICAL INDICATORS ---
 
 def calculate_bollinger_bands(closes, period=20, std_dev=2.0):
@@ -156,6 +170,105 @@ def analyze_order_book_barrier(order_book, current_price, target_price, atr_valu
         ratio = ask_volume / bid_volume if bid_volume > 0 else 10.0
 
     return bid_volume, ask_volume, ratio, direction
+
+def _safe_float(value):
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+def _find_price_in_obj(obj, min_price=1000.0, max_price=1000000.0):
+    if isinstance(obj, dict):
+        # Prefer explicit price keys first
+        for key in ("price", "currentPrice", "latestPrice", "answer", "value", "result"):
+            if key in obj:
+                price = _safe_float(obj.get(key))
+                if price and min_price <= price <= max_price:
+                    return price
+        # Handle Chainlink-style answer + decimals
+        if "answer" in obj and ("decimals" in obj or "decimal" in obj):
+            raw = _safe_float(obj.get("answer"))
+            decimals = _safe_float(obj.get("decimals", obj.get("decimal")))
+            if raw is not None and decimals is not None:
+                price = raw / (10 ** int(decimals))
+                if min_price <= price <= max_price:
+                    return price
+        # Recurse
+        for value in obj.values():
+            found = _find_price_in_obj(value, min_price=min_price, max_price=max_price)
+            if found is not None:
+                return found
+    elif isinstance(obj, list):
+        for item in obj:
+            found = _find_price_in_obj(item, min_price=min_price, max_price=max_price)
+            if found is not None:
+                return found
+    return None
+
+def _extract_price_from_text(text):
+    # Look for common price-like patterns in HTML/JS blobs
+    patterns = [
+        r'"price"\s*:\s*([0-9]+(?:\.[0-9]+)?)',
+        r'"currentPrice"\s*:\s*([0-9]+(?:\.[0-9]+)?)',
+        r'"latestPrice"\s*:\s*([0-9]+(?:\.[0-9]+)?)',
+        r'"answer"\s*:\s*([0-9]+(?:\.[0-9]+)?)',
+        r'"value"\s*:\s*([0-9]+(?:\.[0-9]+)?)',
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, text)
+        if match:
+            price = _safe_float(match.group(1))
+            if price and 1000.0 <= price <= 1000000.0:
+                return price
+    return None
+
+def _fetch_chainlink_price_from_url(url):
+    if not url:
+        return None
+    try:
+        headers = {"User-Agent": "Mozilla/5.0"}
+        response = requests.get(url, headers=headers, timeout=10)
+        response.raise_for_status()
+        content_type = response.headers.get("Content-Type", "")
+        text = response.text
+
+        if "application/json" in content_type or text.strip().startswith("{") or text.strip().startswith("["):
+            try:
+                data = response.json()
+            except ValueError:
+                data = json.loads(text)
+            price = _find_price_in_obj(data)
+            if price is not None:
+                return price
+
+        # Try to parse __NEXT_DATA__ JSON if present
+        next_data_match = re.search(r'__NEXT_DATA__" type="application/json">(.*?)</script>', text)
+        if next_data_match:
+            try:
+                next_data = json.loads(next_data_match.group(1))
+                price = _find_price_in_obj(next_data)
+                if price is not None:
+                    return price
+            except ValueError:
+                pass
+
+        # Fallback: regex extraction from text
+        return _extract_price_from_text(text)
+
+    except Exception:
+        return None
+
+def fetch_chainlink_btc_usd_price():
+    # Prefer Data Streams endpoints, then fallback to Chainlink feed page
+    for url in CHAINLINK_STREAM_URLS:
+        price = _fetch_chainlink_price_from_url(url)
+        if price is not None:
+            return price
+    for url in CHAINLINK_FEED_FALLBACK_URLS:
+        price = _fetch_chainlink_price_from_url(url)
+        if price is not None:
+            return price
+    return None
 
 # --- 4. FETCH CURRENT BTC 15M MARKET AUTOMATICALLY ---
 def find_current_btc_15m_market():
@@ -690,12 +803,11 @@ def run_advisor():
                     print("⏰ MARKET EXPIRED!")
                     print("="*60)
                     
-                    # Check final result
-                    ticker = binance.get_order_book(symbol="BTCUSDT", limit=5)
-                    # Determine direction and select appropriate price
-                    final_price_ask = float(ticker['asks'][0][0])
-                    final_price_bid = float(ticker['bids'][0][0])
-                    final_price = final_price_ask if final_price_ask > strike_price else final_price_bid
+                    # Check final result (Chainlink BTC/USD stream price)
+                    final_price = fetch_chainlink_btc_usd_price()
+                    if final_price is None:
+                        print("⚠️  Chainlink price unavailable. Skipping final resolution check.")
+                        break
                     
                     print(f"\n📊 FINAL RESULTS:")
                     print(f"   Strike Price: ${strike_price:,.2f}")
@@ -751,12 +863,33 @@ def run_advisor():
                     break
 
                 try:
-                    # 1. Get Real-Time BTC Price (Directional)
-                    ticker = binance.get_order_book(symbol="BTCUSDT", limit=5)
-                    real_price_ask = float(ticker['asks'][0][0])
-                    real_price_bid = float(ticker['bids'][0][0])
-                    # Direction unknown yet—use Ask if ask > strike, else Bid (refined after Condition A)
-                    real_price = real_price_ask if real_price_ask > strike_price else real_price_bid
+                    # 1. Get Real-Time BTC Price (Try Chainlink -> Fallback to Coinbase)
+                    real_price = fetch_chainlink_btc_usd_price()
+                    
+                    if real_price is None:
+                        # FALLBACK: Chainlink scraping failed, use Coinbase
+                        try:
+                            # Use Coinbase spot price (USD)
+                            cb_response = requests.get("https://api.coinbase.com/v2/prices/BTC-USD/spot", timeout=10)
+                            cb_response.raise_for_status()
+                            cb_data = cb_response.json()
+                            real_price = float(cb_data['data']['amount'])
+                            
+                            # Log this only once every 10 loops to keep console clean
+                            if not hasattr(run_advisor, "log_counter"): run_advisor.log_counter = 0
+                            run_advisor.log_counter += 1
+                            if run_advisor.log_counter % 10 == 0:
+                                print(f"   ⚠️  Chainlink unavailable. Using Coinbase Proxy: ${real_price:,.2f}")
+                                
+                        except Exception as e:
+                            print(f"❌ Error fetching Coinbase Price: {e}")
+                            # Last resort fallback to Binance if Coinbase fails
+                            try:
+                                ticker = binance.get_symbol_ticker(symbol="BTCUSDT")
+                                real_price = float(ticker['price'])
+                            except Exception:
+                                time.sleep(LOOP_SLEEP_SECONDS)
+                                continue
                     
                     # 2. Get Historical Candles
                     klines = binance.get_klines(symbol="BTCUSDT", interval='1m', limit=60)
