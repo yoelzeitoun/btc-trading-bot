@@ -891,11 +891,23 @@ def run_advisor():
                                 time.sleep(LOOP_SLEEP_SECONDS)
                                 continue
                     
-                    # 2. Get Historical Candles
+                    # 2. Get Historical Candles (BINANCE)
                     klines = binance.get_klines(symbol="BTCUSDT", interval='1m', limit=60)
-                    closes = [float(k[4]) for k in klines]
-                    highs = [float(k[2]) for k in klines]
-                    lows = [float(k[3]) for k in klines]
+                    
+                    # === RECALIBRAGE: Aligner Binance (USDT) avec Coinbase (USD) ===
+                    raw_closes = [float(k[4]) for k in klines]
+                    raw_highs = [float(k[2]) for k in klines]
+                    raw_lows = [float(k[3]) for k in klines]
+                    
+                    # Calculer la différence entre le Prix Vrai (Coinbase) et le dernier Prix Historique (Binance)
+                    last_binance_close = raw_closes[-1]
+                    offset = real_price - last_binance_close
+                    
+                    # Appliquer la correction à tout l'historique pour aligner les graphiques
+                    closes = [x + offset for x in raw_closes]
+                    highs = [x + offset for x in raw_highs]
+                    lows = [x + offset for x in raw_lows]
+                    # === FIN RECALIBRAGE ===
                     
                     # 3. Time Window Announcements
                     window_midpoint = (TRADE_WINDOW_MIN + TRADE_WINDOW_MAX) / 2
