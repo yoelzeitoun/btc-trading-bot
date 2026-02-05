@@ -2,8 +2,8 @@
 
 # === TRADING WINDOW ===
 # The time window (in minutes before expiration) to execute trades
-TRADE_WINDOW_MIN = 2   # Start checking conditions at this many minutes before expiration
-TRADE_WINDOW_MAX = 8  # Stop checking conditions at this many minutes before expiration
+TRADE_WINDOW_MIN = 1   # Start checking conditions at this many minutes before expiration
+TRADE_WINDOW_MAX = 14  # Stop checking conditions at this many minutes before expiration
 
 # === TECHNICAL INDICATORS ===
 BOLLINGER_PERIOD = 20
@@ -11,6 +11,9 @@ BOLLINGER_STD_DEV = 2.0
 
 ATR_PERIOD = 14
 ATR_MULTIPLIER = 0.6
+
+# === SCORING & TRADE EXECUTION ===
+SCORE_THRESHOLD = 70  # Minimum total score required to execute a trade (0-100)
 
 # === BARRIER THRESHOLDS ===
 ORDER_BOOK_RATIO_MIN = 0.8  # Minimum ratio for order book depth barrier

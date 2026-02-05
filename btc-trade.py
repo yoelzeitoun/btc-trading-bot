@@ -7,7 +7,6 @@ import json
 import csv
 import numpy as np
 import requests
-from binance.client import Client as BinanceClient
 from dotenv import load_dotenv
 from datetime import datetime, timezone
 
@@ -21,7 +20,8 @@ from config import (
     ATR_PERIOD, ATR_MULTIPLIER,
     ORDER_BOOK_RATIO_MIN,
     SHARE_PRICE_MIN, SHARE_PRICE_MAX,
-    LOOP_SLEEP_SECONDS, NEXT_MARKET_WAIT_SECONDS
+    LOOP_SLEEP_SECONDS, NEXT_MARKET_WAIT_SECONDS,
+    SCORE_THRESHOLD
 )
 
 # --- 1. API IMPORTS ---
@@ -177,97 +177,25 @@ def _safe_float(value):
     except (TypeError, ValueError):
         return None
 
-def _find_price_in_obj(obj, min_price=1000.0, max_price=1000000.0):
-    if isinstance(obj, dict):
-        # Prefer explicit price keys first
-        for key in ("price", "currentPrice", "latestPrice", "answer", "value", "result"):
-            if key in obj:
-                price = _safe_float(obj.get(key))
-                if price and min_price <= price <= max_price:
-                    return price
-        # Handle Chainlink-style answer + decimals
-        if "answer" in obj and ("decimals" in obj or "decimal" in obj):
-            raw = _safe_float(obj.get("answer"))
-            decimals = _safe_float(obj.get("decimals", obj.get("decimal")))
-            if raw is not None and decimals is not None:
-                price = raw / (10 ** int(decimals))
-                if min_price <= price <= max_price:
-                    return price
-        # Recurse
-        for value in obj.values():
-            found = _find_price_in_obj(value, min_price=min_price, max_price=max_price)
-            if found is not None:
-                return found
-    elif isinstance(obj, list):
-        for item in obj:
-            found = _find_price_in_obj(item, min_price=min_price, max_price=max_price)
-            if found is not None:
-                return found
-    return None
-
-def _extract_price_from_text(text):
-    # Look for common price-like patterns in HTML/JS blobs
-    patterns = [
-        r'"price"\s*:\s*([0-9]+(?:\.[0-9]+)?)',
-        r'"currentPrice"\s*:\s*([0-9]+(?:\.[0-9]+)?)',
-        r'"latestPrice"\s*:\s*([0-9]+(?:\.[0-9]+)?)',
-        r'"answer"\s*:\s*([0-9]+(?:\.[0-9]+)?)',
-        r'"value"\s*:\s*([0-9]+(?:\.[0-9]+)?)',
-    ]
-    for pattern in patterns:
-        match = re.search(pattern, text)
-        if match:
-            price = _safe_float(match.group(1))
-            if price and 1000.0 <= price <= 1000000.0:
-                return price
-    return None
-
-def _fetch_chainlink_price_from_url(url):
-    if not url:
-        return None
-    try:
-        headers = {"User-Agent": "Mozilla/5.0"}
-        response = requests.get(url, headers=headers, timeout=10)
-        response.raise_for_status()
-        content_type = response.headers.get("Content-Type", "")
-        text = response.text
-
-        if "application/json" in content_type or text.strip().startswith("{") or text.strip().startswith("["):
-            try:
-                data = response.json()
-            except ValueError:
-                data = json.loads(text)
-            price = _find_price_in_obj(data)
-            if price is not None:
-                return price
-
-        # Try to parse __NEXT_DATA__ JSON if present
-        next_data_match = re.search(r'__NEXT_DATA__" type="application/json">(.*?)</script>', text)
-        if next_data_match:
-            try:
-                next_data = json.loads(next_data_match.group(1))
-                price = _find_price_in_obj(next_data)
-                if price is not None:
-                    return price
-            except ValueError:
-                pass
-
-        # Fallback: regex extraction from text
-        return _extract_price_from_text(text)
-
-    except Exception:
-        return None
-
 def fetch_chainlink_btc_usd_price():
-    # Prefer Data Streams endpoints, then fallback to Chainlink feed page
-    for url in CHAINLINK_STREAM_URLS:
-        price = _fetch_chainlink_price_from_url(url)
-        if price is not None:
+    """
+    Fetch BTC/USD price from Kraken only (used as Chainlink proxy).
+    """
+    try:
+        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+        response = requests.get(
+            "https://api.kraken.com/0/public/Ticker?pair=XXBTZUSD",
+            headers=headers,
+            timeout=5
+        )
+        response.raise_for_status()
+        data = response.json()
+        price = _safe_float(data.get("result", {}).get("XXBTZUSD", {}).get("c", [None])[0])
+        if price and 20000 <= price <= 150000:
             return price
-    for url in CHAINLINK_FEED_FALLBACK_URLS:
-        price = _fetch_chainlink_price_from_url(url)
-        if price is not None:
-            return price
+    except Exception:
+        pass
+
     return None
 
 # --- 4. FETCH CURRENT BTC 15M MARKET AUTOMATICALLY ---
@@ -619,73 +547,53 @@ def fetch_clob_outcome_prices(yes_token_id, no_token_id):
 
 # --- 6. WINDOW STATISTICS TRACKING ---
 def write_window_statistics(stats, trade_result=None):
-    """Write 15-minute window statistics + trade result to CSV file."""
-    stats_file = "results.csv"
-    
-    # Check if file exists to write headers
-    file_exists = os.path.exists(stats_file)
+    """Write 15-minute window statistics + trade result to readable TXT file."""
+    stats_file = "results.txt"
     
     try:
-        with open(stats_file, 'a', newline='') as f:
-            writer = csv.DictWriter(f, fieldnames=[
-                'timestamp', 'market_slug', 'strike_price',
-                'avg_score_a', 'avg_score_b', 'avg_score_c', 'avg_score_d',
-                'avg_total_score', 'total_evaluations', 'signals_triggered',
-                'direction', 'entry_price', 'final_price', 'result',
-                'profit_loss_pct', 'profit_loss_usd', 'trade_amount'
-            ])
+        # Calculate average scores
+        total = stats['total_evaluations']
+        if total == 0:
+            avg_a = avg_b = avg_c = avg_total = 0
+        else:
+            avg_a = stats['total_score_a'] / total
+            avg_b = stats['total_score_b'] / total
+            avg_c = stats['total_score_c'] / total
+            avg_total = stats['total_score_sum'] / total
+        
+        with open(stats_file, 'a') as f:
+            f.write("\n" + "="*80 + "\n")
+            f.write(f"📅 {stats['start_time']} | Market: {stats['market_slug']}\n")
+            f.write(f"🎯 Strike Price: ${stats['strike_price']:,.2f}\n")
+            f.write("-"*80 + "\n")
             
-            # Write header if file is new
-            if not file_exists:
-                writer.writeheader()
+            f.write(f"📊 SCORING ANALYSIS ({total} evaluations, {stats['signals_triggered']} signals triggered):\n")
+            f.write(f"   • Bollinger Bands:    {avg_a:.1f}/35\n")
+            f.write(f"   • ATR Kinetic:        {avg_b:.1f}/29\n")
+            f.write(f"   • Price/ROI:          {avg_c:.1f}/36\n")
+            f.write(f"   • AVG TOTAL SCORE:    {avg_total:.1f}/100\n")
+            f.write(f"   • MAX TOTAL SCORE:    {stats['max_total_score']}/100\n")
             
-            # Calculate average scores
-            total = stats['total_evaluations']
-            if total == 0:
-                avg_a = avg_b = avg_c = avg_d = avg_total = 0
-            else:
-                avg_a = stats['total_score_a'] / total
-                avg_b = stats['total_score_b'] / total
-                avg_c = stats['total_score_c'] / total
-                avg_d = stats['total_score_d'] / total
-                avg_total = stats['total_score_sum'] / total
-            
-            # Build row with stats
-            row = {
-                'timestamp': stats['start_time'],
-                'market_slug': stats['market_slug'],
-                'strike_price': f"${stats['strike_price']:,.2f}",
-                'avg_score_a': f"{avg_a:.1f}",
-                'avg_score_b': f"{avg_b:.1f}",
-                'avg_score_c': f"{avg_c:.1f}",
-                'avg_score_d': f"{avg_d:.1f}",
-                'avg_total_score': f"{avg_total:.1f}",
-                'total_evaluations': total,
-                'signals_triggered': stats['signals_triggered']
-            }
-            
-            # Add trade result if available
             if trade_result:
-                row.update({
-                    'direction': trade_result['direction'],
-                    'entry_price': f"${trade_result['entry_price']:.3f}",
-                    'final_price': f"${trade_result['final_price']:,.2f}",
-                    'result': trade_result['result'],
-                    'profit_loss_pct': f"{trade_result['profit_loss_pct']:+.2f}%",
-                    'profit_loss_usd': f"${trade_result['profit_loss_usd']:+.2f}",
-                    'trade_amount': f"${trade_result['trade_amount']:.2f}"
-                })
+                f.write("-"*80 + "\n")
+                f.write(f"💼 TRADE EXECUTED:\n")
+                f.write(f"   Direction:     {trade_result['direction'].upper()}\n")
+                f.write(f"   Entry Price:   ${trade_result['entry_price']:.3f}\n")
+                f.write(f"   Final BTC:     ${trade_result['final_price']:,.2f}\n")
+                f.write(f"   Trade Amount:  ${trade_result['trade_amount']:.2f}\n")
+                f.write(f"   Result:        {trade_result['result'].upper()}\n")
+                f.write(f"   P&L:           {trade_result['profit_loss_pct']:+.2f}% (${trade_result['profit_loss_usd']:+.2f})\n")
                 
                 print(f"\n📊 WINDOW STATISTICS + TRADE RESULT SAVED:")
-                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f} | C: {avg_c:.1f} | D: {avg_d:.1f}")
+                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f} | C: {avg_c:.1f}")
                 print(f"   Avg Total Score: {avg_total:.1f}/100 | Signals: {stats['signals_triggered']}")
                 print(f"   Trade Result: {trade_result['result']} ({trade_result['profit_loss_pct']:+.2f}%)")
             else:
                 print(f"\n📊 WINDOW STATISTICS SAVED:")
-                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f} | C: {avg_c:.1f} | D: {avg_d:.1f}")
+                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f} | C: {avg_c:.1f}")
                 print(f"   Avg Total Score: {avg_total:.1f}/100 | Signals: {stats['signals_triggered']} | Evaluations: {total}")
             
-            writer.writerow(row)
+            f.write("="*80 + "\n")
         
     except Exception as e:
         print(f"❌ Error writing statistics: {e}")
@@ -696,7 +604,6 @@ def run_advisor():
     # Setup API connections
     creds = ApiCreds(API_KEY, API_SECRET, API_PASSPHRASE)
     poly_client = ClobClient("https://clob.polymarket.com", key=PRIVATE_KEY, creds=creds, chain_id=POLYGON)
-    binance = BinanceClient()
 
     print("\n🚀 DOUBLE BARRIER MEAN REVERSION BOT - CONTINUOUS MODE")
     print("="*60)
@@ -813,8 +720,8 @@ def run_advisor():
                 'total_score_a': 0,
                 'total_score_b': 0,
                 'total_score_c': 0,
-                'total_score_d': 0,
                 'total_score_sum': 0,
+                'max_total_score': 0,
                 'total_evaluations': 0,
                 'signals_triggered': 0
             }
@@ -824,7 +731,6 @@ def run_advisor():
             WEIGHT_ATR = 25
             WEIGHT_ORDERBOOK = 15
             WEIGHT_PRICE = 30
-            SCORE_THRESHOLD = 75
             
             while True:
                 now = time.time()
@@ -916,51 +822,35 @@ def run_advisor():
                     break
 
                 try:
-                    # 1. Get Real-Time BTC Price (Try Chainlink -> Fallback to Coinbase)
+                    # 1. Get Real-Time BTC Price from Kraken only
                     real_price = fetch_chainlink_btc_usd_price()
                     
                     if real_price is None:
-                        # FALLBACK: Chainlink scraping failed, use Coinbase
-                        try:
-                            # Use Coinbase spot price (USD)
-                            cb_response = requests.get("https://api.coinbase.com/v2/prices/BTC-USD/spot", timeout=10)
-                            cb_response.raise_for_status()
-                            cb_data = cb_response.json()
-                            real_price = float(cb_data['data']['amount'])
-                            
-                            # Log this only once every 10 loops to keep console clean
-                            if not hasattr(run_advisor, "log_counter"): run_advisor.log_counter = 0
-                            run_advisor.log_counter += 1
-                            if run_advisor.log_counter % 10 == 0:
-                                print(f"   ⚠️  Chainlink unavailable. Using Coinbase Proxy: ${real_price:,.2f}")
-                                
-                        except Exception as e:
-                            print(f"❌ Error fetching Coinbase Price: {e}")
-                            # Last resort fallback to Binance if Coinbase fails
-                            try:
-                                ticker = binance.get_symbol_ticker(symbol="BTCUSDT")
-                                real_price = float(ticker['price'])
-                            except Exception:
-                                time.sleep(LOOP_SLEEP_SECONDS)
-                                continue
+                        print("   ⚠️  Kraken price unavailable, skipping this evaluation")
+                        time.sleep(LOOP_SLEEP_SECONDS)
+                        continue
                     
-                    # 2. Get Historical Candles (BINANCE)
-                    klines = binance.get_klines(symbol="BTCUSDT", interval='1m', limit=60)
-                    
-                    # === RECALIBRAGE: Aligner Binance (USDT) avec Coinbase (USD) ===
-                    raw_closes = [float(k[4]) for k in klines]
-                    raw_highs = [float(k[2]) for k in klines]
-                    raw_lows = [float(k[3]) for k in klines]
-                    
-                    # Calculer la différence entre le Prix Vrai (Coinbase) et le dernier Prix Historique (Binance)
-                    last_binance_close = raw_closes[-1]
-                    offset = real_price - last_binance_close
-                    
-                    # Appliquer la correction à tout l'historique pour aligner les graphiques
-                    closes = [x + offset for x in raw_closes]
-                    highs = [x + offset for x in raw_highs]
-                    lows = [x + offset for x in raw_lows]
-                    # === FIN RECALIBRAGE ===
+                    # 2. Get Historical Candles from Kraken (OHLC data)
+                    try:
+                        kraken_url = "https://api.kraken.com/0/public/OHLC?pair=XXBTZUSD&interval=1"
+                        headers = {"User-Agent": "Mozilla/5.0"}
+                        kraken_response = requests.get(kraken_url, headers=headers, timeout=10)
+                        kraken_response.raise_for_status()
+                        kraken_data = kraken_response.json()
+                        
+                        if kraken_data.get('error') and len(kraken_data['error']) > 0:
+                            raise Exception(f"Kraken API error: {kraken_data['error']}")
+                        
+                        ohlc_data = kraken_data['result']['XXBTZUSD']
+                        # Take last 60 candles: [time, open, high, low, close, vwap, volume, count]
+                        closes = [float(candle[4]) for candle in ohlc_data[-60:]]
+                        highs = [float(candle[2]) for candle in ohlc_data[-60:]]
+                        lows = [float(candle[3]) for candle in ohlc_data[-60:]]
+                        
+                    except Exception as e:
+                        print(f"   ⚠️  Kraken OHLC data unavailable: {e}")
+                        time.sleep(LOOP_SLEEP_SECONDS)
+                        continue
                     
                     # 3. Time Window Announcements
                     window_midpoint = (TRADE_WINDOW_MIN + TRADE_WINDOW_MAX) / 2
@@ -999,35 +889,50 @@ def run_advisor():
                         trade_score = 0
                         details = []
                         
-                        # === A. BOLLINGER BANDS SCORE (Max 30) ===
+                        # Max score for each component
+                        MAX_SCORE_BB = 34  # Bollinger Bands
+                        MAX_SCORE_ATR = 33  # ATR
+                        MAX_SCORE_PRICE = 33  # Price
+                        
+                        # === A. BOLLINGER BANDS SCORE (Proportional, Max 34) ===
                         upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=BOLLINGER_PERIOD, std_dev=2.0)
                         
                         score_a = 0
                         if upper_bb and lower_bb:
                             bb_range = upper_bb - lower_bb
                             target_position = (strike_price - lower_bb) / bb_range
+                            target_position = max(0, min(1, target_position))  # Clamp to 0-1
                             
                             if real_price > strike_price:  # UP scenario
-                                # Target should be LOW (in Lower Band)
-                                if target_position < 0.2:
-                                    score_a = 30  # Excellent
-                                elif target_position < 0.4:
-                                    score_a = 15  # Good
+                                # Target should be LOW (position close to 0)
+                                # Score = MAX when position is 0, Score = 0 when position > 0.5
+                                if target_position < 0.5:
+                                    score_a = int(round(MAX_SCORE_BB * (1 - target_position / 0.5)))
                                 else:
-                                    score_a = 0   # Risky
+                                    score_a = 0
                             else:  # DOWN scenario
-                                # Target should be HIGH (in Upper Band)
-                                if target_position > 0.8:
-                                    score_a = 30  # Excellent
-                                elif target_position > 0.6:
-                                    score_a = 15  # Good
+                                # Target should be HIGH (position close to 1)
+                                # Score = MAX when position is 1, Score = 0 when position < 0.5
+                                if target_position > 0.5:
+                                    score_a = int(round(MAX_SCORE_BB * ((target_position - 0.5) / 0.5)))
                                 else:
-                                    score_a = 0   # Risky
+                                    score_a = 0
                         
                         trade_score += score_a
-                        details.append(f"BB: {score_a}/30")
+                        # Explain BB score
+                        if upper_bb and lower_bb:
+                            if real_price > strike_price:
+                                # UP trade: we want strike LOW in band (near bottom)
+                                bb_explain = f"Strike at {target_position:.1%} from BOTTOM of band | UP trade ✓"
+                            else:
+                                # DOWN trade: we want strike HIGH in band (near top)
+                                distance_from_top = 1 - target_position
+                                bb_explain = f"Strike at {distance_from_top:.1%} from TOP of band | DOWN trade ✓"
+                        else:
+                            bb_explain = "Bollinger Bands unavailable"
+                        details.append(f"BB: {score_a}/{MAX_SCORE_BB} - {bb_explain}")
                         
-                        # === B. ATR KINETIC BARRIER SCORE (Max 25) ===
+                        # === B. ATR KINETIC BARRIER SCORE (Proportional, Max 33) ===
                         atr = calculate_atr(highs, lows, closes, period=ATR_PERIOD)
                         
                         score_b = 0
@@ -1035,37 +940,21 @@ def run_advisor():
                             max_move = atr * math.sqrt(minutes_left) * ATR_MULTIPLIER
                             dist = abs(real_price - strike_price)
                             
-                            if dist > (max_move * 1.5):
-                                score_b = 25  # Very safe (1.5x required distance)
-                            elif dist > max_move:
-                                score_b = 15  # Safe
-                            elif dist > (max_move * 0.8):
-                                score_b = 5   # Risky but possible
-                            else:
-                                score_b = 0   # Too close
+                            # Proportional: max score at 1.5x distance, 0 at 0 distance
+                            if max_move > 0:
+                                distance_ratio = min(dist / (max_move * 1.5), 1.0)  # Clamp to 0-1
+                                score_b = int(round(MAX_SCORE_ATR * distance_ratio))
                         
                         trade_score += score_b
-                        details.append(f"ATR: {score_b}/25")
-                        
-                        # === C. ORDER BOOK DEPTH SCORE (Max 15) ===
-                        order_book = binance.get_order_book(symbol="BTCUSDT", limit=1000)
-                        bid_vol, ask_vol, ratio, direction = analyze_order_book_barrier(order_book, real_price, strike_price, atr)
-                        
-                        score_c = 0
-                        if ratio >= 2.0:
-                            score_c = 15  # Huge wall
-                        elif ratio >= 1.2:
-                            score_c = 10  # Good wall
-                        elif ratio >= 0.8:
-                            score_c = 5   # Neutral
+                        # Explain ATR score
+                        if atr:
+                            atr_explain = f"Distance: ${dist:.2f} | Max move: ${max_move:.2f} | Ratio: {distance_ratio:.1%}"
                         else:
-                            score_c = 0   # Wall against us
+                            atr_explain = "ATR unavailable"
+                        details.append(f"ATR: {score_b}/{MAX_SCORE_ATR} - {atr_explain}")
                         
-                        trade_score += score_c
-                        details.append(f"Book: {score_c}/15")
-                        
-                        # === D. PRICE / VALUE SCORE (Max 30) ===
-                        score_d = 0
+                        # === C. PRICE / VALUE SCORE (Proportional, Max 33) ===
+                        score_c = 0
                         share_price = None
                         share_type = "UNKNOWN"
                         
@@ -1075,43 +964,50 @@ def run_advisor():
                                 share_price = outcome_prices['up'] if real_price > strike_price else outcome_prices['down']
                                 share_type = "YES" if real_price > strike_price else "NO"
                                 
-                                # Price valuation scoring
-                                if 0.30 <= share_price <= 0.50:
-                                    score_d = 30      # Jackpot (ROI > 100%)
-                                elif 0.50 < share_price <= 0.70:
-                                    score_d = 20      # Very good
-                                elif 0.70 < share_price <= 0.85:
-                                    score_d = 10      # Fair
-                                elif share_price > 0.92:
-                                    score_d = -100    # KILL SWITCH (Too expensive, ruin risk)
+                                # Price valuation scoring (proportional)
+                                # Max score at 0.30, decreases linearly to 0 at 0.80
+                                if share_price < 0.30:
+                                    score_c = MAX_SCORE_PRICE  # Max score for very cheap
+                                elif share_price <= 0.80:
+                                    # Linear interpolation from 0.30 (max) to 0.80 (0)
+                                    score_c = int(round(MAX_SCORE_PRICE * (1 - (share_price - 0.30) / (0.80 - 0.30))))
                                 else:
-                                    score_d = 0
+                                    score_c = 0  # KILL SWITCH for expensive shares
                         except Exception as api_err:
                             print(f"   ⚠️  Error calculating price score: {api_err}")
                         
-                        trade_score += score_d
+                        trade_score += score_c
                         if share_price is None:
-                            details.append("Price(n/a): 0/30")
-                        elif score_d == -100:
-                            details.append(f"Price({share_price:.2f}): BLOCKED")
+                            details.append(f"Price(n/a): 0/{MAX_SCORE_PRICE} - Market prices unavailable")
+                        elif score_c == -100:
+                            details.append(f"Price({share_price:.2f}): BLOCKED - Too expensive (>${0.80:.2f})")
                         else:
-                            details.append(f"Price({share_price:.2f}): {score_d}/30")
+                            roi = ((1/share_price)-1)*100 if share_price > 0 else 0
+                            price_explain = f"ROI: {roi:.0f}%"
+                            details.append(f"Price({share_price:.2f}): {score_c}/{MAX_SCORE_PRICE} - {price_explain}")
                         
                         # === DECISION ===
+                        # Clamp negative scores to 0 for display
+                        display_score = max(0, trade_score)
+                        
                         window_stats['total_evaluations'] += 1
                         window_stats['total_score_a'] += score_a
                         window_stats['total_score_b'] += score_b
                         window_stats['total_score_c'] += score_c
-                        window_stats['total_score_d'] += score_d
-                        window_stats['total_score_sum'] += trade_score
+                        window_stats['total_score_sum'] += display_score
                         
-                        print(f"\n   📊 SCORE TOTAL: {trade_score}/100  (Seuil: {SCORE_THRESHOLD})")
-                        print(f"      {' | '.join(details)}")
+                        # Track maximum score hit during window
+                        if display_score > window_stats['max_total_score']:
+                            window_stats['max_total_score'] = display_score
+                        
+                        print(f"\n   📊 SCORE TOTAL: {display_score}/100  (Seuil: {SCORE_THRESHOLD})")
+                        for detail in details:
+                            print(f"      {detail}")
                         
                         print("\n" + "-"*60)
-                        if trade_score >= SCORE_THRESHOLD:
+                        if display_score >= SCORE_THRESHOLD:
                             window_stats['signals_triggered'] += 1
-                            print(f"🎯 ✅ TRADE CONFIRMÉ (Score {trade_score})")
+                            print(f"🎯 ✅ TRADE CONFIRMÉ (Score {display_score})")
                             print(f"   📈 SIGNAL: BUY {share_type} @ ${share_price:.2f} ({share_price*100:.0f}¢)")
                             print(f"   💰 Risk: ${share_price:.2f} | Potential: ${1-share_price:.2f} | ROI: {((1/share_price)-1)*100:.1f}%")
                             print(f"   🎲 Strategy: Price stays {'ABOVE' if real_price > strike_price else 'BELOW'} ${strike_price:,.2f}")
@@ -1124,7 +1020,7 @@ def run_advisor():
                                 'btc_price': real_price
                             }
                         else:
-                            print(f"❌ Score insuffisant ({trade_score}/100). Attente...")
+                            print(f"❌ Score insuffisant ({display_score}/100). Attente...")
                         print("-"*60)
                     
                     elif minutes_left > TRADE_WINDOW_MAX:
