@@ -21,8 +21,13 @@ from config import (
     ORDER_BOOK_RATIO_MIN,
     SHARE_PRICE_MIN, SHARE_PRICE_MAX,
     LOOP_SLEEP_SECONDS, NEXT_MARKET_WAIT_SECONDS,
-    SCORE_THRESHOLD
+    SCORE_THRESHOLD,
+    WEIGHT_BOLLINGER, WEIGHT_ATR, WEIGHT_ORDERBOOK, WEIGHT_PRICE
 )
+
+# === ORDER BOOK SCORING THRESHOLDS ===
+OB_RATIO_FLOOR = 0.5
+OB_RATIO_CAP = 3.0
 
 # --- 1. API IMPORTS ---
 try:
@@ -119,7 +124,7 @@ def calculate_rsi(closes, period=14):
     
     return rsi
 
-def analyze_order_book_barrier(order_book, current_price, target_price, atr_value):
+def analyze_order_book_barrier(order_book, current_price, target_price, atr_value, scan_depth_override=None, direction_override=None):
     """
     Analyze order book but ONLY look at depth within the immediate ATR range.
     This prevents huge walls far away from scaring the bot.
@@ -127,36 +132,57 @@ def analyze_order_book_barrier(order_book, current_price, target_price, atr_valu
     """
     bids = order_book.get('bids', [])
     asks = order_book.get('asks', [])
+
+    def _parse_levels(levels):
+        parsed = []
+        for level in levels:
+            if isinstance(level, dict):
+                price = level.get('price')
+                size = level.get('size') or level.get('amount')
+            else:
+                try:
+                    price = level[0]
+                    size = level[1]
+                except Exception:
+                    continue
+            try:
+                parsed.append((float(price), float(size)))
+            except (TypeError, ValueError):
+                continue
+        return parsed
+
+    bids = _parse_levels(bids)
+    asks = _parse_levels(asks)
     
     # We only care about walls within the "Volatility Range"
     # If ATR is None, default to a tight range (e.g. 0.1% of price)
-    scan_depth = atr_value if atr_value else current_price * 0.001
+    scan_depth = scan_depth_override if scan_depth_override is not None else (atr_value if atr_value else current_price * 0.001)
     
-    if current_price > target_price:
-        # BETTING UP (Hold the line)
+    if direction_override in ("UP", "DOWN"):
+        direction = direction_override
+    elif current_price > target_price:
         direction = "UP"
-        
+    else:
+        direction = "DOWN"
+
+    if direction == "UP":
         # Support: Bids close to current price (cushion)
         # Scan from Current Price down to (Current - Scan Depth)
-        relevant_bids = [float(bid[1]) for bid in bids 
-                         if (current_price - scan_depth) < float(bid[0]) < current_price]
-        
+        relevant_bids = [bid[1] for bid in bids
+                 if (current_price - scan_depth) < bid[0] < current_price]
+
         # Resistance: Asks immediately above (roof)
         # Scan from Current Price up to (Current + Scan Depth)
-        relevant_asks = [float(ask[1]) for ask in asks 
-                         if current_price < float(ask[0]) < (current_price + scan_depth)]
-        
+        relevant_asks = [ask[1] for ask in asks
+                 if current_price < ask[0] < (current_price + scan_depth)]
     else:
-        # BETTING DOWN
-        direction = "DOWN"
-        
         # Resistance: Asks close to current price
-        relevant_asks = [float(ask[1]) for ask in asks 
-                         if current_price < float(ask[0]) < (current_price + scan_depth)]
-        
+        relevant_asks = [ask[1] for ask in asks
+                 if current_price < ask[0] < (current_price + scan_depth)]
+
         # Support: Bids immediately below
-        relevant_bids = [float(bid[1]) for bid in bids 
-                         if (current_price - scan_depth) < float(bid[0]) < current_price]
+        relevant_bids = [bid[1] for bid in bids
+                 if (current_price - scan_depth) < bid[0] < current_price]
 
     bid_volume = sum(relevant_bids)
     ask_volume = sum(relevant_asks)
@@ -534,6 +560,21 @@ def fetch_clob_best_ask(token_id):
     except Exception:
         return None
 
+def fetch_clob_order_book(token_id):
+    """Fetch full order book for a token from Polymarket CLOB."""
+    if not token_id:
+        return None
+    try:
+        response = requests.get(
+            "https://clob.polymarket.com/book",
+            params={"token_id": token_id},
+            timeout=10
+        )
+        response.raise_for_status()
+        return response.json()
+    except Exception:
+        return None
+
 def fetch_clob_outcome_prices(yes_token_id, no_token_id):
     """Fetch YES/NO outcome prices from CLOB order books."""
     yes_price = fetch_clob_best_ask(yes_token_id)
@@ -554,11 +595,12 @@ def write_window_statistics(stats, trade_result=None):
         # Calculate average scores
         total = stats['total_evaluations']
         if total == 0:
-            avg_a = avg_b = avg_c = avg_total = 0
+            avg_a = avg_b = avg_c = avg_d = avg_total = 0
         else:
             avg_a = stats['total_score_a'] / total
             avg_b = stats['total_score_b'] / total
             avg_c = stats['total_score_c'] / total
+            avg_d = stats['total_score_d'] / total
             avg_total = stats['total_score_sum'] / total
         
         with open(stats_file, 'a') as f:
@@ -568,9 +610,10 @@ def write_window_statistics(stats, trade_result=None):
             f.write("-"*80 + "\n")
             
             f.write(f"📊 SCORING ANALYSIS ({total} evaluations, {stats['signals_triggered']} signals triggered):\n")
-            f.write(f"   • Bollinger Bands:    {avg_a:.1f}/35\n")
-            f.write(f"   • ATR Kinetic:        {avg_b:.1f}/29\n")
-            f.write(f"   • Price/ROI:          {avg_c:.1f}/36\n")
+            f.write(f"   • Bollinger Bands:    {avg_a:.1f}/40\n")
+            f.write(f"   • ATR Kinetic:        {avg_b:.1f}/40\n")
+            f.write(f"   • Order Book:         {avg_d:.1f}/10\n")
+            f.write(f"   • Price/ROI:          {avg_c:.1f}/10\n")
             f.write(f"   • AVG TOTAL SCORE:    {avg_total:.1f}/100\n")
             f.write(f"   • MAX TOTAL SCORE:    {stats['max_total_score']}/100\n")
             
@@ -585,12 +628,12 @@ def write_window_statistics(stats, trade_result=None):
                 f.write(f"   P&L:           {trade_result['profit_loss_pct']:+.2f}% (${trade_result['profit_loss_usd']:+.2f})\n")
                 
                 print(f"\n📊 WINDOW STATISTICS + TRADE RESULT SAVED:")
-                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f} | C: {avg_c:.1f}")
+                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f} | C: {avg_c:.1f} | D: {avg_d:.1f}")
                 print(f"   Avg Total Score: {avg_total:.1f}/100 | Signals: {stats['signals_triggered']}")
                 print(f"   Trade Result: {trade_result['result']} ({trade_result['profit_loss_pct']:+.2f}%)")
             else:
                 print(f"\n📊 WINDOW STATISTICS SAVED:")
-                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f} | C: {avg_c:.1f}")
+                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f} | C: {avg_c:.1f} | D: {avg_d:.1f}")
                 print(f"   Avg Total Score: {avg_total:.1f}/100 | Signals: {stats['signals_triggered']} | Evaluations: {total}")
             
             f.write("="*80 + "\n")
@@ -720,17 +763,12 @@ def run_advisor():
                 'total_score_a': 0,
                 'total_score_b': 0,
                 'total_score_c': 0,
+                'total_score_d': 0,
                 'total_score_sum': 0,
                 'max_total_score': 0,
                 'total_evaluations': 0,
                 'signals_triggered': 0
             }
-            
-            # === POIDS DES INDICATEURS (Scoring System) ===
-            WEIGHT_BOLLINGER = 30
-            WEIGHT_ATR = 25
-            WEIGHT_ORDERBOOK = 15
-            WEIGHT_PRICE = 30
             
             while True:
                 now = time.time()
@@ -890,9 +928,10 @@ def run_advisor():
                         details = []
                         
                         # Max score for each component
-                        MAX_SCORE_BB = 34  # Bollinger Bands
-                        MAX_SCORE_ATR = 33  # ATR
-                        MAX_SCORE_PRICE = 33  # Price
+                        MAX_SCORE_BB = WEIGHT_BOLLINGER
+                        MAX_SCORE_ATR = WEIGHT_ATR
+                        MAX_SCORE_ORDERBOOK = WEIGHT_ORDERBOOK
+                        MAX_SCORE_PRICE = WEIGHT_PRICE
                         
                         # === A. BOLLINGER BANDS SCORE (Proportional, Max 34) ===
                         upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=BOLLINGER_PERIOD, std_dev=2.0)
@@ -953,7 +992,7 @@ def run_advisor():
                             atr_explain = "ATR unavailable"
                         details.append(f"ATR: {score_b}/{MAX_SCORE_ATR} - {atr_explain}")
                         
-                        # === C. PRICE / VALUE SCORE (Proportional, Max 33) ===
+                        # === C. PRICE / VALUE SCORE (Proportional, Max 25) ===
                         score_c = 0
                         share_price = None
                         share_type = "UNKNOWN"
@@ -979,12 +1018,54 @@ def run_advisor():
                         trade_score += score_c
                         if share_price is None:
                             details.append(f"Price(n/a): 0/{MAX_SCORE_PRICE} - Market prices unavailable")
-                        elif score_c == -100:
-                            details.append(f"Price({share_price:.2f}): BLOCKED - Too expensive (>${0.80:.2f})")
+                        elif share_price > 0.80:
+                            details.append(f"Price({share_price:.2f}): 0/{MAX_SCORE_PRICE} - Too expensive (>${0.80:.2f})")
                         else:
                             roi = ((1/share_price)-1)*100 if share_price > 0 else 0
                             price_explain = f"ROI: {roi:.0f}%"
                             details.append(f"Price({share_price:.2f}): {score_c}/{MAX_SCORE_PRICE} - {price_explain}")
+
+                        # === D. ORDER BOOK BARRIER SCORE (Proportional, Max 20) ===
+                        score_d = 0
+                        order_book_explain = "Data unavailable"
+                        order_book = None
+
+                        clob_token_ids = market_data.get('clob_token_ids')
+                        if clob_token_ids and clob_token_ids.get('yes') and clob_token_ids.get('no') and share_price is not None:
+                            ob_token_id = clob_token_ids['yes'] if real_price > strike_price else clob_token_ids['no']
+                            order_book = fetch_clob_order_book(ob_token_id)
+
+                        if order_book and share_price is not None:
+                            ob_direction = "UP"
+                            ob_scan_depth = max(share_price * 0.05, 0.01)
+                            bid_vol, ask_vol, ratio, direction = analyze_order_book_barrier(
+                                order_book,
+                                share_price,
+                                share_price,
+                                atr,
+                                scan_depth_override=ob_scan_depth,
+                                direction_override=ob_direction
+                            )
+
+                            if ratio <= OB_RATIO_FLOOR:
+                                score_d = 0
+                                percent = 0.0
+                            elif ratio >= OB_RATIO_CAP:
+                                score_d = MAX_SCORE_ORDERBOOK
+                                percent = 1.0
+                            else:
+                                progress = (ratio - OB_RATIO_FLOOR) / (OB_RATIO_CAP - OB_RATIO_FLOOR)
+                                score_d = int(round(progress * MAX_SCORE_ORDERBOOK))
+                                percent = progress
+
+                            order_book_explain = (
+                                f"Ref {share_price:.3f} ±{ob_scan_depth:.3f} | "
+                                f"Bid {bid_vol:.1f} vs Ask {ask_vol:.1f} | "
+                                f"Ratio {ratio:.2f} -> {percent*100:.0f}% pts"
+                            )
+
+                        trade_score += score_d
+                        details.append(f"OrderBook: {score_d}/{MAX_SCORE_ORDERBOOK} - {order_book_explain}")
                         
                         # === DECISION ===
                         # Clamp negative scores to 0 for display
@@ -994,6 +1075,7 @@ def run_advisor():
                         window_stats['total_score_a'] += score_a
                         window_stats['total_score_b'] += score_b
                         window_stats['total_score_c'] += score_c
+                        window_stats['total_score_d'] += score_d
                         window_stats['total_score_sum'] += display_score
                         
                         # Track maximum score hit during window
@@ -1004,8 +1086,23 @@ def run_advisor():
                         for detail in details:
                             print(f"      {detail}")
                         
+                        # === HARD CONSTRAINTS CHECK ===
+                        constraint_violations = []
+                        if share_price is not None:
+                            if share_price < SHARE_PRICE_MIN:
+                                constraint_violations.append(f"Price too low (${share_price:.2f} < ${SHARE_PRICE_MIN})")
+                            if share_price > SHARE_PRICE_MAX:
+                                constraint_violations.append(f"Price too high (${share_price:.2f} > ${SHARE_PRICE_MAX})")
+                        if order_book and 'ratio' in locals():
+                            if ratio < ORDER_BOOK_RATIO_MIN:
+                                constraint_violations.append(f"OrderBook ratio too low ({ratio:.2f} < {ORDER_BOOK_RATIO_MIN})")
+                        
                         print("\n" + "-"*60)
-                        if display_score >= SCORE_THRESHOLD:
+                        if constraint_violations:
+                            print(f"🚫 TRADE BLOCKED - Hard constraints violated:")
+                            for violation in constraint_violations:
+                                print(f"   ⛔ {violation}")
+                        elif display_score >= SCORE_THRESHOLD:
                             window_stats['signals_triggered'] += 1
                             print(f"🎯 ✅ TRADE CONFIRMÉ (Score {display_score})")
                             print(f"   📈 SIGNAL: BUY {share_type} @ ${share_price:.2f} ({share_price*100:.0f}¢)")
