@@ -22,7 +22,7 @@ from config import (
     SHARE_PRICE_MIN, SHARE_PRICE_MAX,
     LOOP_SLEEP_SECONDS, NEXT_MARKET_WAIT_SECONDS,
     SCORE_THRESHOLD,
-    WEIGHT_BOLLINGER, WEIGHT_ATR, WEIGHT_ORDERBOOK, WEIGHT_PRICE
+    WEIGHT_BOLLINGER, WEIGHT_ATR, WEIGHT_ORDERBOOK, WEIGHT_PRICE, WEIGHT_RSI
 )
 
 # === ORDER BOOK SCORING THRESHOLDS ===
@@ -595,12 +595,13 @@ def write_window_statistics(stats, trade_result=None):
         # Calculate average scores
         total = stats['total_evaluations']
         if total == 0:
-            avg_a = avg_b = avg_c = avg_d = avg_total = 0
+            avg_a = avg_b = avg_c = avg_d = avg_e = avg_total = 0
         else:
             avg_a = stats['total_score_a'] / total
             avg_b = stats['total_score_b'] / total
             avg_c = stats['total_score_c'] / total
             avg_d = stats['total_score_d'] / total
+            avg_e = stats['total_score_e'] / total
             avg_total = stats['total_score_sum'] / total
         
         with open(stats_file, 'a') as f:
@@ -610,10 +611,11 @@ def write_window_statistics(stats, trade_result=None):
             f.write("-"*80 + "\n")
             
             f.write(f"📊 SCORING ANALYSIS ({total} evaluations, {stats['signals_triggered']} signals triggered):\n")
-            f.write(f"   • Bollinger Bands:    {avg_a:.1f}/40\n")
-            f.write(f"   • ATR Kinetic:        {avg_b:.1f}/40\n")
+            f.write(f"   • Bollinger Bands:    {avg_a:.1f}/35\n")
+            f.write(f"   • ATR Kinetic:        {avg_b:.1f}/35\n")
             f.write(f"   • Order Book:         {avg_d:.1f}/10\n")
             f.write(f"   • Price/ROI:          {avg_c:.1f}/10\n")
+            f.write(f"   • RSI:                {avg_e:.1f}/10\n")
             f.write(f"   • AVG TOTAL SCORE:    {avg_total:.1f}/100\n")
             f.write(f"   • MAX TOTAL SCORE:    {stats['max_total_score']}/100\n")
             
@@ -628,12 +630,12 @@ def write_window_statistics(stats, trade_result=None):
                 f.write(f"   P&L:           {trade_result['profit_loss_pct']:+.2f}% (${trade_result['profit_loss_usd']:+.2f})\n")
                 
                 print(f"\n📊 WINDOW STATISTICS + TRADE RESULT SAVED:")
-                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f} | C: {avg_c:.1f} | D: {avg_d:.1f}")
+                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f} | C: {avg_c:.1f} | D: {avg_d:.1f} | E: {avg_e:.1f}")
                 print(f"   Avg Total Score: {avg_total:.1f}/100 | Signals: {stats['signals_triggered']}")
                 print(f"   Trade Result: {trade_result['result']} ({trade_result['profit_loss_pct']:+.2f}%)")
             else:
                 print(f"\n📊 WINDOW STATISTICS SAVED:")
-                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f} | C: {avg_c:.1f} | D: {avg_d:.1f}")
+                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f} | C: {avg_c:.1f} | D: {avg_d:.1f} | E: {avg_e:.1f}")
                 print(f"   Avg Total Score: {avg_total:.1f}/100 | Signals: {stats['signals_triggered']} | Evaluations: {total}")
             
             f.write("="*80 + "\n")
@@ -764,6 +766,7 @@ def run_advisor():
                 'total_score_b': 0,
                 'total_score_c': 0,
                 'total_score_d': 0,
+                'total_score_e': 0,
                 'total_score_sum': 0,
                 'max_total_score': 0,
                 'total_evaluations': 0,
@@ -1066,6 +1069,34 @@ def run_advisor():
 
                         trade_score += score_d
                         details.append(f"OrderBook: {score_d}/{MAX_SCORE_ORDERBOOK} - {order_book_explain}")
+
+                        # === E. RSI SCORE (Proportional, Max 10) ===
+                        score_e = 0
+                        rsi_val = calculate_rsi(closes, period=14)
+
+                        if rsi_val:
+                            if real_price > strike_price:  # UP trade
+                                # Score max (10) if RSI <= 30, Score 0 if RSI >= 75
+                                if rsi_val <= 30:
+                                    score_e = WEIGHT_RSI
+                                elif rsi_val >= 75:
+                                    score_e = 0
+                                else:
+                                    # Linear interpolation between 30 (10 pts) and 75 (0 pts)
+                                    score_e = int(round(WEIGHT_RSI * (1 - (rsi_val - 30) / (75 - 30))))
+                            else:  # DOWN trade
+                                # Score max (10) if RSI >= 70, Score 0 if RSI <= 25
+                                if rsi_val >= 70:
+                                    score_e = WEIGHT_RSI
+                                elif rsi_val <= 25:
+                                    score_e = 0
+                                else:
+                                    # Linear interpolation between 25 (0 pts) and 70 (10 pts)
+                                    score_e = int(round(WEIGHT_RSI * ((rsi_val - 25) / (70 - 25))))
+
+                        trade_score += score_e
+                        rsi_display = f"{rsi_val:.1f}" if rsi_val else "N/A"
+                        details.append(f"RSI({rsi_display}): {score_e}/{WEIGHT_RSI}")
                         
                         # === DECISION ===
                         # Clamp negative scores to 0 for display
@@ -1076,6 +1107,7 @@ def run_advisor():
                         window_stats['total_score_b'] += score_b
                         window_stats['total_score_c'] += score_c
                         window_stats['total_score_d'] += score_d
+                        window_stats['total_score_e'] += score_e
                         window_stats['total_score_sum'] += display_score
                         
                         # Track maximum score hit during window
@@ -1098,26 +1130,27 @@ def run_advisor():
                                 constraint_violations.append(f"OrderBook ratio too low ({ratio:.2f} < {ORDER_BOOK_RATIO_MIN})")
                         
                         print("\n" + "-"*60)
-                        if constraint_violations:
-                            print(f"🚫 TRADE BLOCKED - Hard constraints violated:")
-                            for violation in constraint_violations:
-                                print(f"   ⛔ {violation}")
-                        elif display_score >= SCORE_THRESHOLD:
-                            window_stats['signals_triggered'] += 1
-                            print(f"🎯 ✅ TRADE CONFIRMÉ (Score {display_score})")
-                            print(f"   📈 SIGNAL: BUY {share_type} @ ${share_price:.2f} ({share_price*100:.0f}¢)")
-                            print(f"   💰 Risk: ${share_price:.2f} | Potential: ${1-share_price:.2f} | ROI: {((1/share_price)-1)*100:.1f}%")
-                            print(f"   🎲 Strategy: Price stays {'ABOVE' if real_price > strike_price else 'BELOW'} ${strike_price:,.2f}")
-                            
-                            trade_signal_given = True
-                            signal_details = {
-                                'direction': share_type,
-                                'price': share_price,
-                                'entry_time': minutes_left,
-                                'btc_price': real_price
-                            }
+                        if display_score >= SCORE_THRESHOLD:
+                            if constraint_violations:
+                                print(f"🚫 TRADE BLOCKED - Hard constraints violated:")
+                                for violation in constraint_violations:
+                                    print(f"   ⛔ {violation}")
+                            else:
+                                window_stats['signals_triggered'] += 1
+                                print(f"🎯 ✅ TRADE CONFIRMÉ (Score {display_score})")
+                                print(f"   📈 SIGNAL: BUY {share_type} @ ${share_price:.2f} ({share_price*100:.0f}¢)")
+                                print(f"   💰 Risk: ${share_price:.2f} | Potential: ${1-share_price:.2f} | ROI: {((1/share_price)-1)*100:.1f}%")
+                                print(f"   🎲 Strategy: Price stays {'ABOVE' if real_price > strike_price else 'BELOW'} ${strike_price:,.2f}")
+                                
+                                trade_signal_given = True
+                                signal_details = {
+                                    'direction': share_type,
+                                    'price': share_price,
+                                    'entry_time': minutes_left,
+                                    'btc_price': real_price
+                                }
                         else:
-                            print(f"❌ Score insuffisant ({display_score}/100). Attente...")
+                            print(f"❌ Score insuffisant ({display_score}/100)")
                         print("-"*60)
                     
                     elif minutes_left > TRADE_WINDOW_MAX:

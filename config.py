@@ -16,10 +16,11 @@ ATR_MULTIPLIER = 0.6
 SCORE_THRESHOLD = 70  # Minimum total score required to execute a trade (0-100)
 
 # === SCORING WEIGHTS ===
-WEIGHT_BOLLINGER = 40
-WEIGHT_ATR = 40
+WEIGHT_BOLLINGER = 35
+WEIGHT_ATR = 35
 WEIGHT_ORDERBOOK = 10
 WEIGHT_PRICE = 10
+WEIGHT_RSI = 10
 
 # === BARRIER THRESHOLDS (HARD CONSTRAINTS) ===
 ORDER_BOOK_RATIO_MIN = 0.3  # Minimum ratio for order book depth barrier (BLOCKS TRADE if below)
