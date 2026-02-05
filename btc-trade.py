@@ -22,7 +22,7 @@ from config import (
     SHARE_PRICE_MIN, SHARE_PRICE_MAX,
     LOOP_SLEEP_SECONDS, NEXT_MARKET_WAIT_SECONDS,
     SCORE_THRESHOLD,
-    WEIGHT_BOLLINGER, WEIGHT_ATR, WEIGHT_ORDERBOOK, WEIGHT_PRICE, WEIGHT_RSI
+    WEIGHT_BOLLINGER, WEIGHT_ATR, WEIGHT_ORDERBOOK, WEIGHT_RSI
 )
 
 # === ORDER BOOK SCORING THRESHOLDS ===
@@ -595,11 +595,10 @@ def write_window_statistics(stats, trade_result=None):
         # Calculate average scores
         total = stats['total_evaluations']
         if total == 0:
-            avg_a = avg_b = avg_c = avg_d = avg_e = avg_total = 0
+            avg_a = avg_b = avg_d = avg_e = avg_total = 0
         else:
             avg_a = stats['total_score_a'] / total
             avg_b = stats['total_score_b'] / total
-            avg_c = stats['total_score_c'] / total
             avg_d = stats['total_score_d'] / total
             avg_e = stats['total_score_e'] / total
             avg_total = stats['total_score_sum'] / total
@@ -611,13 +610,22 @@ def write_window_statistics(stats, trade_result=None):
             f.write("-"*80 + "\n")
             
             f.write(f"📊 SCORING ANALYSIS ({total} evaluations, {stats['signals_triggered']} signals triggered):\n")
-            f.write(f"   • Bollinger Bands:    {avg_a:.1f}/35\n")
-            f.write(f"   • ATR Kinetic:        {avg_b:.1f}/35\n")
+            f.write(f"   • Bollinger Bands:    {avg_a:.1f}/40\n")
+            f.write(f"   • ATR Kinetic:        {avg_b:.1f}/40\n")
             f.write(f"   • Order Book:         {avg_d:.1f}/10\n")
-            f.write(f"   • Price/ROI:          {avg_c:.1f}/10\n")
             f.write(f"   • RSI:                {avg_e:.1f}/10\n")
             f.write(f"   • AVG TOTAL SCORE:    {avg_total:.1f}/100\n")
             f.write(f"   • MAX TOTAL SCORE:    {stats['max_total_score']}/100\n")
+            if stats.get('max_total_score', 0) >= SCORE_THRESHOLD and stats.get('signals_triggered', 0) == 0:
+                f.write("⚠️  NO TRADE EXECUTED despite MAX SCORE >= threshold:\n")
+                blocked_count = stats.get('blocked_signals', 0)
+                blocked_reasons = stats.get('blocked_reasons', [])
+                if blocked_count > 0:
+                    f.write(f"   • {blocked_count} signal(s) blocked by hard constraints:\n")
+                    for reason in blocked_reasons:
+                        f.write(f"     - {reason}\n")
+                else:
+                    f.write("   • No eligible signals (constraints or missing data). Check runtime logs.\n")
             
             if trade_result:
                 f.write("-"*80 + "\n")
@@ -630,12 +638,12 @@ def write_window_statistics(stats, trade_result=None):
                 f.write(f"   P&L:           {trade_result['profit_loss_pct']:+.2f}% (${trade_result['profit_loss_usd']:+.2f})\n")
                 
                 print(f"\n📊 WINDOW STATISTICS + TRADE RESULT SAVED:")
-                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f} | C: {avg_c:.1f} | D: {avg_d:.1f} | E: {avg_e:.1f}")
+                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f} | D: {avg_d:.1f} | E: {avg_e:.1f}")
                 print(f"   Avg Total Score: {avg_total:.1f}/100 | Signals: {stats['signals_triggered']}")
                 print(f"   Trade Result: {trade_result['result']} ({trade_result['profit_loss_pct']:+.2f}%)")
             else:
                 print(f"\n📊 WINDOW STATISTICS SAVED:")
-                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f} | C: {avg_c:.1f} | D: {avg_d:.1f} | E: {avg_e:.1f}")
+                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f} | D: {avg_d:.1f} | E: {avg_e:.1f}")
                 print(f"   Avg Total Score: {avg_total:.1f}/100 | Signals: {stats['signals_triggered']} | Evaluations: {total}")
             
             f.write("="*80 + "\n")
@@ -764,13 +772,14 @@ def run_advisor():
                 'start_time': end_time_readable,
                 'total_score_a': 0,
                 'total_score_b': 0,
-                'total_score_c': 0,
                 'total_score_d': 0,
                 'total_score_e': 0,
                 'total_score_sum': 0,
                 'max_total_score': 0,
                 'total_evaluations': 0,
-                'signals_triggered': 0
+                'signals_triggered': 0,
+                'blocked_signals': 0,
+                'blocked_reasons': []
             }
             
             while True:
@@ -934,7 +943,7 @@ def run_advisor():
                         MAX_SCORE_BB = WEIGHT_BOLLINGER
                         MAX_SCORE_ATR = WEIGHT_ATR
                         MAX_SCORE_ORDERBOOK = WEIGHT_ORDERBOOK
-                        MAX_SCORE_PRICE = WEIGHT_PRICE
+                        MAX_SCORE_RSI = WEIGHT_RSI
                         
                         # === A. BOLLINGER BANDS SCORE (Proportional, Max 34) ===
                         upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=BOLLINGER_PERIOD, std_dev=2.0)
@@ -950,6 +959,7 @@ def run_advisor():
                                 # Score = MAX when position is 0, Score = 0 when position > 0.5
                                 if target_position < 0.5:
                                     score_a = int(round(MAX_SCORE_BB * (1 - target_position / 0.5)))
+                                    score_a = min(score_a, MAX_SCORE_BB)  # Clamp to max after rounding
                                 else:
                                     score_a = 0
                             else:  # DOWN scenario
@@ -957,6 +967,7 @@ def run_advisor():
                                 # Score = MAX when position is 1, Score = 0 when position < 0.5
                                 if target_position > 0.5:
                                     score_a = int(round(MAX_SCORE_BB * ((target_position - 0.5) / 0.5)))
+                                    score_a = min(score_a, MAX_SCORE_BB)  # Clamp to max after rounding
                                 else:
                                     score_a = 0
                         
@@ -995,40 +1006,18 @@ def run_advisor():
                             atr_explain = "ATR unavailable"
                         details.append(f"ATR: {score_b}/{MAX_SCORE_ATR} - {atr_explain}")
                         
-                        # === C. PRICE / VALUE SCORE (Proportional, Max 25) ===
-                        score_c = 0
+                        # Get share_price and share_type for constraints (not scoring)
                         share_price = None
                         share_type = "UNKNOWN"
-                        
                         try:
                             outcome_prices = market_data.get('outcome_prices', {})
                             if outcome_prices.get('up') is not None and outcome_prices.get('down') is not None:
                                 share_price = outcome_prices['up'] if real_price > strike_price else outcome_prices['down']
                                 share_type = "YES" if real_price > strike_price else "NO"
-                                
-                                # Price valuation scoring (proportional)
-                                # Max score at 0.30, decreases linearly to 0 at 0.80
-                                if share_price < 0.30:
-                                    score_c = MAX_SCORE_PRICE  # Max score for very cheap
-                                elif share_price <= 0.80:
-                                    # Linear interpolation from 0.30 (max) to 0.80 (0)
-                                    score_c = int(round(MAX_SCORE_PRICE * (1 - (share_price - 0.30) / (0.80 - 0.30))))
-                                else:
-                                    score_c = 0  # KILL SWITCH for expensive shares
-                        except Exception as api_err:
-                            print(f"   ⚠️  Error calculating price score: {api_err}")
+                        except Exception:
+                            pass
                         
-                        trade_score += score_c
-                        if share_price is None:
-                            details.append(f"Price(n/a): 0/{MAX_SCORE_PRICE} - Market prices unavailable")
-                        elif share_price > 0.80:
-                            details.append(f"Price({share_price:.2f}): 0/{MAX_SCORE_PRICE} - Too expensive (>${0.80:.2f})")
-                        else:
-                            roi = ((1/share_price)-1)*100 if share_price > 0 else 0
-                            price_explain = f"ROI: {roi:.0f}%"
-                            details.append(f"Price({share_price:.2f}): {score_c}/{MAX_SCORE_PRICE} - {price_explain}")
-
-                        # === D. ORDER BOOK BARRIER SCORE (Proportional, Max 20) ===
+                        # === D. ORDER BOOK BARRIER SCORE (Proportional, Max 10) ===
                         score_d = 0
                         order_book_explain = "Data unavailable"
                         order_book = None
@@ -1105,7 +1094,6 @@ def run_advisor():
                         window_stats['total_evaluations'] += 1
                         window_stats['total_score_a'] += score_a
                         window_stats['total_score_b'] += score_b
-                        window_stats['total_score_c'] += score_c
                         window_stats['total_score_d'] += score_d
                         window_stats['total_score_e'] += score_e
                         window_stats['total_score_sum'] += display_score
@@ -1132,6 +1120,10 @@ def run_advisor():
                         print("\n" + "-"*60)
                         if display_score >= SCORE_THRESHOLD:
                             if constraint_violations:
+                                window_stats['blocked_signals'] += 1
+                                for violation in constraint_violations:
+                                    if violation not in window_stats['blocked_reasons']:
+                                        window_stats['blocked_reasons'].append(violation)
                                 print(f"🚫 TRADE BLOCKED - Hard constraints violated:")
                                 for violation in constraint_violations:
                                     print(f"   ⛔ {violation}")
