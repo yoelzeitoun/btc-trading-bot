@@ -18,17 +18,13 @@ from config import (
     TRADE_WINDOW_MIN, TRADE_WINDOW_MAX,
     BOLLINGER_PERIOD, BOLLINGER_STD_DEV,
     ATR_PERIOD, ATR_MULTIPLIER,
-    ORDER_BOOK_RATIO_MIN,
     SHARE_PRICE_MIN, SHARE_PRICE_MAX,
+    BB_BANDWIDTH_MIN,
     LOOP_SLEEP_SECONDS, NEXT_MARKET_WAIT_SECONDS,
     SCORE_THRESHOLD,
-    WEIGHT_BOLLINGER, WEIGHT_ATR, WEIGHT_ORDERBOOK, WEIGHT_RSI,
+    WEIGHT_BOLLINGER, WEIGHT_ATR, WEIGHT_RSI,
     REAL_TRADE, TRADE_AMOUNT
 )
-
-# === ORDER BOOK SCORING THRESHOLDS ===
-OB_RATIO_FLOOR = 0.5
-OB_RATIO_CAP = 3.0
 
 # --- 1. API IMPORTS ---
 try:
@@ -50,6 +46,7 @@ API_SECRET = os.getenv("API_SECRET")
 API_PASSPHRASE = os.getenv("API_PASSPHRASE")
 MY_ADDRESS = os.getenv("MY_ADDRESS")
 PRIVATE_KEY = os.getenv("PRIVATE_KEY")
+PROXY_ADDRESS = os.getenv("PROXY_ADDRESS")
 
 # --- 2B. CHAINLINK BTC/USD STREAM CONFIG ---
 CHAINLINK_STREAM_URLS = [
@@ -125,79 +122,6 @@ def calculate_rsi(closes, period=14):
     
     return rsi
 
-def analyze_order_book_barrier(order_book, current_price, target_price, atr_value, scan_depth_override=None, direction_override=None):
-    """
-    Analyze order book but ONLY look at depth within the immediate ATR range.
-    This prevents huge walls far away from scaring the bot.
-    Only the orders within volatility range matter.
-    """
-    bids = order_book.get('bids', [])
-    asks = order_book.get('asks', [])
-
-    def _parse_levels(levels):
-        parsed = []
-        for level in levels:
-            if isinstance(level, dict):
-                price = level.get('price')
-                size = level.get('size') or level.get('amount')
-            else:
-                try:
-                    price = level[0]
-                    size = level[1]
-                except Exception:
-                    continue
-            try:
-                parsed.append((float(price), float(size)))
-            except (TypeError, ValueError):
-                continue
-        return parsed
-
-    bids = _parse_levels(bids)
-    asks = _parse_levels(asks)
-    
-    # We only care about walls within the "Volatility Range"
-    # If ATR is None, default to a tight range (e.g. 0.1% of price)
-    scan_depth = scan_depth_override if scan_depth_override is not None else (atr_value if atr_value else current_price * 0.001)
-    
-    if direction_override in ("UP", "DOWN"):
-        direction = direction_override
-    elif current_price > target_price:
-        direction = "UP"
-    else:
-        direction = "DOWN"
-
-    if direction == "UP":
-        # Support: Bids close to current price (cushion)
-        # Scan from Current Price down to (Current - Scan Depth)
-        relevant_bids = [bid[1] for bid in bids
-                 if (current_price - scan_depth) < bid[0] < current_price]
-
-        # Resistance: Asks immediately above (roof)
-        # Scan from Current Price up to (Current + Scan Depth)
-        relevant_asks = [ask[1] for ask in asks
-                 if current_price < ask[0] < (current_price + scan_depth)]
-    else:
-        # Resistance: Asks close to current price
-        relevant_asks = [ask[1] for ask in asks
-                 if current_price < ask[0] < (current_price + scan_depth)]
-
-        # Support: Bids immediately below
-        relevant_bids = [bid[1] for bid in bids
-                 if (current_price - scan_depth) < bid[0] < current_price]
-
-    bid_volume = sum(relevant_bids)
-    ask_volume = sum(relevant_asks)
-
-    # Calculate Ratio
-    if direction == "UP":
-        # We want high Bid Volume relative to Ask Volume immediate overhead
-        ratio = bid_volume / ask_volume if ask_volume > 0 else 10.0
-    else: 
-        # We want high Ask Volume relative to Bid Volume immediate underfoot
-        ratio = ask_volume / bid_volume if bid_volume > 0 else 10.0
-
-    return bid_volume, ask_volume, ratio, direction
-
 def _safe_float(value):
     try:
         return float(value)
@@ -262,6 +186,7 @@ def execute_real_trade(poly_client, token_id, direction, share_price, strike_pri
         book_data = book_response.json()
         
         asks = book_data.get("asks", [])
+        min_order_size = _safe_float(book_data.get("min_order_size")) or 1.0
         
         if not asks:
             print("   ❌ No asks available in order book")
@@ -269,17 +194,47 @@ def execute_real_trade(poly_client, token_id, direction, share_price, strike_pri
             
         best_ask_price = min(float(a['price']) for a in asks)
         
-        # === DETERMINE TRADE AMOUNT ===
-        # Polymarket minimum order is $1 (not in shares, in USD)
-        actual_trade_amount = max(TRADE_AMOUNT, 1.0)  # Enforce $1 minimum
-        
-        if TRADE_AMOUNT < 1.0:
-            print(f"   📊 Trade Amount ${TRADE_AMOUNT} below minimum $1, using $1 minimum")
-        
-        # Calculate number of shares to buy
-        actual_size = round(actual_trade_amount / best_ask_price, 2)
+        # === DETERMINE TRADE SIZE (SHARES) ===
+        actual_size = float(TRADE_AMOUNT)
+
+        # Enforce per-token minimum share size
+        if actual_size < min_order_size:
+            actual_size = float(min_order_size)
+            print(
+                f"   📊 Size below token minimum, using minimum size: {actual_size} shares"
+            )
+
         actual_cost = actual_size * best_ask_price
             
+        # Check balance/allowance before placing order
+        try:
+            from py_clob_client.clob_types import BalanceAllowanceParams, AssetType, OrderArgs
+            balance_params = BalanceAllowanceParams(asset_type=AssetType.COLLATERAL)
+            balance_info = poly_client.get_balance_allowance(balance_params)
+
+            # Support different response shapes
+            if isinstance(balance_info, dict):
+                raw_balance = balance_info.get("balance") or balance_info.get("collateral_balance")
+                raw_allowance = balance_info.get("allowance") or balance_info.get("collateral_allowance")
+            else:
+                raw_balance = getattr(balance_info, "balance", None)
+                raw_allowance = getattr(balance_info, "allowance", None)
+
+            balance_val = _safe_float(raw_balance)
+            allowance_val = _safe_float(raw_allowance)
+
+            if balance_val is not None and allowance_val is not None:
+                required = actual_cost
+                if balance_val < required or allowance_val < required:
+                    print(
+                        f"   🚫 Insufficient balance/allowance: "
+                        f"balance=${balance_val:.2f}, allowance=${allowance_val:.2f}, required=${required:.2f}"
+                    )
+                    print("   💡 Deposit/approve more USDC collateral in Polymarket to trade.")
+                    return None
+        except Exception as e:
+            print(f"   ⚠️  Could not verify balance/allowance: {e}")
+
         # Import OrderArgs
         from py_clob_client.clob_types import OrderArgs
         
@@ -668,21 +623,6 @@ def fetch_clob_best_ask(token_id):
     except Exception:
         return None
 
-def fetch_clob_order_book(token_id):
-    """Fetch full order book for a token from Polymarket CLOB."""
-    if not token_id:
-        return None
-    try:
-        response = requests.get(
-            "https://clob.polymarket.com/book",
-            params={"token_id": token_id},
-            timeout=10
-        )
-        response.raise_for_status()
-        return response.json()
-    except Exception:
-        return None
-
 def fetch_clob_outcome_prices(yes_token_id, no_token_id):
     """Fetch YES/NO outcome prices from CLOB order books."""
     yes_price = fetch_clob_best_ask(yes_token_id)
@@ -703,11 +643,10 @@ def write_window_statistics(stats, trade_result=None):
         # Calculate average scores
         total = stats['total_evaluations']
         if total == 0:
-            avg_a = avg_b = avg_d = avg_e = avg_total = 0
+            avg_a = avg_b = avg_e = avg_total = 0
         else:
             avg_a = stats['total_score_a'] / total
             avg_b = stats['total_score_b'] / total
-            avg_d = stats['total_score_d'] / total
             avg_e = stats['total_score_e'] / total
             avg_total = stats['total_score_sum'] / total
         
@@ -718,10 +657,9 @@ def write_window_statistics(stats, trade_result=None):
             f.write("-"*80 + "\n")
             
             f.write(f"📊 SCORING ANALYSIS ({total} evaluations, {stats['signals_triggered']} signals triggered):\n")
-            f.write(f"   • Bollinger Bands:    {stats['max_score_a']}/40 (max score)\n")
-            f.write(f"   • ATR Kinetic:        {stats['max_score_b']}/40 (max score)\n")
-            f.write(f"   • Order Book:         {stats['max_score_d']}/10 (max score)\n")
-            f.write(f"   • RSI:                {stats['max_score_e']}/10 (max score)\n")
+            f.write(f"   • Bollinger Bands:    {stats['max_score_a']}/60 (max score)\n")
+            f.write(f"   • ATR Kinetic:        {stats['max_score_b']}/35 (max score)\n")
+            f.write(f"   • RSI:                {stats['max_score_e']}/5 (max score)\n")
             f.write(f"   • MAX TOTAL SCORE:    {stats['max_total_score']}/100\n")
             
             # Show "AT MAX SCORE MOMENT" if max score was tracked (price was acceptable)
@@ -784,12 +722,12 @@ def write_window_statistics(stats, trade_result=None):
                 f.write(f"   P&L:           {trade_result['profit_loss_pct']:+.2f}% (${trade_result['profit_loss_usd']:+.2f})\n")
                 
                 print(f"\n📊 WINDOW STATISTICS + TRADE RESULT SAVED:")
-                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f} | D: {avg_d:.1f} | E: {avg_e:.1f}")
+                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f} | E: {avg_e:.1f}")
                 print(f"   Avg Total Score: {avg_total:.1f}/100 | Signals: {stats['signals_triggered']}")
                 print(f"   Trade Result: {trade_result['result']} ({trade_result['profit_loss_pct']:+.2f}%)")
             else:
                 print(f"\n📊 WINDOW STATISTICS SAVED:")
-                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f} | D: {avg_d:.1f} | E: {avg_e:.1f}")
+                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f} | E: {avg_e:.1f}")
                 print(f"   Avg Total Score: {avg_total:.1f}/100 | Signals: {stats['signals_triggered']} | Evaluations: {total}")
             
             f.write("="*80 + "\n")
@@ -802,7 +740,17 @@ def write_window_statistics(stats, trade_result=None):
 def run_advisor():
     # Setup API connections
     creds = ApiCreds(API_KEY, API_SECRET, API_PASSPHRASE)
-    poly_client = ClobClient("https://clob.polymarket.com", key=PRIVATE_KEY, creds=creds, chain_id=POLYGON)
+    if PROXY_ADDRESS:
+        poly_client = ClobClient(
+            "https://clob.polymarket.com",
+            key=PRIVATE_KEY,
+            creds=creds,
+            chain_id=POLYGON,
+            funder=PROXY_ADDRESS,
+            signature_type=2
+        )
+    else:
+        poly_client = ClobClient("https://clob.polymarket.com", key=PRIVATE_KEY, creds=creds, chain_id=POLYGON)
 
     print("\n🚀 DOUBLE BARRIER MEAN REVERSION BOT - CONTINUOUS MODE")
     print("="*60)
@@ -918,13 +866,11 @@ def run_advisor():
                 'start_time': end_time_readable,
                 'total_score_a': 0,
                 'total_score_b': 0,
-                'total_score_d': 0,
                 'total_score_e': 0,
                 'total_score_sum': 0,
                 'max_total_score': 0,
                 'max_score_a': 0,
                 'max_score_b': 0,
-                'max_score_d': 0,
                 'max_score_e': 0,
                 'max_score_btc_price': 0,
                 'max_score_direction': 'UNKNOWN',
@@ -1105,14 +1051,17 @@ def run_advisor():
                         # Max score for each component
                         MAX_SCORE_BB = WEIGHT_BOLLINGER
                         MAX_SCORE_ATR = WEIGHT_ATR
-                        MAX_SCORE_ORDERBOOK = WEIGHT_ORDERBOOK
                         MAX_SCORE_RSI = WEIGHT_RSI
                         
                         # === A. BOLLINGER BANDS SCORE (Proportional, Max 34) ===
                         upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=BOLLINGER_PERIOD, std_dev=2.0)
                         
                         score_a = 0
-                        if upper_bb and lower_bb:
+                        bb_bandwidth = None
+                        if upper_bb and lower_bb and middle_bb:
+                            # Calculate Bollinger Bandwidth
+                            bb_bandwidth = (upper_bb - lower_bb) / middle_bb if middle_bb > 0 else 0
+                            
                             bb_range = upper_bb - lower_bb
                             target_position = (strike_price - lower_bb) / bb_range
                             target_position = max(0, min(1, target_position))  # Clamp to 0-1
@@ -1144,6 +1093,8 @@ def run_advisor():
                                 # DOWN trade: we want strike HIGH in band (near top)
                                 distance_from_top = 1 - target_position
                                 bb_explain = f"Strike at {distance_from_top:.1%} from TOP of band | DOWN trade ✓"
+                            if bb_bandwidth is not None:
+                                bb_explain += f" | BW: {bb_bandwidth:.3f}"
                         else:
                             bb_explain = "Bollinger Bands unavailable"
                         details.append(f"BB: {score_a}/{MAX_SCORE_BB} - {bb_explain}")
@@ -1156,10 +1107,15 @@ def run_advisor():
                             max_move = atr * math.sqrt(minutes_left) * ATR_MULTIPLIER
                             dist = abs(real_price - strike_price)
                             
-                            # Proportional: max score at 1.5x distance, 0 at 0 distance
-                            if max_move > 0:
-                                distance_ratio = min(dist / (max_move * 1.5), 1.0)  # Clamp to 0-1
-                                score_b = int(round(MAX_SCORE_ATR * distance_ratio))
+                            # If distance < max_move, score = 0 (too close to strike)
+                            if dist < max_move:
+                                score_b = 0
+                                distance_ratio = 0.0
+                            else:
+                                # Proportional: max score at 2x max_move, 0 at max_move
+                                if max_move > 0:
+                                    distance_ratio = min((dist - max_move) / max_move, 1.0)  # Clamp to 0-1
+                                    score_b = int(round(MAX_SCORE_ATR * distance_ratio))
                         
                         trade_score += score_b
                         # Explain ATR score
@@ -1180,48 +1136,6 @@ def run_advisor():
                         except Exception:
                             pass
                         
-                        # === D. ORDER BOOK BARRIER SCORE (Proportional, Max 10) ===
-                        score_d = 0
-                        order_book_explain = "Data unavailable"
-                        order_book = None
-
-                        clob_token_ids = market_data.get('clob_token_ids')
-                        if clob_token_ids and clob_token_ids.get('yes') and clob_token_ids.get('no') and share_price is not None:
-                            ob_token_id = clob_token_ids['yes'] if real_price > strike_price else clob_token_ids['no']
-                            order_book = fetch_clob_order_book(ob_token_id)
-
-                        if order_book and share_price is not None:
-                            ob_direction = "UP"
-                            ob_scan_depth = max(share_price * 0.05, 0.01)
-                            bid_vol, ask_vol, ratio, direction = analyze_order_book_barrier(
-                                order_book,
-                                share_price,
-                                share_price,
-                                atr,
-                                scan_depth_override=ob_scan_depth,
-                                direction_override=ob_direction
-                            )
-
-                            if ratio <= OB_RATIO_FLOOR:
-                                score_d = 0
-                                percent = 0.0
-                            elif ratio >= OB_RATIO_CAP:
-                                score_d = MAX_SCORE_ORDERBOOK
-                                percent = 1.0
-                            else:
-                                progress = (ratio - OB_RATIO_FLOOR) / (OB_RATIO_CAP - OB_RATIO_FLOOR)
-                                score_d = int(round(progress * MAX_SCORE_ORDERBOOK))
-                                percent = progress
-
-                            order_book_explain = (
-                                f"Ref {share_price:.3f} ±{ob_scan_depth:.3f} | "
-                                f"Bid {bid_vol:.1f} vs Ask {ask_vol:.1f} | "
-                                f"Ratio {ratio:.2f} -> {percent*100:.0f}% pts"
-                            )
-
-                        trade_score += score_d
-                        details.append(f"OrderBook: {score_d}/{MAX_SCORE_ORDERBOOK} - {order_book_explain}")
-
                         # === E. RSI SCORE (Proportional, Max 10) ===
                         score_e = 0
                         rsi_val = calculate_rsi(closes, period=14)
@@ -1257,7 +1171,6 @@ def run_advisor():
                         window_stats['total_evaluations'] += 1
                         window_stats['total_score_a'] += score_a
                         window_stats['total_score_b'] += score_b
-                        window_stats['total_score_d'] += score_d
                         window_stats['total_score_e'] += score_e
                         window_stats['total_score_sum'] += display_score
                         
@@ -1267,7 +1180,6 @@ def run_advisor():
                                 window_stats['max_total_score'] = display_score
                                 window_stats['max_score_a'] = score_a
                                 window_stats['max_score_b'] = score_b
-                                window_stats['max_score_d'] = score_d
                                 window_stats['max_score_e'] = score_e
                                 window_stats['max_score_btc_price'] = real_price
                                 window_stats['max_score_direction'] = 'UP' if real_price > strike_price else 'DOWN'
@@ -1288,9 +1200,9 @@ def run_advisor():
                                 constraint_violations.append(f"Price too low (${share_price:.2f} < ${SHARE_PRICE_MIN})")
                             if share_price > SHARE_PRICE_MAX:
                                 constraint_violations.append(f"Price too high (${share_price:.2f} > ${SHARE_PRICE_MAX})")
-                        if order_book and 'ratio' in locals():
-                            if ratio < ORDER_BOOK_RATIO_MIN:
-                                constraint_violations.append(f"OrderBook ratio too low ({ratio:.2f} < {ORDER_BOOK_RATIO_MIN})")
+                        # Check Bollinger Bandwidth (squeeze detection)
+                        if bb_bandwidth is not None and bb_bandwidth < BB_BANDWIDTH_MIN:
+                            constraint_violations.append(f"BB Bandwidth too low ({bb_bandwidth:.3f} < {BB_BANDWIDTH_MIN}) - Squeeze detected")
                         
                         print("\n" + "-"*60)
                         if display_score >= SCORE_THRESHOLD:
@@ -1315,44 +1227,68 @@ def run_advisor():
                                 trade_direction = 'UP' if real_price > strike_price else 'DOWN'
                                 
                                 print(f"🎯 ✅ TRADE CONFIRMÉ (Score {display_score})")
-                                print(f"   📈 SIGNAL: BUY {share_type} @ ${share_price:.2f} ({share_price*100:.0f}¢)")
-                                print(f"   💰 Risk: ${share_price:.2f} | Potential: ${1-share_price:.2f} | ROI: {((1/share_price)-1)*100:.1f}%")
+                                
+                                # Only print share price details if available
+                                if share_price is not None:
+                                    print(f"   📈 SIGNAL: BUY {share_type} @ ${share_price:.2f} ({share_price*100:.0f}¢)")
+                                    print(f"   💰 Risk: ${share_price:.2f} | Potential: ${1-share_price:.2f} | ROI: {((1/share_price)-1)*100:.1f}%")
+                                else:
+                                    print(f"   📈 SIGNAL: BUY {share_type} (price unavailable)")
+                                    print(f"   ⚠️  Share price not available from market data")
+                                
                                 print(f"   🎲 Strategy: Price stays {'ABOVE' if real_price > strike_price else 'BELOW'} ${strike_price:,.2f}")
                                 
                                 # === EXECUTE REAL TRADE IF ENABLED ===
                                 if REAL_TRADE:
-                                    print(f"\n   💼 REAL_TRADE ENABLED - Attempting to place order...")
-                                    
-                                    # Get the correct token ID based on direction
-                                    clob_token_ids = market_data.get('clob_token_ids')
-                                    if clob_token_ids:
-                                        # For UP trades, buy YES token; for DOWN trades, buy NO token
-                                        token_id_to_trade = clob_token_ids.get('yes') if trade_direction == 'UP' else clob_token_ids.get('no')
+                                    if share_price is None:
+                                        print(f"\n   🚫 REAL_TRADE BLOCKED - Share price unavailable from market data")
+                                        signal_details = {
+                                            'direction': share_type,
+                                            'price': None,
+                                            'entry_time': minutes_left,
+                                            'btc_price': real_price
+                                        }
+                                    else:
+                                        print(f"\n   💼 REAL_TRADE ENABLED - Attempting to place order...")
                                         
-                                        if token_id_to_trade:
-                                            trade_result = execute_real_trade(
-                                                poly_client,
-                                                token_id_to_trade,
-                                                trade_direction,
-                                                share_price,
-                                                strike_price,
-                                                real_price
-                                            )
+                                        # Get the correct token ID based on direction
+                                        clob_token_ids = market_data.get('clob_token_ids')
+                                        if clob_token_ids:
+                                            # For UP trades, buy YES token; for DOWN trades, buy NO token
+                                            token_id_to_trade = clob_token_ids.get('yes') if trade_direction == 'UP' else clob_token_ids.get('no')
                                             
-                                            if trade_result and trade_result.get('success'):
-                                                print(f"   🎉 Real trade executed successfully!")
-                                                # Store order ID in signal details
-                                                signal_details = {
-                                                    'direction': share_type,
-                                                    'price': share_price,
-                                                    'entry_time': minutes_left,
-                                                    'btc_price': real_price,
-                                                    'order_id': trade_result.get('order_id'),
-                                                    'actual_size': trade_result.get('size'),
-                                                    'actual_cost': trade_result.get('cost')
-                                                }
+                                            if token_id_to_trade:
+                                                trade_result = execute_real_trade(
+                                                    poly_client,
+                                                    token_id_to_trade,
+                                                    trade_direction,
+                                                    share_price,
+                                                    strike_price,
+                                                    real_price
+                                                )
+                                                
+                                                if trade_result and trade_result.get('success'):
+                                                    print(f"   🎉 Real trade executed successfully!")
+                                                    # Store order ID in signal details
+                                                    signal_details = {
+                                                        'direction': share_type,
+                                                        'price': share_price,
+                                                        'entry_time': minutes_left,
+                                                        'btc_price': real_price,
+                                                        'order_id': trade_result.get('order_id'),
+                                                        'actual_size': trade_result.get('size'),
+                                                        'actual_cost': trade_result.get('cost')
+                                                    }
+                                                else:
+                                                    print(f"   ⚠️  Real trade execution failed, continuing in simulation mode")
+                                                    signal_details = {
+                                                        'direction': share_type,
+                                                        'price': share_price,
+                                                        'entry_time': minutes_left,
+                                                        'btc_price': real_price
+                                                    }
                                             else:
-                                                print(f"   ⚠️  Real trade execution failed, continuing in simulation mode")
+                                                print(f"   ⚠️  Token ID not found for {trade_direction} trade")
                                                 signal_details = {
                                                     'direction': share_type,
                                                     'price': share_price,
@@ -1360,21 +1296,13 @@ def run_advisor():
                                                     'btc_price': real_price
                                                 }
                                         else:
-                                            print(f"   ⚠️  Token ID not found for {trade_direction} trade")
+                                            print(f"   ⚠️  CLOB token IDs not available")
                                             signal_details = {
                                                 'direction': share_type,
                                                 'price': share_price,
                                                 'entry_time': minutes_left,
                                                 'btc_price': real_price
                                             }
-                                    else:
-                                        print(f"   ⚠️  CLOB token IDs not available")
-                                        signal_details = {
-                                            'direction': share_type,
-                                            'price': share_price,
-                                            'entry_time': minutes_left,
-                                            'btc_price': real_price
-                                        }
                                 else:
                                     print(f"   ℹ️  REAL_TRADE is False - Running in SIMULATION MODE only")
                                     signal_details = {
