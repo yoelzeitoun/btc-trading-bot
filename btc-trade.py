@@ -22,7 +22,8 @@ from config import (
     SHARE_PRICE_MIN, SHARE_PRICE_MAX,
     LOOP_SLEEP_SECONDS, NEXT_MARKET_WAIT_SECONDS,
     SCORE_THRESHOLD,
-    WEIGHT_BOLLINGER, WEIGHT_ATR, WEIGHT_ORDERBOOK, WEIGHT_RSI
+    WEIGHT_BOLLINGER, WEIGHT_ATR, WEIGHT_ORDERBOOK, WEIGHT_RSI,
+    REAL_TRADE, TRADE_AMOUNT
 )
 
 # === ORDER BOOK SCORING THRESHOLDS ===
@@ -223,6 +224,113 @@ def fetch_chainlink_btc_usd_price():
         pass
 
     return None
+
+# --- 3B. EXECUTE REAL TRADE ---
+def execute_real_trade(poly_client, token_id, direction, share_price, strike_price, current_btc_price):
+    """
+    Execute a real trade on Polymarket.
+    
+    Args:
+        poly_client: ClobClient instance
+        token_id: The token ID to trade (YES or NO token)
+        direction: "UP" or "DOWN" 
+        share_price: Current market price of the share
+        strike_price: The strike price from the market
+        current_btc_price: Current BTC price
+        
+    Returns:
+        dict with trade result or None if trade failed
+    """
+    if not REAL_TRADE:
+        print("   ℹ️  REAL_TRADE is False - Skipping actual order placement (simulation mode)")
+        return None
+        
+    # Validate all constraints before attempting trade
+    if share_price < SHARE_PRICE_MIN:
+        print(f"   🚫 Cannot trade: Share price ${share_price:.3f} below minimum ${SHARE_PRICE_MIN}")
+        return None
+        
+    if share_price > SHARE_PRICE_MAX:
+        print(f"   🚫 Cannot trade: Share price ${share_price:.3f} above maximum ${SHARE_PRICE_MAX}")
+        return None
+    
+    try:
+        # Fetch current order book to get best ask and minimum size
+        book_url = f"https://clob.polymarket.com/book?token_id={token_id}"
+        book_response = requests.get(book_url, timeout=10)
+        book_response.raise_for_status()
+        book_data = book_response.json()
+        
+        asks = book_data.get("asks", [])
+        
+        if not asks:
+            print("   ❌ No asks available in order book")
+            return None
+            
+        best_ask_price = min(float(a['price']) for a in asks)
+        
+        # === DETERMINE TRADE AMOUNT ===
+        # Polymarket minimum order is $1 (not in shares, in USD)
+        actual_trade_amount = max(TRADE_AMOUNT, 1.0)  # Enforce $1 minimum
+        
+        if TRADE_AMOUNT < 1.0:
+            print(f"   📊 Trade Amount ${TRADE_AMOUNT} below minimum $1, using $1 minimum")
+        
+        # Calculate number of shares to buy
+        actual_size = round(actual_trade_amount / best_ask_price, 2)
+        actual_cost = actual_size * best_ask_price
+            
+        # Import OrderArgs
+        from py_clob_client.clob_types import OrderArgs
+        
+        print(f"\n   🔄 EXECUTING REAL TRADE...")
+        print(f"      Direction: {direction}")
+        print(f"      Token ID: {token_id}")
+        print(f"      Price: ${best_ask_price:.3f}")
+        print(f"      Size: {actual_size} shares")
+        print(f"      Total Cost: ${actual_cost:.2f}")
+        print(f"      Expected Strategy: BTC {'>' if direction == 'UP' else '<'} ${strike_price:,.2f}")
+        
+        # Create order
+        order_args = OrderArgs(
+            price=best_ask_price,
+            size=actual_size,
+            side="BUY",
+            token_id=token_id
+        )
+        
+        # Place order
+        response = poly_client.create_and_post_order(order_args)
+        
+        if isinstance(response, dict) and response.get("success"):
+            order_id = response.get("orderID", "unknown")
+            print(f"   ✅ ORDER PLACED SUCCESSFULLY!")
+            print(f"      Order ID: {order_id}")
+            print(f"      Cost: ${actual_cost:.2f}")
+            print(f"      Potential Profit: ${(actual_size - actual_cost):.2f}")
+            print(f"      ROI if Win: {((actual_size/actual_cost - 1) * 100):.1f}%")
+            
+            return {
+                'success': True,
+                'order_id': order_id,
+                'direction': direction,
+                'price': best_ask_price,
+                'size': actual_size,
+                'cost': actual_cost,
+                'token_id': token_id,
+                'current_btc': current_btc_price,
+                'strike_price': strike_price
+            }
+        else:
+            error_msg = response.get("error", response) if isinstance(response, dict) else str(response)
+            print(f"   ❌ ORDER FAILED: {error_msg}")
+            return None
+            
+    except Exception as e:
+        print(f"   ❌ Error executing trade: {e}")
+        import traceback
+        traceback.print_exc()
+        return None
 
 # --- 4. FETCH CURRENT BTC 15M MARKET AUTOMATICALLY ---
 def find_current_btc_15m_market():
@@ -1202,18 +1310,81 @@ def run_advisor():
                                 if display_score == window_stats['max_total_score']:
                                     window_stats['max_score_trade_taken'] = True
                                     window_stats['max_score_trade_result'] = 'PENDING'
+                                
+                                # Determine trade direction based on BB signal
+                                trade_direction = 'UP' if real_price > strike_price else 'DOWN'
+                                
                                 print(f"🎯 ✅ TRADE CONFIRMÉ (Score {display_score})")
                                 print(f"   📈 SIGNAL: BUY {share_type} @ ${share_price:.2f} ({share_price*100:.0f}¢)")
                                 print(f"   💰 Risk: ${share_price:.2f} | Potential: ${1-share_price:.2f} | ROI: {((1/share_price)-1)*100:.1f}%")
                                 print(f"   🎲 Strategy: Price stays {'ABOVE' if real_price > strike_price else 'BELOW'} ${strike_price:,.2f}")
                                 
+                                # === EXECUTE REAL TRADE IF ENABLED ===
+                                if REAL_TRADE:
+                                    print(f"\n   💼 REAL_TRADE ENABLED - Attempting to place order...")
+                                    
+                                    # Get the correct token ID based on direction
+                                    clob_token_ids = market_data.get('clob_token_ids')
+                                    if clob_token_ids:
+                                        # For UP trades, buy YES token; for DOWN trades, buy NO token
+                                        token_id_to_trade = clob_token_ids.get('yes') if trade_direction == 'UP' else clob_token_ids.get('no')
+                                        
+                                        if token_id_to_trade:
+                                            trade_result = execute_real_trade(
+                                                poly_client,
+                                                token_id_to_trade,
+                                                trade_direction,
+                                                share_price,
+                                                strike_price,
+                                                real_price
+                                            )
+                                            
+                                            if trade_result and trade_result.get('success'):
+                                                print(f"   🎉 Real trade executed successfully!")
+                                                # Store order ID in signal details
+                                                signal_details = {
+                                                    'direction': share_type,
+                                                    'price': share_price,
+                                                    'entry_time': minutes_left,
+                                                    'btc_price': real_price,
+                                                    'order_id': trade_result.get('order_id'),
+                                                    'actual_size': trade_result.get('size'),
+                                                    'actual_cost': trade_result.get('cost')
+                                                }
+                                            else:
+                                                print(f"   ⚠️  Real trade execution failed, continuing in simulation mode")
+                                                signal_details = {
+                                                    'direction': share_type,
+                                                    'price': share_price,
+                                                    'entry_time': minutes_left,
+                                                    'btc_price': real_price
+                                                }
+                                        else:
+                                            print(f"   ⚠️  Token ID not found for {trade_direction} trade")
+                                            signal_details = {
+                                                'direction': share_type,
+                                                'price': share_price,
+                                                'entry_time': minutes_left,
+                                                'btc_price': real_price
+                                            }
+                                    else:
+                                        print(f"   ⚠️  CLOB token IDs not available")
+                                        signal_details = {
+                                            'direction': share_type,
+                                            'price': share_price,
+                                            'entry_time': minutes_left,
+                                            'btc_price': real_price
+                                        }
+                                else:
+                                    print(f"   ℹ️  REAL_TRADE is False - Running in SIMULATION MODE only")
+                                    signal_details = {
+                                        'direction': share_type,
+                                        'price': share_price,
+                                        'entry_time': minutes_left,
+                                        'btc_price': real_price
+                                    }
+                                
                                 trade_signal_given = True
-                                signal_details = {
-                                    'direction': share_type,
-                                    'price': share_price,
-                                    'entry_time': minutes_left,
-                                    'btc_price': real_price
-                                }
                         else:
                             print(f"❌ Score insuffisant ({display_score}/100)")
                         print("-"*60)
