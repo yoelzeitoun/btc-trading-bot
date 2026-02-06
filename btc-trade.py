@@ -23,7 +23,7 @@ from config import (
     LOOP_SLEEP_SECONDS, NEXT_MARKET_WAIT_SECONDS,
     SCORE_THRESHOLD,
     WEIGHT_BOLLINGER, WEIGHT_ATR, WEIGHT_RSI,
-    REAL_TRADE, TRADE_AMOUNT
+    REAL_TRADE, TRADE_AMOUNT, CLOSE_TRADE_ON_TARGET
 )
 
 # --- 1. API IMPORTS ---
@@ -285,6 +285,50 @@ def execute_real_trade(poly_client, token_id, direction, share_price, strike_pri
         print(f"   ❌ Error executing trade: {e}")
         import traceback
         traceback.print_exc()
+        return None
+
+def execute_close_trade(poly_client, token_id, size):
+    """
+    Close an open position by placing a SELL order at best bid.
+    """
+    try:
+        book_url = f"https://clob.polymarket.com/book?token_id={token_id}"
+        book_response = requests.get(book_url, timeout=10)
+        book_response.raise_for_status()
+        book_data = book_response.json()
+
+        bids = book_data.get("bids", [])
+        if not bids:
+            print("   ❌ No bids available to close position")
+            return None
+
+        best_bid_price = max(float(b['price']) for b in bids)
+
+        from py_clob_client.clob_types import OrderArgs
+        order_args = OrderArgs(
+            price=best_bid_price,
+            size=float(size),
+            side="SELL",
+            token_id=token_id
+        )
+
+        response = poly_client.create_and_post_order(order_args)
+        if isinstance(response, dict) and response.get("success"):
+            order_id = response.get("orderID", "unknown")
+            print(f"   ✅ CLOSE ORDER PLACED: {order_id} @ ${best_bid_price:.3f}")
+            return {
+                'success': True,
+                'order_id': order_id,
+                'price': best_bid_price,
+                'size': float(size),
+                'token_id': token_id
+            }
+        else:
+            error_msg = response.get("error", response) if isinstance(response, dict) else str(response)
+            print(f"   ❌ CLOSE ORDER FAILED: {error_msg}")
+            return None
+    except Exception as e:
+        print(f"   ❌ Error closing trade: {e}")
         return None
 
 # --- 4. FETCH CURRENT BTC 15M MARKET AUTOMATICALLY ---
@@ -887,6 +931,8 @@ def run_advisor():
                 'blocked_reasons': []
             }
             
+            open_position = None
+
             while True:
                 now = time.time()
                 minutes_left = (end_timestamp - now) / 60
@@ -1011,7 +1057,28 @@ def run_advisor():
                         time.sleep(LOOP_SLEEP_SECONDS)
                         continue
                     
-                    # 3. Time Window Announcements
+                    # 3. Auto-close position on target (if enabled)
+                    if CLOSE_TRADE_ON_TARGET and open_position and not open_position.get('closed'):
+                        if open_position['direction'] == 'UP' and real_price >= strike_price:
+                            print("\n🎯 TARGET HIT - Closing UP position...")
+                            close_result = execute_close_trade(
+                                poly_client,
+                                open_position['token_id'],
+                                open_position['size']
+                            )
+                            if close_result and close_result.get('success'):
+                                open_position['closed'] = True
+                        elif open_position['direction'] == 'DOWN' and real_price <= strike_price:
+                            print("\n🎯 TARGET HIT - Closing DOWN position...")
+                            close_result = execute_close_trade(
+                                poly_client,
+                                open_position['token_id'],
+                                open_position['size']
+                            )
+                            if close_result and close_result.get('success'):
+                                open_position['closed'] = True
+
+                    # 4. Time Window Announcements
                     window_midpoint = (TRADE_WINDOW_MIN + TRADE_WINDOW_MAX) / 2
                     if TRADE_WINDOW_MAX - 0.5 < minutes_left <= TRADE_WINDOW_MAX + 0.5 and not five_min_announced:
                         print(f"\n🔔 ENTERING TRADING WINDOW (Time Left: {minutes_left:.2f}min)")
@@ -1024,7 +1091,7 @@ def run_advisor():
                         print("   Final opportunity zone!")
                         three_min_announced = True
                     
-                    # 4. EXECUTION WINDOW CHECK
+                    # 5. EXECUTION WINDOW CHECK
                     if TRADE_WINDOW_MIN <= minutes_left <= TRADE_WINDOW_MAX and not trade_signal_given:
 
                         # Refresh outcome prices from CLOB each evaluation (for live prices)
@@ -1278,6 +1345,13 @@ def run_advisor():
                                                         'order_id': trade_result.get('order_id'),
                                                         'actual_size': trade_result.get('size'),
                                                         'actual_cost': trade_result.get('cost')
+                                                    }
+                                                    open_position = {
+                                                        'token_id': token_id_to_trade,
+                                                        'size': trade_result.get('size'),
+                                                        'direction': trade_direction,
+                                                        'strike_price': strike_price,
+                                                        'closed': False
                                                     }
                                                 else:
                                                     print(f"   ⚠️  Real trade execution failed, continuing in simulation mode")

@@ -2,7 +2,7 @@
 # === REAL TRADING ===
 REAL_TRADE = True  # Set to True to execute real trades, False for simulation only
 TRADE_AMOUNT = 5  # Trade amount in Shares (minimum required is 5 for real trades)
-
+CLOSE_TRADE_ON_TARGET = True  # Whether to automatically close the trade when target price is hit
 # === SCORING & TRADE EXECUTION ===
 SCORE_THRESHOLD = 70  # Minimum total score required to execute a trade (0-100)
 
