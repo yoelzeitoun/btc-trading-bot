@@ -13,7 +13,7 @@ ATR_PERIOD = 14
 ATR_MULTIPLIER = 0.6
 
 # === SCORING & TRADE EXECUTION ===
-SCORE_THRESHOLD = 70  # Minimum total score required to execute a trade (0-100)
+SCORE_THRESHOLD = 60  # Minimum total score required to execute a trade (0-100)
 
 # === SCORING WEIGHTS ===
 WEIGHT_BOLLINGER = 50
@@ -24,8 +24,8 @@ WEIGHT_RSI = 10
 # === BARRIER THRESHOLDS (HARD CONSTRAINTS) ===
 ORDER_BOOK_RATIO_MIN = 0.3  # Minimum ratio for order book depth barrier (BLOCKS TRADE if below)
 
-SHARE_PRICE_MIN = 0.55  # Minimum acceptable share price (BLOCKS TRADE if below)
-SHARE_PRICE_MAX = 0.96  # Maximum acceptable share price (BLOCKS TRADE if above)
+SHARE_PRICE_MIN = 0.35  # Minimum acceptable share price (BLOCKS TRADE if below)
+SHARE_PRICE_MAX = 0.90  # Maximum acceptable share price (BLOCKS TRADE if above)
 
 # === MONITORING ===
 LOOP_SLEEP_SECONDS = 5  # How often to check market conditions (seconds)

@@ -605,17 +605,54 @@ def write_window_statistics(stats, trade_result=None):
         
         with open(stats_file, 'a') as f:
             f.write("\n" + "="*80 + "\n")
-            f.write(f"📅 {stats['start_time']} | Market: {stats['market_slug']}\n")
+            f.write(f"📅 {stats['start_time']} | Market: https://polymarket.com/market/{stats['market_slug']}\n")
             f.write(f"🎯 Strike Price: ${stats['strike_price']:,.2f}\n")
             f.write("-"*80 + "\n")
             
             f.write(f"📊 SCORING ANALYSIS ({total} evaluations, {stats['signals_triggered']} signals triggered):\n")
-            f.write(f"   • Bollinger Bands:    {avg_a:.1f}/40\n")
-            f.write(f"   • ATR Kinetic:        {avg_b:.1f}/40\n")
-            f.write(f"   • Order Book:         {avg_d:.1f}/10\n")
-            f.write(f"   • RSI:                {avg_e:.1f}/10\n")
-            f.write(f"   • AVG TOTAL SCORE:    {avg_total:.1f}/100\n")
+            f.write(f"   • Bollinger Bands:    {stats['max_score_a']}/40 (max score)\n")
+            f.write(f"   • ATR Kinetic:        {stats['max_score_b']}/40 (max score)\n")
+            f.write(f"   • Order Book:         {stats['max_score_d']}/10 (max score)\n")
+            f.write(f"   • RSI:                {stats['max_score_e']}/10 (max score)\n")
             f.write(f"   • MAX TOTAL SCORE:    {stats['max_total_score']}/100\n")
+            
+            # Show "AT MAX SCORE MOMENT" if max score was tracked (price was acceptable)
+            if stats.get('max_score_share_price') is not None:
+                f.write("-"*80 + "\n")
+                f.write(f"📈 AT MAX SCORE MOMENT:\n")
+                f.write(f"   Time to Expiration:  T-{stats.get('max_score_minutes_left', 0):.1f}min\n")
+                f.write(f"   Current BTC Price:   ${stats['max_score_btc_price']:,.2f}\n")
+                f.write(f"   Entry Price:        ${stats['max_score_share_price']:.3f}\n")
+                if stats.get('final_btc_price') is not None:
+                    f.write(f"   Final BTC:          ${stats['final_btc_price']:,.2f}\n")
+                f.write(f"   Direction:           {stats['max_score_direction']}\n")
+                # Hypothetical result if taken at max score moment
+                final_btc = stats.get('final_btc_price')
+                entry_price = stats.get('max_score_share_price')
+                entry_type = stats.get('max_score_share_type')
+                if final_btc is not None and entry_price:
+                    is_win = False
+                    if entry_type == "YES" and final_btc > stats['strike_price']:
+                        is_win = True
+                    elif entry_type == "NO" and final_btc < stats['strike_price']:
+                        is_win = True
+
+                    trade_amount = 100
+                    if is_win:
+                        payout = trade_amount / entry_price
+                        profit = payout - trade_amount
+                        profit_pct = (profit / trade_amount) * 100
+                        result_status = "WIN"
+                    else:
+                        profit = -trade_amount
+                        profit_pct = -100
+                        result_status = "LOSS"
+
+                    f.write(f"   Hypothetical Result: {result_status}\n")
+                    f.write(f"   Hypothetical P&L:    {profit_pct:+.2f}% (${profit:+.2f})\n")
+                else:
+                    f.write("   Hypothetical Result: UNAVAILABLE (missing data)\n")
+            
             if stats.get('max_total_score', 0) >= SCORE_THRESHOLD and stats.get('signals_triggered', 0) == 0:
                 f.write("⚠️  NO TRADE EXECUTED despite MAX SCORE >= threshold:\n")
                 blocked_count = stats.get('blocked_signals', 0)
@@ -630,6 +667,7 @@ def write_window_statistics(stats, trade_result=None):
             if trade_result:
                 f.write("-"*80 + "\n")
                 f.write(f"💼 TRADE EXECUTED:\n")
+                f.write(f"   Signal Score:  {trade_result.get('signal_score', 0)}/100\n")
                 f.write(f"   Direction:     {trade_result['direction'].upper()}\n")
                 f.write(f"   Entry Price:   ${trade_result['entry_price']:.3f}\n")
                 f.write(f"   Final BTC:     ${trade_result['final_price']:,.2f}\n")
@@ -776,6 +814,19 @@ def run_advisor():
                 'total_score_e': 0,
                 'total_score_sum': 0,
                 'max_total_score': 0,
+                'max_score_a': 0,
+                'max_score_b': 0,
+                'max_score_d': 0,
+                'max_score_e': 0,
+                'max_score_btc_price': 0,
+                'max_score_direction': 'UNKNOWN',
+                'max_score_trade_result': None,
+                'max_score_trade_taken': False,
+                'signal_score': None,
+                'signal_minutes_left': None,
+                'max_score_share_price': None,
+                'max_score_share_type': None,
+                'final_btc_price': None,
                 'total_evaluations': 0,
                 'signals_triggered': 0,
                 'blocked_signals': 0,
@@ -796,6 +847,7 @@ def run_advisor():
                     if final_price is None:
                         print("⚠️  Chainlink price unavailable. Skipping final resolution check.")
                     else:
+                        window_stats['final_btc_price'] = final_price
                         print(f"\n📊 FINAL RESULTS:")
                         print(f"   Strike Price: ${strike_price:,.2f}")
                         print(f"   Final BTC: ${final_price:,.2f}")
@@ -848,8 +900,11 @@ def run_advisor():
                             'result': result_status,
                             'profit_loss_pct': profit_pct,
                             'profit_loss_usd': profit,
-                            'trade_amount': trade_amount
+                            'trade_amount': trade_amount,
+                            'signal_score': window_stats.get('signal_score', 0)
                         }
+                        if window_stats.get('max_score_trade_taken'):
+                            window_stats['max_score_trade_result'] = result_status
                     else:
                         print(f"\n⏸️  NO TRADE SIGNAL - Conditions not met")
                     
@@ -1098,9 +1153,21 @@ def run_advisor():
                         window_stats['total_score_e'] += score_e
                         window_stats['total_score_sum'] += display_score
                         
-                        # Track maximum score hit during window
-                        if display_score > window_stats['max_total_score']:
-                            window_stats['max_total_score'] = display_score
+                        # Track maximum score hit during window (only if entry price is acceptable)
+                        if share_price is not None and share_price <= SHARE_PRICE_MAX:
+                            if display_score > window_stats['max_total_score']:
+                                window_stats['max_total_score'] = display_score
+                                window_stats['max_score_a'] = score_a
+                                window_stats['max_score_b'] = score_b
+                                window_stats['max_score_d'] = score_d
+                                window_stats['max_score_e'] = score_e
+                                window_stats['max_score_btc_price'] = real_price
+                                window_stats['max_score_direction'] = 'UP' if real_price > strike_price else 'DOWN'
+                                window_stats['max_score_minutes_left'] = minutes_left
+                                window_stats['max_score_trade_taken'] = False
+                                window_stats['max_score_trade_result'] = None
+                                window_stats['max_score_share_price'] = share_price
+                                window_stats['max_score_share_type'] = share_type
                         
                         print(f"\n   📊 SCORE TOTAL: {display_score}/100  (Seuil: {SCORE_THRESHOLD})")
                         for detail in details:
@@ -1129,6 +1196,12 @@ def run_advisor():
                                     print(f"   ⛔ {violation}")
                             else:
                                 window_stats['signals_triggered'] += 1
+                                window_stats['signal_score'] = display_score
+                                window_stats['signal_minutes_left'] = minutes_left
+                                # Track if this trade is at the max score point
+                                if display_score == window_stats['max_total_score']:
+                                    window_stats['max_score_trade_taken'] = True
+                                    window_stats['max_score_trade_result'] = 'PENDING'
                                 print(f"🎯 ✅ TRADE CONFIRMÉ (Score {display_score})")
                                 print(f"   📈 SIGNAL: BUY {share_type} @ ${share_price:.2f} ({share_price*100:.0f}¢)")
                                 print(f"   💰 Risk: ${share_price:.2f} | Potential: ${1-share_price:.2f} | ROI: {((1/share_price)-1)*100:.1f}%")
