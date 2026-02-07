@@ -1,0 +1,636 @@
+
+================================================================================
+📅 2026-02-07 00:15 | Market: https://polymarket.com/market/btc-updown-15m-1770422400
+🎯 Strike Price: $70,527.66
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (190 evaluations, 0 signals triggered):
+   • Bollinger Bands:    14/60 (max score)
+   • ATR Kinetic:        38/35 (max score)
+   • RSI:                2/5 (max score)
+   • MAX TOTAL SCORE:    54/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-7.6min
+   Current BTC Price:   $70,157.50
+   Entry Price:        $0.900
+   Final BTC:          $70,230.30
+   Direction:           DOWN
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +11.11% ($+11.11)
+================================================================================
+
+================================================================================
+📅 2026-02-07 00:30 | Market: https://polymarket.com/market/btc-updown-15m-1770423300
+🎯 Strike Price: $70,227.01
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (190 evaluations, 0 signals triggered):
+   • Bollinger Bands:    0/60 (max score)
+   • ATR Kinetic:        30/35 (max score)
+   • RSI:                2/5 (max score)
+   • MAX TOTAL SCORE:    32/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-3.7min
+   Current BTC Price:   $70,395.80
+   Entry Price:        $0.900
+   Final BTC:          $70,076.80
+   Direction:           UP
+   Hypothetical Result: LOSS
+   Hypothetical P&L:    -100.00% ($-100.00)
+================================================================================
+
+================================================================================
+📅 2026-02-07 00:45 | Market: https://polymarket.com/market/btc-updown-15m-1770424200
+🎯 Strike Price: $70,062.99
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (218 evaluations, 0 signals triggered):
+   • Bollinger Bands:    45/60 (max score)
+   • ATR Kinetic:        0/35 (max score)
+   • RSI:                7/5 (max score)
+   • MAX TOTAL SCORE:    52/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-13.5min
+   Current BTC Price:   $70,066.60
+   Entry Price:        $0.510
+   Final BTC:          $69,689.00
+   Direction:           UP
+   Hypothetical Result: LOSS
+   Hypothetical P&L:    -100.00% ($-100.00)
+================================================================================
+
+================================================================================
+📅 2026-02-07 01:00 | Market: https://polymarket.com/market/btc-updown-15m-1770425100
+🎯 Strike Price: $69,686.81
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (196 evaluations, 0 signals triggered):
+   • Bollinger Bands:    41/60 (max score)
+   • ATR Kinetic:        25/35 (max score)
+   • RSI:                3/5 (max score)
+   • MAX TOTAL SCORE:    69/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-9.4min
+   Current BTC Price:   $69,932.20
+   Entry Price:        $0.870
+   Final BTC:          $69,915.10
+   Direction:           UP
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +14.94% ($+14.94)
+================================================================================
+
+================================================================================
+📅 2026-02-07 01:15 | Market: https://polymarket.com/market/btc-updown-15m-1770426000
+🎯 Strike Price: $69,916.68
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (218 evaluations, 0 signals triggered):
+   • Bollinger Bands:    0/60 (max score)
+   • ATR Kinetic:        29/35 (max score)
+   • RSI:                4/5 (max score)
+   • MAX TOTAL SCORE:    33/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-2.6min
+   Current BTC Price:   $69,803.90
+   Entry Price:        $0.900
+   Final BTC:          $69,806.50
+   Direction:           DOWN
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +11.11% ($+11.11)
+================================================================================
+
+================================================================================
+📅 2026-02-07 01:30 | Market: https://polymarket.com/market/btc-updown-15m-1770426900
+🎯 Strike Price: $69,806.37
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (201 evaluations, 0 signals triggered):
+   • Bollinger Bands:    38/60 (max score)
+   • ATR Kinetic:        39/35 (max score)
+   • RSI:                3/5 (max score)
+   • MAX TOTAL SCORE:    80/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-4.8min
+   Current BTC Price:   $69,999.50
+   Entry Price:        $0.900
+   Final BTC:          $69,954.60
+   Direction:           UP
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +11.11% ($+11.11)
+⚠️  NO TRADE EXECUTED despite MAX SCORE >= threshold:
+   • 66 signal(s) blocked by hard constraints:
+     - BB Bandwidth too low (0.004 < 0.01) - Squeeze detected
+     - Price too high ($0.92 > $0.9)
+     - Price too high ($0.91 > $0.9)
+     - Price too high ($0.93 > $0.9)
+     - Price too high ($0.95 > $0.9)
+     - Price too high ($0.96 > $0.9)
+     - Price too high ($0.97 > $0.9)
+     - Price too high ($0.98 > $0.9)
+     - BB Bandwidth too low (0.005 < 0.01) - Squeeze detected
+     - Price too high ($0.99 > $0.9)
+     - Price too high ($1.00 > $0.9)
+     - BB Bandwidth too low (0.006 < 0.01) - Squeeze detected
+================================================================================
+
+================================================================================
+📅 2026-02-07 01:45 | Market: https://polymarket.com/market/btc-updown-15m-1770427800
+🎯 Strike Price: $69,943.92
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (194 evaluations, 0 signals triggered):
+   • Bollinger Bands:    17/60 (max score)
+   • ATR Kinetic:        40/35 (max score)
+   • RSI:                1/5 (max score)
+   • MAX TOTAL SCORE:    58/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-8.9min
+   Current BTC Price:   $70,166.30
+   Entry Price:        $0.880
+   Final BTC:          $70,250.60
+   Direction:           UP
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +13.64% ($+13.64)
+================================================================================
+
+================================================================================
+📅 2026-02-07 02:00 | Market: https://polymarket.com/market/btc-updown-15m-1770428700
+🎯 Strike Price: $70,244.74
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (216 evaluations, 0 signals triggered):
+   • Bollinger Bands:    14/60 (max score)
+   • ATR Kinetic:        36/35 (max score)
+   • RSI:                2/5 (max score)
+   • MAX TOTAL SCORE:    52/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-7.2min
+   Current BTC Price:   $70,476.10
+   Entry Price:        $0.900
+   Final BTC:          $70,472.10
+   Direction:           UP
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +11.11% ($+11.11)
+================================================================================
+
+================================================================================
+📅 2026-02-07 02:15 | Market: https://polymarket.com/market/btc-updown-15m-1770429600
+🎯 Strike Price: $70,442.88
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (203 evaluations, 0 signals triggered):
+   • Bollinger Bands:    21/60 (max score)
+   • ATR Kinetic:        17/35 (max score)
+   • RSI:                3/5 (max score)
+   • MAX TOTAL SCORE:    41/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-8.9min
+   Current BTC Price:   $70,573.60
+   Entry Price:        $0.780
+   Final BTC:          $70,390.90
+   Direction:           UP
+   Hypothetical Result: LOSS
+   Hypothetical P&L:    -100.00% ($-100.00)
+================================================================================
+
+================================================================================
+📅 2026-02-07 02:30 | Market: https://polymarket.com/market/btc-updown-15m-1770430500
+🎯 Strike Price: $70,392.96
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (218 evaluations, 0 signals triggered):
+   • Bollinger Bands:    0/60 (max score)
+   • ATR Kinetic:        40/35 (max score)
+   • RSI:                4/5 (max score)
+   • MAX TOTAL SCORE:    44/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-4.6min
+   Current BTC Price:   $70,532.40
+   Entry Price:        $0.900
+   Final BTC:          $70,403.40
+   Direction:           UP
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +11.11% ($+11.11)
+================================================================================
+
+================================================================================
+📅 2026-02-07 02:45 | Market: https://polymarket.com/market/btc-updown-15m-1770431400
+🎯 Strike Price: $70,408.50
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (197 evaluations, 0 signals triggered):
+   • Bollinger Bands:    26/60 (max score)
+   • ATR Kinetic:        14/35 (max score)
+   • RSI:                4/5 (max score)
+   • MAX TOTAL SCORE:    44/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-1.0min
+   Current BTC Price:   $70,439.90
+   Entry Price:        $0.820
+   Final BTC:          $70,443.10
+   Direction:           UP
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +21.95% ($+21.95)
+================================================================================
+
+================================================================================
+📅 2026-02-07 03:00 | Market: https://polymarket.com/market/btc-updown-15m-1770432300
+🎯 Strike Price: $70,419.44
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (209 evaluations, 0 signals triggered):
+   • Bollinger Bands:    21/60 (max score)
+   • ATR Kinetic:        40/35 (max score)
+   • RSI:                3/5 (max score)
+   • MAX TOTAL SCORE:    64/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-4.4min
+   Current BTC Price:   $70,279.50
+   Entry Price:        $0.900
+   Final BTC:          $70,321.10
+   Direction:           DOWN
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +11.11% ($+11.11)
+================================================================================
+
+================================================================================
+📅 2026-02-07 03:15 | Market: https://polymarket.com/market/btc-updown-15m-1770433200
+🎯 Strike Price: $70,321.64
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (196 evaluations, 0 signals triggered):
+   • Bollinger Bands:    0/60 (max score)
+   • ATR Kinetic:        26/35 (max score)
+   • RSI:                0/5 (max score)
+   • MAX TOTAL SCORE:    26/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-12.5min
+   Current BTC Price:   $70,496.40
+   Entry Price:        $0.800
+   Final BTC:          $70,710.00
+   Direction:           UP
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +25.00% ($+25.00)
+================================================================================
+
+================================================================================
+📅 2026-02-07 03:30 | Market: https://polymarket.com/market/btc-updown-15m-1770434100
+🎯 Strike Price: $70,702.52
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (203 evaluations, 0 signals triggered):
+   • Bollinger Bands:    35/60 (max score)
+   • ATR Kinetic:        0/35 (max score)
+   • RSI:                8/5 (max score)
+   • MAX TOTAL SCORE:    43/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-13.0min
+   Current BTC Price:   $70,614.70
+   Entry Price:        $0.640
+   Final BTC:          $70,818.50
+   Direction:           DOWN
+   Hypothetical Result: LOSS
+   Hypothetical P&L:    -100.00% ($-100.00)
+================================================================================
+
+================================================================================
+📅 2026-02-07 03:45 | Market: https://polymarket.com/market/btc-updown-15m-1770435000
+🎯 Strike Price: $70,820.37
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (198 evaluations, 0 signals triggered):
+   • Bollinger Bands:    38/60 (max score)
+   • ATR Kinetic:        15/35 (max score)
+   • RSI:                9/5 (max score)
+   • MAX TOTAL SCORE:    62/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-9.3min
+   Current BTC Price:   $70,691.90
+   Entry Price:        $0.810
+   Final BTC:          $70,703.50
+   Direction:           DOWN
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +23.46% ($+23.46)
+================================================================================
+
+================================================================================
+📅 2026-02-07 04:00 | Market: https://polymarket.com/market/btc-updown-15m-1770435900
+🎯 Strike Price: $70,699.69
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (213 evaluations, 0 signals triggered):
+   • Bollinger Bands:    3/60 (max score)
+   • ATR Kinetic:        40/35 (max score)
+   • RSI:                1/5 (max score)
+   • MAX TOTAL SCORE:    44/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-4.0min
+   Current BTC Price:   $70,833.40
+   Entry Price:        $0.900
+   Final BTC:          $70,883.60
+   Direction:           UP
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +11.11% ($+11.11)
+================================================================================
+
+================================================================================
+📅 2026-02-07 04:15 | Market: https://polymarket.com/market/btc-updown-15m-1770436800
+🎯 Strike Price: $70,874.09
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (201 evaluations, 0 signals triggered):
+   • Bollinger Bands:    7/60 (max score)
+   • ATR Kinetic:        25/35 (max score)
+   • RSI:                0/5 (max score)
+   • MAX TOTAL SCORE:    32/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-4.4min
+   Current BTC Price:   $71,071.80
+   Entry Price:        $0.860
+   Final BTC:          $71,226.60
+   Direction:           UP
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +16.28% ($+16.28)
+================================================================================
+
+================================================================================
+📅 2026-02-07 04:30 | Market: https://polymarket.com/market/btc-updown-15m-1770437700
+🎯 Strike Price: $71,184.99
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (203 evaluations, 0 signals triggered):
+   • Bollinger Bands:    9/60 (max score)
+   • ATR Kinetic:        34/35 (max score)
+   • RSI:                3/5 (max score)
+   • MAX TOTAL SCORE:    46/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-4.9min
+   Current BTC Price:   $71,436.00
+   Entry Price:        $0.880
+   Final BTC:          $71,063.10
+   Direction:           UP
+   Hypothetical Result: LOSS
+   Hypothetical P&L:    -100.00% ($-100.00)
+================================================================================
+
+================================================================================
+📅 2026-02-07 04:45 | Market: https://polymarket.com/market/btc-updown-15m-1770438600
+🎯 Strike Price: $71,115.26
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (200 evaluations, 0 signals triggered):
+   • Bollinger Bands:    28/60 (max score)
+   • ATR Kinetic:        0/35 (max score)
+   • RSI:                7/5 (max score)
+   • MAX TOTAL SCORE:    35/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-12.6min
+   Current BTC Price:   $71,189.30
+   Entry Price:        $0.610
+   Final BTC:          $70,689.60
+   Direction:           UP
+   Hypothetical Result: LOSS
+   Hypothetical P&L:    -100.00% ($-100.00)
+================================================================================
+
+================================================================================
+📅 2026-02-07 05:00 | Market: https://polymarket.com/market/btc-updown-15m-1770439500
+🎯 Strike Price: $70,669.59
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (204 evaluations, 0 signals triggered):
+   • Bollinger Bands:    39/60 (max score)
+   • ATR Kinetic:        0/35 (max score)
+   • RSI:                10/5 (max score)
+   • MAX TOTAL SCORE:    49/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-13.1min
+   Current BTC Price:   $70,723.30
+   Entry Price:        $0.600
+   Final BTC:          $70,747.40
+   Direction:           UP
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +66.67% ($+66.67)
+================================================================================
+
+================================================================================
+📅 2026-02-07 05:15 | Market: https://polymarket.com/market/btc-updown-15m-1770440400
+🎯 Strike Price: $70,733.48
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (217 evaluations, 0 signals triggered):
+   • Bollinger Bands:    0/60 (max score)
+   • ATR Kinetic:        34/35 (max score)
+   • RSI:                2/5 (max score)
+   • MAX TOTAL SCORE:    36/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-4.8min
+   Current BTC Price:   $70,879.20
+   Entry Price:        $0.890
+   Final BTC:          $70,866.20
+   Direction:           UP
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +12.36% ($+12.36)
+================================================================================
+
+================================================================================
+📅 2026-02-07 05:30 | Market: https://polymarket.com/market/btc-updown-15m-1770441300
+🎯 Strike Price: $70,872.66
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (203 evaluations, 0 signals triggered):
+   • Bollinger Bands:    12/60 (max score)
+   • ATR Kinetic:        40/35 (max score)
+   • RSI:                2/5 (max score)
+   • MAX TOTAL SCORE:    54/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-4.6min
+   Current BTC Price:   $71,026.00
+   Entry Price:        $0.870
+   Final BTC:          $70,233.20
+   Direction:           UP
+   Hypothetical Result: LOSS
+   Hypothetical P&L:    -100.00% ($-100.00)
+================================================================================
+
+================================================================================
+📅 2026-02-07 05:45 | Market: https://polymarket.com/market/btc-updown-15m-1770442200
+🎯 Strike Price: $70,226.24
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (210 evaluations, 0 signals triggered):
+   • Bollinger Bands:    50/60 (max score)
+   • ATR Kinetic:        0/35 (max score)
+   • RSI:                10/5 (max score)
+   • MAX TOTAL SCORE:    60/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-13.3min
+   Current BTC Price:   $70,276.90
+   Entry Price:        $0.620
+   Final BTC:          $70,202.10
+   Direction:           UP
+   Hypothetical Result: LOSS
+   Hypothetical P&L:    -100.00% ($-100.00)
+================================================================================
+
+================================================================================
+📅 2026-02-07 06:00 | Market: https://polymarket.com/market/btc-updown-15m-1770443100
+🎯 Strike Price: $70,196.71
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (211 evaluations, 0 signals triggered):
+   • Bollinger Bands:    8/60 (max score)
+   • ATR Kinetic:        40/35 (max score)
+   • RSI:                4/5 (max score)
+   • MAX TOTAL SCORE:    52/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-5.4min
+   Current BTC Price:   $70,006.40
+   Entry Price:        $0.890
+   Final BTC:          $70,105.70
+   Direction:           DOWN
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +12.36% ($+12.36)
+================================================================================
+
+================================================================================
+📅 2026-02-07 06:15 | Market: https://polymarket.com/market/btc-updown-15m-1770444000
+🎯 Strike Price: $70,126.73
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (201 evaluations, 0 signals triggered):
+   • Bollinger Bands:    13/60 (max score)
+   • ATR Kinetic:        40/35 (max score)
+   • RSI:                4/5 (max score)
+   • MAX TOTAL SCORE:    57/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-2.0min
+   Current BTC Price:   $69,985.30
+   Entry Price:        $0.880
+   Final BTC:          $70,066.80
+   Direction:           DOWN
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +13.64% ($+13.64)
+================================================================================
+
+================================================================================
+📅 2026-02-07 06:30 | Market: https://polymarket.com/market/btc-updown-15m-1770444900
+🎯 Strike Price: $70,067.73
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (209 evaluations, 0 signals triggered):
+   • Bollinger Bands:    0/60 (max score)
+   • ATR Kinetic:        12/35 (max score)
+   • RSI:                3/5 (max score)
+   • MAX TOTAL SCORE:    15/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-3.1min
+   Current BTC Price:   $70,161.80
+   Entry Price:        $0.890
+   Final BTC:          $70,186.80
+   Direction:           UP
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +12.36% ($+12.36)
+================================================================================
+
+================================================================================
+📅 2026-02-07 06:45 | Market: https://polymarket.com/market/btc-updown-15m-1770445800
+🎯 Strike Price: $70,178.96
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (205 evaluations, 0 signals triggered):
+   • Bollinger Bands:    0/60 (max score)
+   • ATR Kinetic:        40/35 (max score)
+   • RSI:                4/5 (max score)
+   • MAX TOTAL SCORE:    44/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-1.1min
+   Current BTC Price:   $70,090.70
+   Entry Price:        $0.900
+   Final BTC:          $70,033.80
+   Direction:           DOWN
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +11.11% ($+11.11)
+================================================================================
+
+================================================================================
+📅 2026-02-07 07:00 | Market: https://polymarket.com/market/btc-updown-15m-1770446700
+🎯 Strike Price: $70,035.11
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (214 evaluations, 0 signals triggered):
+   • Bollinger Bands:    0/60 (max score)
+   • ATR Kinetic:        26/35 (max score)
+   • RSI:                0/5 (max score)
+   • MAX TOTAL SCORE:    26/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-9.5min
+   Current BTC Price:   $69,710.20
+   Entry Price:        $0.860
+   Final BTC:          $68,748.80
+   Direction:           DOWN
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +16.28% ($+16.28)
+================================================================================
+
+================================================================================
+📅 2026-02-07 07:15 | Market: https://polymarket.com/market/btc-updown-15m-1770447600
+🎯 Strike Price: $68,732.49
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (208 evaluations, 0 signals triggered):
+   • Bollinger Bands:    45/60 (max score)
+   • ATR Kinetic:        0/35 (max score)
+   • RSI:                10/5 (max score)
+   • MAX TOTAL SCORE:    55/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-13.3min
+   Current BTC Price:   $68,956.70
+   Entry Price:        $0.690
+   Final BTC:          $67,982.40
+   Direction:           UP
+   Hypothetical Result: LOSS
+   Hypothetical P&L:    -100.00% ($-100.00)
+================================================================================
+
+================================================================================
+📅 2026-02-07 07:30 | Market: https://polymarket.com/market/btc-updown-15m-1770448500
+🎯 Strike Price: $67,954.85
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (34 evaluations, 0 signals triggered):
+   • Bollinger Bands:    7/60 (max score)
+   • ATR Kinetic:        0/35 (max score)
+   • RSI:                7/5 (max score)
+   • MAX TOTAL SCORE:    14/100
+================================================================================
+
+================================================================================
+📅 2026-02-07 07:45 | Market: https://polymarket.com/market/btc-updown-15m-1770449400
+🎯 Strike Price: $67,995.55
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (226 evaluations, 0 signals triggered):
+   • Bollinger Bands:    33/60 (max score)
+   • ATR Kinetic:        17/35 (max score)
+   • RSI:                3/5 (max score)
+   • MAX TOTAL SCORE:    53/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-10.2min
+   Current BTC Price:   $67,554.20
+   Entry Price:        $0.850
+   Final BTC:          $68,450.10
+   Direction:           DOWN
+   Hypothetical Result: LOSS
+   Hypothetical P&L:    -100.00% ($-100.00)
+================================================================================
+
+================================================================================
+📅 2026-02-07 08:15 | Market: https://polymarket.com/market/btc-updown-15m-1770451200
+🎯 Strike Price: $68,068.05
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (211 evaluations, 0 signals triggered):
+   • Bollinger Bands:    8/60 (max score)
+   • ATR Kinetic:        35/35 (max score)
+   • RSI:                4/5 (max score)
+   • MAX TOTAL SCORE:    47/100
+================================================================================
