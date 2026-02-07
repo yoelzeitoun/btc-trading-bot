@@ -13,8 +13,8 @@ WEIGHT_RSI = 10
 
 # === BARRIER THRESHOLDS (HARD CONSTRAINTS) ===
 SHARE_PRICE_MIN = 0.35  # Minimum acceptable share price (BLOCKS TRADE if below)
-SHARE_PRICE_MAX = 0.90  # Maximum acceptable share price (BLOCKS TRADE if above)
-BB_BANDWIDTH_MIN = 0.01  # Minimum Bollinger Bandwidth (Upper-Lower)/Middle (BLOCKS TRADE if below = squeeze)
+SHARE_PRICE_MAX = 0.95  # Maximum acceptable share price (BLOCKS TRADE if above)
+BB_BANDWIDTH_MIN = 0.005  # Minimum Bollinger Bandwidth (Upper-Lower)/Middle (BLOCKS TRADE if below = squeeze)
 
 # === TRADING WINDOW ===
 # The time window (in minutes before expiration) to execute trades

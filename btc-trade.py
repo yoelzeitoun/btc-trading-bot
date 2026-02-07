@@ -701,9 +701,9 @@ def write_window_statistics(stats, trade_result=None):
             f.write("-"*80 + "\n")
             
             f.write(f"📊 SCORING ANALYSIS ({total} evaluations, {stats['signals_triggered']} signals triggered):\n")
-            f.write(f"   • Bollinger Bands:    {stats['max_score_a']}/60 (max score)\n")
-            f.write(f"   • ATR Kinetic:        {stats['max_score_b']}/35 (max score)\n")
-            f.write(f"   • RSI:                {stats['max_score_e']}/5 (max score)\n")
+            f.write(f"   • Bollinger Bands:    {stats['max_score_a']}/{WEIGHT_BOLLINGER} (max score)\n")
+            f.write(f"   • ATR Kinetic:        {stats['max_score_b']}/{WEIGHT_ATR} (max score)\n")
+            f.write(f"   • RSI:                {stats['max_score_e']}/{WEIGHT_RSI} (max score)\n")
             f.write(f"   • MAX TOTAL SCORE:    {stats['max_total_score']}/100\n")
             
             # Show "AT MAX SCORE MOMENT" if max score was tracked (price was acceptable) AND score >= 50
