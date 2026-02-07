@@ -706,8 +706,8 @@ def write_window_statistics(stats, trade_result=None):
             f.write(f"   • RSI:                {stats['max_score_e']}/5 (max score)\n")
             f.write(f"   • MAX TOTAL SCORE:    {stats['max_total_score']}/100\n")
             
-            # Show "AT MAX SCORE MOMENT" if max score was tracked (price was acceptable)
-            if stats.get('max_score_share_price') is not None:
+            # Show "AT MAX SCORE MOMENT" if max score was tracked (price was acceptable) AND score >= 50
+            if stats.get('max_score_share_price') is not None and stats.get('max_total_score', 0) >= 50:
                 f.write("-"*80 + "\n")
                 f.write(f"📈 AT MAX SCORE MOMENT:\n")
                 f.write(f"   Time to Expiration:  T-{stats.get('max_score_minutes_left', 0):.1f}min\n")
