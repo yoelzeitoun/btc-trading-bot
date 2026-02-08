@@ -1399,13 +1399,11 @@ def run_advisor():
                         if upper_bb and lower_bb:
                             if real_price > strike_price:
                                 # UP trade: we want strike LOW in band (near bottom)
-                                bb_explain = f"Strike at {target_position:.1%} from BOTTOM of band | UP trade ✓"
+                                bb_explain = f"Strike at {target_position:.1%} from BOTTOM of band"
                             else:
                                 # DOWN trade: we want strike HIGH in band (near top)
                                 distance_from_top = 1 - target_position
-                                bb_explain = f"Strike at {distance_from_top:.1%} from TOP of band | DOWN trade ✓"
-                            if bb_bandwidth is not None:
-                                bb_explain += f" | BW: {bb_bandwidth:.3f}"
+                                bb_explain = f"Strike at {distance_from_top:.1%} from TOP of band"
                         else:
                             bb_explain = "Bollinger Bands unavailable"
                         details.append(f"BB: {score_a}/{MAX_SCORE_BB} - {bb_explain}")
@@ -1431,7 +1429,11 @@ def run_advisor():
                         trade_score += score_b
                         # Explain ATR score
                         if atr:
-                            atr_explain = f"Distance: ${dist:.2f} | Max move: ${max_move:.2f} | Ratio: {distance_ratio:.1%}"
+                            ratio_value = (dist / max_move) if max_move else 0
+                            atr_explain = (
+                                f"Distance: ${dist:.2f} | Max move: ${max_move:.2f} | "
+                                f"Ratio: {dist:.2f}/{max_move:.2f} = {ratio_value:.2f}"
+                            )
                         else:
                             atr_explain = "ATR unavailable"
                         details.append(f"ATR: {score_b}/{MAX_SCORE_ATR} - {atr_explain}")
@@ -1470,7 +1472,9 @@ def run_advisor():
                                 window_stats['max_score_share_price'] = share_price
                                 window_stats['max_score_share_type'] = share_type
                         
-                        print(f"\n   📊 SCORE TOTAL: {display_score}/100  (Seuil: {SCORE_THRESHOLD})")
+                        trade_direction_label = "UP trade ✓" if real_price > strike_price else "DOWN trade ✓"
+                        print(f"\n   {trade_direction_label}")
+                        print(f"   📊 SCORE TOTAL: {display_score}/100  (Seuil: {SCORE_THRESHOLD})")
                         for detail in details:
                             print(f"      {detail}")
                         
