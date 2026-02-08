@@ -276,9 +276,11 @@ def execute_real_trade(poly_client, token_id, direction, share_price, strike_pri
 
         # Import OrderArgs
         from py_clob_client.clob_types import OrderArgs
+        from datetime import datetime
         
-        print(f"\n   🔄 EXECUTING REAL TRADE...")
-        record_log("🔄 EXECUTING REAL TRADE...")
+        trade_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f"\n   🔄 EXECUTING REAL TRADE... [{trade_time}]")
+        record_log(f"🔄 EXECUTING REAL TRADE... [{trade_time}]")
         print(f"      Direction: {direction}")
         record_log(f"Direction: {direction}")
         print(f"      Token ID: {token_id}")
@@ -291,6 +293,8 @@ def execute_real_trade(poly_client, token_id, direction, share_price, strike_pri
         record_log(f"Total Cost: ${actual_cost:.2f}")
         print(f"      Expected Strategy: BTC {'>' if direction == 'UP' else '<'} ${strike_price:,.2f}")
         record_log(f"Expected Strategy: BTC {'>' if direction == 'UP' else '<'} ${strike_price:,.2f}")
+        print(f"      Current BTC: ${current_btc_price:,.2f}")
+        record_log(f"Current BTC: ${current_btc_price:,.2f}")
         
         # Create order
         order_args = OrderArgs(
@@ -992,6 +996,14 @@ def write_window_statistics(stats, trade_result=None):
                         f.write("   Open Trade Logs:\n")
                         for line in log_lines:
                             f.write(f"     - {line}\n")
+                    
+                    # Write monitoring logs
+                    monitoring_logs = real_trade_info.get('monitoring_logs', [])
+                    if monitoring_logs:
+                        f.write("   Position Monitoring:\n")
+                        for line in monitoring_logs:
+                            f.write(f"     {line}\n")
+                    
                     # Check for close result
                     close_result = real_trade_info.get('close_result')
                     if close_result:
@@ -1261,6 +1273,9 @@ def run_advisor():
                                 result_data['real_trade']['close_result'] = open_position['close_result']
                             if open_position.get('close_attempts'):
                                 result_data['real_trade']['close_attempts'] = open_position['close_attempts']
+                            # Add monitoring logs
+                            if open_position.get('monitoring_logs'):
+                                result_data['real_trade']['monitoring_logs'] = open_position['monitoring_logs']
                         if window_stats.get('max_score_trade_taken'):
                             window_stats['max_score_trade_result'] = result_status
                     else:
@@ -1334,31 +1349,51 @@ def run_advisor():
                         # Only print target status every few checks to avoid spam
                         if not open_position.get('last_target_print'):
                             open_position['last_target_print'] = time.time()
-                            print(f"   📍 Position Status: {target_status}")
+                            
+                            # Get market prices
+                            outcome_prices = market_data.get('outcome_prices', {})
+                            up_price = outcome_prices.get('up', 0)
+                            down_price = outcome_prices.get('down', 0)
+                            prices_str = f"Market Prices - Up: {up_price*100:.1f}¢ | Down: {down_price*100:.1f}¢" if up_price and down_price else ""
+                            
+                            timestamp_line = f"[T-{minutes_left:.2f}min] |  {prices_str}"
+                            print(timestamp_line)
+                            open_position.setdefault('monitoring_logs', []).append(timestamp_line)
+                            
+                            status_line = f"📍 Position Status: {target_status}"
+                            print(status_line)
+                            open_position['monitoring_logs'].append(status_line)
             
                             # Calculate and display scores during position monitoring
                             upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=BOLLINGER_PERIOD, std_dev=2.0)
                             atr = calculate_atr(highs, lows, closes, period=ATR_PERIOD)
             
                             score_a = 0
+                            bb_explain = "BB unavailable"
                             if upper_bb and lower_bb and middle_bb:
                                 bb_range = upper_bb - lower_bb
                                 target_position = (strike_price - lower_bb) / bb_range
                                 target_position = max(0, min(1, target_position))
                 
                                 if direction == 'UP':
+                                    bb_explain = f"Strike at {target_position:.1%} from BOTTOM of band"
                                     if target_position < 0.5:
                                         score_a = int(round(WEIGHT_BOLLINGER * (1 - target_position / 0.5)))
                                         score_a = min(score_a, WEIGHT_BOLLINGER)
                                 else:
+                                    distance_from_top = 1 - target_position
+                                    bb_explain = f"Strike at {distance_from_top:.1%} from TOP of band"
                                     if target_position > 0.5:
                                         score_a = int(round(WEIGHT_BOLLINGER * ((target_position - 0.5) / 0.5)))
                                         score_a = min(score_a, WEIGHT_BOLLINGER)
             
                             score_b = 0
+                            atr_explain = "ATR unavailable"
                             if atr:
                                 max_move = atr * math.sqrt(minutes_left) * ATR_MULTIPLIER
                                 dist = abs(real_price - strike_price)
+                                ratio_value = (dist / max_move) if max_move else 0
+                                atr_explain = f"Distance: ${dist:.2f} - Max move: ${max_move:.2f} - Ratio: {ratio_value:.2f}"
                 
                                 if dist < max_move:
                                     score_b = 0
@@ -1369,33 +1404,54 @@ def run_advisor():
                                         score_b = int(round(WEIGHT_ATR * distance_ratio))
             
                             total_score = score_a + score_b
-                            print(f"   📊 SCORES: BB {score_a}/{WEIGHT_BOLLINGER} | ATR {score_b}/{WEIGHT_ATR} | TOTAL {total_score}/100")
+                            scores_line = f"📊 SCORES: TOTAL {total_score}/100 | BB {score_a}/{WEIGHT_BOLLINGER} - {bb_explain} | ATR {score_b}/{WEIGHT_ATR} - {atr_explain}"
+                            print(scores_line)
+                            open_position['monitoring_logs'].append(scores_line)
                         elif time.time() - open_position['last_target_print'] > LOOP_SLEEP_SECONDS:  # Print every loop
-                            print(f"   📍 Position Status: {target_status}")
+                            # Get market prices
+                            outcome_prices = market_data.get('outcome_prices', {})
+                            up_price = outcome_prices.get('up', 0)
+                            down_price = outcome_prices.get('down', 0)
+                            prices_str = f"Market Prices - Up: {up_price*100:.1f}¢ | Down: {down_price*100:.1f}¢" if up_price and down_price else ""
+                            
+                            timestamp_line = f"[T-{minutes_left:.2f}min] |  {prices_str}"
+                            print(timestamp_line)
+                            open_position.setdefault('monitoring_logs', []).append(timestamp_line)
+                            
+                            status_line = f"📍 Position Status: {target_status}"
+                            print(status_line)
+                            open_position['monitoring_logs'].append(status_line)
             
                             # Calculate and display scores during position monitoring
                             upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=BOLLINGER_PERIOD, std_dev=2.0)
                             atr = calculate_atr(highs, lows, closes, period=ATR_PERIOD)
             
                             score_a = 0
+                            bb_explain = "BB unavailable"
                             if upper_bb and lower_bb and middle_bb:
                                 bb_range = upper_bb - lower_bb
                                 target_position = (strike_price - lower_bb) / bb_range
                                 target_position = max(0, min(1, target_position))
                 
                                 if direction == 'UP':
+                                    bb_explain = f"Strike at {target_position:.1%} from BOTTOM of band"
                                     if target_position < 0.5:
                                         score_a = int(round(WEIGHT_BOLLINGER * (1 - target_position / 0.5)))
                                         score_a = min(score_a, WEIGHT_BOLLINGER)
                                 else:
+                                    distance_from_top = 1 - target_position
+                                    bb_explain = f"Strike at {distance_from_top:.1%} from TOP of band"
                                     if target_position > 0.5:
                                         score_a = int(round(WEIGHT_BOLLINGER * ((target_position - 0.5) / 0.5)))
                                         score_a = min(score_a, WEIGHT_BOLLINGER)
             
                             score_b = 0
+                            atr_explain = "ATR unavailable"
                             if atr:
                                 max_move = atr * math.sqrt(minutes_left) * ATR_MULTIPLIER
                                 dist = abs(real_price - strike_price)
+                                ratio_value = (dist / max_move) if max_move else 0
+                                atr_explain = f"Distance: ${dist:.2f} - Max move: ${max_move:.2f} - Ratio: {ratio_value:.2f}"
                 
                                 if dist < max_move:
                                     score_b = 0
@@ -1406,7 +1462,9 @@ def run_advisor():
                                         score_b = int(round(WEIGHT_ATR * distance_ratio))
             
                             total_score = score_a + score_b
-                            print(f"   📊 SCORES: BB {score_a}/{WEIGHT_BOLLINGER} | ATR {score_b}/{WEIGHT_ATR} | TOTAL {total_score}/100")
+                            scores_line = f"📊 SCORES: TOTAL {total_score}/100 | BB {score_a}/{WEIGHT_BOLLINGER} - {bb_explain} | ATR {score_b}/{WEIGHT_ATR} - {atr_explain}"
+                            print(scores_line)
+                            open_position['monitoring_logs'].append(scores_line)
                             open_position['last_target_print'] = time.time()
                         
                         # Attempt close if target hit (position is losing)
@@ -1544,7 +1602,7 @@ def run_advisor():
                             ratio_value = (dist / max_move) if max_move else 0
                             atr_explain = (
                                 f"Distance: ${dist:.2f} | Max move: ${max_move:.2f} | "
-                                f"Ratio: {dist:.2f}/{max_move:.2f} = {ratio_value:.2f}"
+                                f"Ratio: {ratio_value:.2f}"
                             )
                         else:
                             atr_explain = "ATR unavailable"
@@ -1690,7 +1748,8 @@ def run_advisor():
                                                         'strike_price': strike_price,
                                                         'closed': False,
                                                         'open_time': trade_result.get('open_time'),
-                                                        'open_btc_price': trade_result.get('open_btc_price')
+                                                        'open_btc_price': trade_result.get('open_btc_price'),
+                                                        'monitoring_logs': []  # Store all monitoring logs
                                                     }
                                                 else:
                                                     print(f"   ⚠️  Real trade execution failed, continuing in simulation mode")

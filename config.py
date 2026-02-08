@@ -4,11 +4,11 @@ REAL_TRADE = True  # Set to True to execute real trades, False for simulation on
 TRADE_AMOUNT = 10  # Trade amount in Shares (increased to 7 to avoid "min 5" errors on partial fills)
 CLOSE_TRADE_ON_TARGET = True  # Whether to automatically close the trade when target price is hit
 # === SCORING & TRADE EXECUTION ===
-SCORE_THRESHOLD = 70  # Minimum total score required to execute a trade (0-100)
+SCORE_THRESHOLD = 71  # Minimum total score required to execute a trade (0-100)
 
 # === SCORING WEIGHTS ===
-WEIGHT_BOLLINGER = 40
-WEIGHT_ATR = 60
+WEIGHT_BOLLINGER = 30
+WEIGHT_ATR = 70
 
 # === BARRIER THRESHOLDS (HARD CONSTRAINTS) ===
 SHARE_PRICE_MIN = 0.35  # Minimum acceptable share price
