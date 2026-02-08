@@ -371,67 +371,179 @@ def execute_real_trade(poly_client, token_id, direction, share_price, strike_pri
             'log_lines': log_lines
         }
 
+def get_token_balance(poly_client, token_id):
+    """
+    Get the actual balance of a conditional token from the user's wallet.
+    This is the "MAX" amount available to sell.
+    """
+    try:
+        # Try using the BalanceAllowanceParams with CONDITIONAL token type
+        from py_clob_client.clob_types import BalanceAllowanceParams, AssetType
+        
+        # First try - use the token_id as asset_id
+        try:
+            balance_params = BalanceAllowanceParams(
+                asset_type=AssetType.CONDITIONAL,
+                token_id=token_id
+            )
+            balance_info = poly_client.get_balance_allowance(balance_params)
+            
+            if isinstance(balance_info, dict):
+                balance = balance_info.get("balance", 0)
+            else:
+                balance = getattr(balance_info, "balance", 0)
+            
+            # Convert from smallest unit (10^6) to decimal shares
+            balance_decimal = float(balance) / 1_000_000 if balance else 0.0
+            return balance_decimal if balance_decimal > 0 else None
+        except Exception:
+            pass
+        
+        # Second try - query the open orders to infer balance
+        try:
+            # Get all open orders for this token
+            orders = poly_client.get_orders()
+            # This might not give us balance directly, so skip
+            pass
+        except Exception:
+            pass
+        
+        return None
+    except Exception as e:
+        print(f"   ⚠️  Could not query token balance: {e}")
+        return None
+
 def execute_close_trade(poly_client, token_id, size, current_btc_price=None):
     """
     Close an open position by placing a SELL order at best bid.
+    First tries to get actual wallet balance (MAX), then falls back to progressive retry.
     """
-    try:
-        book_url = f"https://clob.polymarket.com/book?token_id={token_id}"
-        book_response = requests.get(book_url, timeout=10)
-        book_response.raise_for_status()
-        book_data = book_response.json()
-
-        bids = book_data.get("bids", [])
-        if not bids:
-            print("   ❌ No bids available to close position")
-            return None
-
-        best_bid_price = max(float(b['price']) for b in bids)
-
-        from py_clob_client.clob_types import OrderArgs
-        order_args = OrderArgs(
-            price=best_bid_price,
-            size=float(size),
-            side="SELL",
-            token_id=token_id
-        )
-
-        response = poly_client.create_and_post_order(order_args)
-        if isinstance(response, dict) and response.get("success"):
-            order_id = response.get("orderID", "unknown")
-            print(f"   ✅ CLOSE ORDER PLACED: {order_id} @ ${best_bid_price:.3f}")
-            from datetime import datetime
-            close_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            return {
-                'success': True,
-                'order_id': order_id,
-                'price': best_bid_price,
-                'size': float(size),
-                'token_id': token_id,
-                'close_time': close_time,
-                'close_btc_price': current_btc_price
-            }
+    import requests
+    from datetime import datetime
+    from py_clob_client.clob_types import OrderArgs
+    
+    # Try to get actual balance first (MAX functionality)
+    actual_balance = get_token_balance(poly_client, token_id)
+    
+    if actual_balance and actual_balance > 0:
+        print(f"   💰 Wallet MAX balance: {actual_balance:.6f} shares")
+        # Try closing the actual balance first
+        percentages = [1.0, 0.99, 0.98, 0.95]  # Try actual balance, then 99%, 98%, 95%
+        base_size = actual_balance
+    else:
+        print(f"   ⚠️  Could not fetch wallet balance, using order size: {size}")
+        # Fall back to using the size we think we have
+        percentages = [1.0, 0.99, 0.98, 0.95, 0.93, 0.90]
+        base_size = float(size)
+    
+    for pct in percentages:
+        trade_size = base_size * pct
+        if actual_balance:
+            print(f"   ℹ️  Attempting to close {trade_size:.6f} shares ({pct*100:.0f}% of MAX)...")
         else:
-            error_msg = response.get("error", response) if isinstance(response, dict) else str(response)
-            print(f"   ❌ CLOSE ORDER FAILED: {error_msg}")
-            return {
-                'success': False,
-                'error': error_msg,
-                'price': best_bid_price,
-                'size': float(size),
-                'token_id': token_id,
-                'close_btc_price': current_btc_price
-            }
-    except Exception as e:
-        error_str = str(e)
-        print(f"   ❌ Error closing trade: {error_str}")
-        return {
-            'success': False,
-            'error': error_str,
-            'size': size,
-            'token_id': token_id,
-            'close_btc_price': current_btc_price
-        }
+            print(f"   ℹ️  Attempting to close {trade_size:.6f} shares ({pct*100:.0f}% of {size})...")
+        
+        try:
+            # Get best bid
+            book_url = f"https://clob.polymarket.com/book?token_id={token_id}"
+            book_response = requests.get(book_url, timeout=10)
+            book_response.raise_for_status()
+            book_data = book_response.json()
+
+            bids = book_data.get("bids", [])
+            if not bids:
+                print("   ❌ No bids available to close position")
+                if pct == percentages[-1]:  # Last attempt
+                    return None
+                continue  # Try next percentage
+
+            # Get best bid
+            best_bid_price = max(float(b['price']) for b in bids)
+
+            print(f"   📉 Placing sell order: {trade_size:.4f} shares @ ${best_bid_price:.3f}...")
+
+            order_args = OrderArgs(
+                price=best_bid_price,
+                size=trade_size,
+                side="SELL",
+                token_id=token_id
+            )
+
+            response = poly_client.create_and_post_order(order_args)
+            
+            if isinstance(response, dict) and response.get("success"):
+                order_id = response.get("orderID", "unknown")
+                print(f"   ✅ CLOSE ORDER PLACED: {order_id} @ ${best_bid_price:.3f}")
+                close_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                return {
+                    'success': True,
+                    'order_id': order_id,
+                    'price': best_bid_price,
+                    'size': trade_size,
+                    'token_id': token_id,
+                    'close_time': close_time,
+                    'close_btc_price': current_btc_price
+                }
+            else:
+                error_msg = response.get("error", response) if isinstance(response, dict) else str(response)
+                # Check if it's a balance error
+                if 'balance' in str(error_msg).lower() or 'allowance' in str(error_msg).lower():
+                    print(f"   ⚠️  Balance error at {pct*100:.0f}%, trying lower amount...")
+                    continue  # Try next percentage
+                else:
+                    print(f"   ❌ CLOSE ORDER FAILED: {error_msg}")
+                    return {
+                        'success': False,
+                        'error': error_msg,
+                        'price': best_bid_price,
+                        'size': trade_size,
+                        'token_id': token_id,
+                        'close_btc_price': current_btc_price
+                    }
+        except Exception as e:
+            error_str = str(e)
+            # Check if it's a balance/allowance error
+            if 'balance' in error_str.lower() or 'allowance' in error_str.lower():
+                print(f"   ⚠️  Balance error at {pct*100:.0f}%: {error_str}")
+                if pct == percentages[-1]:  # Last attempt
+                    print(f"   ❌ Failed to close even at {pct*100:.0f}%")
+                    return {
+                        'success': False,
+                        'error': error_str,
+                        'size': size,
+                        'token_id': token_id,
+                        'close_btc_price': current_btc_price
+                    }
+                continue  # Try next percentage
+            elif 'lower than the minimum' in error_str.lower():
+                # Order size is below market minimum, skip closing
+                print(f"   ⚠️  Order size below market minimum, skipping close")
+                return {
+                    'success': False,
+                    'error': 'Order size below market minimum',
+                    'size': size,
+                    'token_id': token_id,
+                    'close_btc_price': current_btc_price
+                }
+            else:
+                # Non-balance error, return immediately
+                print(f"   ❌ Error closing trade: {error_str}")
+                return {
+                    'success': False,
+                    'error': error_str,
+                    'size': size,
+                    'token_id': token_id,
+                    'close_btc_price': current_btc_price
+                }
+    
+    # If we get here, all attempts failed
+    return {
+        'success': False,
+        'error': 'All close attempts failed',
+        'size': size,
+        'token_id': token_id,
+        'close_btc_price': current_btc_price
+    }
 
 # --- 4. FETCH CURRENT BTC 15M MARKET AUTOMATICALLY ---
 def find_current_btc_15m_market():
