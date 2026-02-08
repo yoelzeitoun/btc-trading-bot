@@ -4,17 +4,15 @@ REAL_TRADE = True  # Set to True to execute real trades, False for simulation on
 TRADE_AMOUNT = 5  # Trade amount in Shares (minimum required is 5 for real trades)
 CLOSE_TRADE_ON_TARGET = True  # Whether to automatically close the trade when target price is hit
 # === SCORING & TRADE EXECUTION ===
-SCORE_THRESHOLD = 60  # Minimum total score required to execute a trade (0-100)
+SCORE_THRESHOLD = 70  # Minimum total score required to execute a trade (0-100)
 
 # === SCORING WEIGHTS ===
-WEIGHT_BOLLINGER = 50
-WEIGHT_ATR = 40
-WEIGHT_RSI = 10
+WEIGHT_BOLLINGER = 40
+WEIGHT_ATR = 60
 
 # === BARRIER THRESHOLDS (HARD CONSTRAINTS) ===
-SHARE_PRICE_MIN = 0.35  # Minimum acceptable share price (BLOCKS TRADE if below)
-SHARE_PRICE_MAX = 0.95  # Maximum acceptable share price (BLOCKS TRADE if above)
-BB_BANDWIDTH_MIN = 0.005  # Minimum Bollinger Bandwidth (Upper-Lower)/Middle (BLOCKS TRADE if below = squeeze)
+SHARE_PRICE_MIN = 0.35  # Minimum acceptable share price
+SHARE_PRICE_MAX = 0.95  # Maximum acceptable share price
 
 # === TRADING WINDOW ===
 # The time window (in minutes before expiration) to execute trades

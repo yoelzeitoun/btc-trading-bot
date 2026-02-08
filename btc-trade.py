@@ -19,10 +19,9 @@ from config import (
     BOLLINGER_PERIOD, BOLLINGER_STD_DEV,
     ATR_PERIOD, ATR_MULTIPLIER,
     SHARE_PRICE_MIN, SHARE_PRICE_MAX,
-    BB_BANDWIDTH_MIN,
     LOOP_SLEEP_SECONDS, NEXT_MARKET_WAIT_SECONDS,
     SCORE_THRESHOLD,
-    WEIGHT_BOLLINGER, WEIGHT_ATR, WEIGHT_RSI,
+    WEIGHT_BOLLINGER, WEIGHT_ATR,
     REAL_TRADE, TRADE_AMOUNT, CLOSE_TRADE_ON_TARGET
 )
 
@@ -96,32 +95,6 @@ def calculate_atr(highs, lows, closes, period=14):
     atr = np.mean(true_ranges[-period:])
     return atr
 
-def calculate_rsi(closes, period=14):
-    """Calculate Relative Strength Index (RSI)"""
-    if len(closes) < period + 1:
-        return None
-    
-    # Calculate price changes
-    deltas = np.diff(closes)
-    
-    # Separate gains and losses
-    gains = np.where(deltas > 0, deltas, 0)
-    losses = np.where(deltas < 0, -deltas, 0)
-    
-    # Calculate average gain and loss
-    avg_gain = np.mean(gains[-period:])
-    avg_loss = np.mean(losses[-period:])
-    
-    # Avoid division by zero
-    if avg_loss == 0:
-        return 100.0 if avg_gain > 0 else 50.0
-    
-    # Calculate RS and RSI
-    rs = avg_gain / avg_loss
-    rsi = 100 - (100 / (1 + rs))
-    
-    return rsi
-
 def _safe_float(value):
     try:
         return float(value)
@@ -165,18 +138,55 @@ def execute_real_trade(poly_client, token_id, direction, share_price, strike_pri
     Returns:
         dict with trade result or None if trade failed
     """
+    log_lines = []
+    def record_log(message):
+        log_lines.append(message)
+
     if not REAL_TRADE:
-        print("   ℹ️  REAL_TRADE is False - Skipping actual order placement (simulation mode)")
-        return None
+        message = "ℹ️  REAL_TRADE is False - Skipping actual order placement (simulation mode)"
+        print(f"   {message}")
+        record_log(message)
+        return {
+            'success': False,
+            'error': 'REAL_TRADE is False',
+            'direction': direction,
+            'token_id': token_id,
+            'share_price': share_price,
+            'current_btc': current_btc_price,
+            'strike_price': strike_price,
+            'log_lines': log_lines
+        }
         
     # Validate all constraints before attempting trade
     if share_price < SHARE_PRICE_MIN:
-        print(f"   🚫 Cannot trade: Share price ${share_price:.3f} below minimum ${SHARE_PRICE_MIN}")
-        return None
+        message = f"🚫 Cannot trade: Share price ${share_price:.3f} below minimum ${SHARE_PRICE_MIN}"
+        print(f"   {message}")
+        record_log(message)
+        return {
+            'success': False,
+            'error': message,
+            'direction': direction,
+            'token_id': token_id,
+            'share_price': share_price,
+            'current_btc': current_btc_price,
+            'strike_price': strike_price,
+            'log_lines': log_lines
+        }
         
     if share_price > SHARE_PRICE_MAX:
-        print(f"   🚫 Cannot trade: Share price ${share_price:.3f} above maximum ${SHARE_PRICE_MAX}")
-        return None
+        message = f"🚫 Cannot trade: Share price ${share_price:.3f} above maximum ${SHARE_PRICE_MAX}"
+        print(f"   {message}")
+        record_log(message)
+        return {
+            'success': False,
+            'error': message,
+            'direction': direction,
+            'token_id': token_id,
+            'share_price': share_price,
+            'current_btc': current_btc_price,
+            'strike_price': strike_price,
+            'log_lines': log_lines
+        }
     
     try:
         # Fetch current order book to get best ask and minimum size
@@ -189,8 +199,19 @@ def execute_real_trade(poly_client, token_id, direction, share_price, strike_pri
         min_order_size = _safe_float(book_data.get("min_order_size")) or 1.0
         
         if not asks:
-            print("   ❌ No asks available in order book")
-            return None
+            message = "❌ No asks available in order book"
+            print(f"   {message}")
+            record_log(message)
+            return {
+                'success': False,
+                'error': message,
+                'direction': direction,
+                'token_id': token_id,
+                'share_price': share_price,
+                'current_btc': current_btc_price,
+                'strike_price': strike_price,
+                'log_lines': log_lines
+            }
             
         best_ask_price = min(float(a['price']) for a in asks)
         
@@ -200,9 +221,9 @@ def execute_real_trade(poly_client, token_id, direction, share_price, strike_pri
         # Enforce per-token minimum share size
         if actual_size < min_order_size:
             actual_size = float(min_order_size)
-            print(
-                f"   📊 Size below token minimum, using minimum size: {actual_size} shares"
-            )
+            message = f"📊 Size below token minimum, using minimum size: {actual_size} shares"
+            print(f"   {message}")
+            record_log(message)
 
         actual_cost = actual_size * best_ask_price
             
@@ -226,25 +247,50 @@ def execute_real_trade(poly_client, token_id, direction, share_price, strike_pri
             if balance_val is not None and allowance_val is not None:
                 required = actual_cost
                 if balance_val < required or allowance_val < required:
-                    print(
-                        f"   🚫 Insufficient balance/allowance: "
+                    message = (
+                        "🚫 Insufficient balance/allowance: "
                         f"balance=${balance_val:.2f}, allowance=${allowance_val:.2f}, required=${required:.2f}"
                     )
-                    print("   💡 Deposit/approve more USDC collateral in Polymarket to trade.")
-                    return None
+                    print(f"   {message}")
+                    hint = "💡 Deposit/approve more USDC collateral in Polymarket to trade."
+                    print(f"   {hint}")
+                    record_log(message)
+                    record_log(hint)
+                    return {
+                        'success': False,
+                        'error': message,
+                        'direction': direction,
+                        'token_id': token_id,
+                        'share_price': share_price,
+                        'best_ask_price': best_ask_price,
+                        'size': actual_size,
+                        'cost': actual_cost,
+                        'current_btc': current_btc_price,
+                        'strike_price': strike_price,
+                        'log_lines': log_lines
+                    }
         except Exception as e:
-            print(f"   ⚠️  Could not verify balance/allowance: {e}")
+            message = f"⚠️  Could not verify balance/allowance: {e}"
+            print(f"   {message}")
+            record_log(message)
 
         # Import OrderArgs
         from py_clob_client.clob_types import OrderArgs
         
         print(f"\n   🔄 EXECUTING REAL TRADE...")
+        record_log("🔄 EXECUTING REAL TRADE...")
         print(f"      Direction: {direction}")
+        record_log(f"Direction: {direction}")
         print(f"      Token ID: {token_id}")
+        record_log(f"Token ID: {token_id}")
         print(f"      Price: ${best_ask_price:.3f}")
+        record_log(f"Price: ${best_ask_price:.3f}")
         print(f"      Size: {actual_size} shares")
+        record_log(f"Size: {actual_size} shares")
         print(f"      Total Cost: ${actual_cost:.2f}")
+        record_log(f"Total Cost: ${actual_cost:.2f}")
         print(f"      Expected Strategy: BTC {'>' if direction == 'UP' else '<'} ${strike_price:,.2f}")
+        record_log(f"Expected Strategy: BTC {'>' if direction == 'UP' else '<'} ${strike_price:,.2f}")
         
         # Create order
         order_args = OrderArgs(
@@ -264,7 +310,14 @@ def execute_real_trade(poly_client, token_id, direction, share_price, strike_pri
             print(f"      Cost: ${actual_cost:.2f}")
             print(f"      Potential Profit: ${(actual_size - actual_cost):.2f}")
             print(f"      ROI if Win: {((actual_size/actual_cost - 1) * 100):.1f}%")
+            record_log("✅ ORDER PLACED SUCCESSFULLY!")
+            record_log(f"Order ID: {order_id}")
+            record_log(f"Cost: ${actual_cost:.2f}")
+            record_log(f"Potential Profit: ${(actual_size - actual_cost):.2f}")
+            record_log(f"ROI if Win: {((actual_size/actual_cost - 1) * 100):.1f}%")
             
+            from datetime import datetime
+            open_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             return {
                 'success': True,
                 'order_id': order_id,
@@ -274,20 +327,51 @@ def execute_real_trade(poly_client, token_id, direction, share_price, strike_pri
                 'cost': actual_cost,
                 'token_id': token_id,
                 'current_btc': current_btc_price,
-                'strike_price': strike_price
+                'strike_price': strike_price,
+                'min_order_size': min_order_size,
+                'share_price': share_price,
+                'log_lines': log_lines,
+                'open_time': open_time,
+                'open_btc_price': current_btc_price
             }
         else:
             error_msg = response.get("error", response) if isinstance(response, dict) else str(response)
-            print(f"   ❌ ORDER FAILED: {error_msg}")
-            return None
+            message = f"❌ ORDER FAILED: {error_msg}"
+            print(f"   {message}")
+            record_log(message)
+            return {
+                'success': False,
+                'error': error_msg,
+                'direction': direction,
+                'token_id': token_id,
+                'price': best_ask_price,
+                'size': actual_size,
+                'cost': actual_cost,
+                'current_btc': current_btc_price,
+                'strike_price': strike_price,
+                'min_order_size': min_order_size,
+                'share_price': share_price,
+                'log_lines': log_lines
+            }
             
     except Exception as e:
-        print(f"   ❌ Error executing trade: {e}")
+        message = f"❌ Error executing trade: {e}"
+        print(f"   {message}")
         import traceback
         traceback.print_exc()
-        return None
+        record_log(message)
+        return {
+            'success': False,
+            'error': str(e),
+            'direction': direction,
+            'token_id': token_id,
+            'share_price': share_price,
+            'current_btc': current_btc_price,
+            'strike_price': strike_price,
+            'log_lines': log_lines
+        }
 
-def execute_close_trade(poly_client, token_id, size):
+def execute_close_trade(poly_client, token_id, size, current_btc_price=None):
     """
     Close an open position by placing a SELL order at best bid.
     """
@@ -316,20 +400,38 @@ def execute_close_trade(poly_client, token_id, size):
         if isinstance(response, dict) and response.get("success"):
             order_id = response.get("orderID", "unknown")
             print(f"   ✅ CLOSE ORDER PLACED: {order_id} @ ${best_bid_price:.3f}")
+            from datetime import datetime
+            close_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             return {
                 'success': True,
                 'order_id': order_id,
                 'price': best_bid_price,
                 'size': float(size),
-                'token_id': token_id
+                'token_id': token_id,
+                'close_time': close_time,
+                'close_btc_price': current_btc_price
             }
         else:
             error_msg = response.get("error", response) if isinstance(response, dict) else str(response)
             print(f"   ❌ CLOSE ORDER FAILED: {error_msg}")
-            return None
+            return {
+                'success': False,
+                'error': error_msg,
+                'price': best_bid_price,
+                'size': float(size),
+                'token_id': token_id,
+                'close_btc_price': current_btc_price
+            }
     except Exception as e:
-        print(f"   ❌ Error closing trade: {e}")
-        return None
+        error_str = str(e)
+        print(f"   ❌ Error closing trade: {error_str}")
+        return {
+            'success': False,
+            'error': error_str,
+            'size': size,
+            'token_id': token_id,
+            'close_btc_price': current_btc_price
+        }
 
 # --- 4. FETCH CURRENT BTC 15M MARKET AUTOMATICALLY ---
 def find_current_btc_15m_market():
@@ -687,11 +789,10 @@ def write_window_statistics(stats, trade_result=None):
         # Calculate average scores
         total = stats['total_evaluations']
         if total == 0:
-            avg_a = avg_b = avg_e = avg_total = 0
+            avg_a = avg_b = avg_total = 0
         else:
             avg_a = stats['total_score_a'] / total
             avg_b = stats['total_score_b'] / total
-            avg_e = stats['total_score_e'] / total
             avg_total = stats['total_score_sum'] / total
         
         with open(stats_file, 'a') as f:
@@ -703,7 +804,6 @@ def write_window_statistics(stats, trade_result=None):
             f.write(f"📊 SCORING ANALYSIS ({total} evaluations, {stats['signals_triggered']} signals triggered):\n")
             f.write(f"   • Bollinger Bands:    {stats['max_score_a']}/{WEIGHT_BOLLINGER} (max score)\n")
             f.write(f"   • ATR Kinetic:        {stats['max_score_b']}/{WEIGHT_ATR} (max score)\n")
-            f.write(f"   • RSI:                {stats['max_score_e']}/{WEIGHT_RSI} (max score)\n")
             f.write(f"   • MAX TOTAL SCORE:    {stats['max_total_score']}/100\n")
             
             # Show "AT MAX SCORE MOMENT" if max score was tracked (price was acceptable) AND score >= 50
@@ -764,14 +864,42 @@ def write_window_statistics(stats, trade_result=None):
                 f.write(f"   Trade Amount:  ${trade_result['trade_amount']:.2f}\n")
                 f.write(f"   Result:        {trade_result['result'].upper()}\n")
                 f.write(f"   P&L:           {trade_result['profit_loss_pct']:+.2f}% (${trade_result['profit_loss_usd']:+.2f})\n")
+
+                real_trade_info = trade_result.get('real_trade')
+                if real_trade_info:
+                    status = "SUCCESS" if real_trade_info.get('success') else "FAILED"
+                    f.write(f"   Real Trade Open: {status}\n")
+                    if real_trade_info.get('open_time'):
+                        f.write(f"   Open Time:     {real_trade_info['open_time']}\n")
+                    if real_trade_info.get('open_btc_price'):
+                        f.write(f"   Open BTC Price: ${real_trade_info['open_btc_price']:,.2f}\n")
+                    if real_trade_info.get('error'):
+                        f.write(f"   Error:         {real_trade_info['error']}\n")
+                    log_lines = real_trade_info.get('log_lines', [])
+                    if log_lines:
+                        f.write("   Open Trade Logs:\n")
+                        for line in log_lines:
+                            f.write(f"     - {line}\n")
+                    # Check for close result
+                    close_result = real_trade_info.get('close_result')
+                    if close_result:
+                        f.write(f"   Close Time:    {close_result.get('close_time', 'N/A')}\n")
+                        f.write(f"   Close BTC Price: ${close_result.get('close_btc_price', 'N/A'):,.2f}\n")
+                        f.write(f"   Close Price:   ${close_result.get('price', 'N/A'):.3f}\n")
+                        if not close_result.get('success'):
+                            f.write(f"   Close Status:  FAILED - {close_result.get('error', 'Unknown error')}\n")
+                    
+                    # Check for close attempts info
+                    if 'close_attempts' in real_trade_info:
+                        f.write(f"   Close Attempts: {real_trade_info['close_attempts']}\n")
                 
                 print(f"\n📊 WINDOW STATISTICS + TRADE RESULT SAVED:")
-                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f} | E: {avg_e:.1f}")
+                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f}")
                 print(f"   Avg Total Score: {avg_total:.1f}/100 | Signals: {stats['signals_triggered']}")
                 print(f"   Trade Result: {trade_result['result']} ({trade_result['profit_loss_pct']:+.2f}%)")
             else:
                 print(f"\n📊 WINDOW STATISTICS SAVED:")
-                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f} | E: {avg_e:.1f}")
+                print(f"   Avg Scores - A: {avg_a:.1f} | B: {avg_b:.1f}")
                 print(f"   Avg Total Score: {avg_total:.1f}/100 | Signals: {stats['signals_triggered']} | Evaluations: {total}")
             
             f.write("="*80 + "\n")
@@ -910,12 +1038,10 @@ def run_advisor():
                 'start_time': end_time_readable,
                 'total_score_a': 0,
                 'total_score_b': 0,
-                'total_score_e': 0,
                 'total_score_sum': 0,
                 'max_total_score': 0,
                 'max_score_a': 0,
                 'max_score_b': 0,
-                'max_score_e': 0,
                 'max_score_btc_price': 0,
                 'max_score_direction': 'UNKNOWN',
                 'max_score_trade_result': None,
@@ -971,7 +1097,16 @@ def run_advisor():
                         
                         # Calculate P&L (assuming $100 trade)
                         trade_amount = 100
-                        if is_win:
+                        if entry_price is None:
+                            # No entry price available (trade signal had no price data)
+                            profit = 0
+                            profit_pct = 0
+                            result_status = "UNKNOWN"
+                            print(f"\n⚠️  TRADE RESULT UNKNOWN - No entry price data!")
+                            print(f"   Direction: {direction}")
+                            print(f"   Entry: UNAVAILABLE")
+                            print(f"   Final BTC: ${final_price:,.2f}")
+                        elif is_win:
                             payout = trade_amount / entry_price
                             profit = payout - trade_amount
                             profit_pct = (profit / trade_amount) * 100
@@ -1003,6 +1138,17 @@ def run_advisor():
                             'trade_amount': trade_amount,
                             'signal_score': window_stats.get('signal_score', 0)
                         }
+                        real_trade_info = signal_details.get('real_trade')
+                        if real_trade_info:
+                            result_data['real_trade'] = real_trade_info
+                        # Add close result and attempts if position was closed or attempted
+                        if open_position:
+                            if 'real_trade' not in result_data:
+                                result_data['real_trade'] = real_trade_info or {}
+                            if open_position.get('close_result'):
+                                result_data['real_trade']['close_result'] = open_position['close_result']
+                            if open_position.get('close_attempts'):
+                                result_data['real_trade']['close_attempts'] = open_position['close_attempts']
                         if window_stats.get('max_score_trade_taken'):
                             window_stats['max_score_trade_result'] = result_status
                     else:
@@ -1057,26 +1203,125 @@ def run_advisor():
                         time.sleep(LOOP_SLEEP_SECONDS)
                         continue
                     
-                    # 3. Auto-close position on target (if enabled)
+                    # 3. Monitor position and auto-close on target (if enabled)
                     if CLOSE_TRADE_ON_TARGET and open_position and not open_position.get('closed'):
-                        if open_position['direction'] == 'UP' and real_price >= strike_price:
-                            print("\n🎯 TARGET HIT - Closing UP position...")
+                        # Show price relative to target
+                        direction = open_position['direction']
+                        target_status = ""
+                        if direction == 'UP':
+                            if real_price <= strike_price:
+                                target_status = f"⚠️ TARGET HIT - LOSING (BTC ${real_price:,.2f} <= ${strike_price:,.2f})"
+                            else:
+                                target_status = f"⏳ Winning (BTC ${real_price:,.2f} > ${strike_price:,.2f})"
+                        else:  # DOWN
+                            if real_price >= strike_price:
+                                target_status = f"⚠️ TARGET HIT - LOSING (BTC ${real_price:,.2f} >= ${strike_price:,.2f})"
+                            else:
+                                target_status = f"⏳ Winning (BTC ${real_price:,.2f} < ${strike_price:,.2f})"
+                        
+                        # Only print target status every few checks to avoid spam
+                        if not open_position.get('last_target_print'):
+                            open_position['last_target_print'] = time.time()
+                            print(f"   📍 Position Status: {target_status}")
+            
+                            # Calculate and display scores during position monitoring
+                            upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=BOLLINGER_PERIOD, std_dev=2.0)
+                            atr = calculate_atr(highs, lows, closes, period=ATR_PERIOD)
+            
+                            score_a = 0
+                            if upper_bb and lower_bb and middle_bb:
+                                bb_range = upper_bb - lower_bb
+                                target_position = (strike_price - lower_bb) / bb_range
+                                target_position = max(0, min(1, target_position))
+                
+                                if direction == 'UP':
+                                    if target_position < 0.5:
+                                        score_a = int(round(WEIGHT_BOLLINGER * (1 - target_position / 0.5)))
+                                        score_a = min(score_a, WEIGHT_BOLLINGER)
+                                else:
+                                    if target_position > 0.5:
+                                        score_a = int(round(WEIGHT_BOLLINGER * ((target_position - 0.5) / 0.5)))
+                                        score_a = min(score_a, WEIGHT_BOLLINGER)
+            
+                            score_b = 0
+                            if atr:
+                                max_move = atr * math.sqrt(minutes_left) * ATR_MULTIPLIER
+                                dist = abs(real_price - strike_price)
+                
+                                if dist < max_move:
+                                    score_b = 0
+                                    distance_ratio = 0.0
+                                else:
+                                    if max_move > 0:
+                                        distance_ratio = min((dist - max_move) / max_move, 1.0)
+                                        score_b = int(round(WEIGHT_ATR * distance_ratio))
+            
+                            total_score = score_a + score_b
+                            print(f"   📊 SCORES: BB {score_a}/{WEIGHT_BOLLINGER} | ATR {score_b}/{WEIGHT_ATR} | TOTAL {total_score}/100")
+                        elif time.time() - open_position['last_target_print'] > LOOP_SLEEP_SECONDS:  # Print every loop
+                            print(f"   📍 Position Status: {target_status}")
+            
+                            # Calculate and display scores during position monitoring
+                            upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=BOLLINGER_PERIOD, std_dev=2.0)
+                            atr = calculate_atr(highs, lows, closes, period=ATR_PERIOD)
+            
+                            score_a = 0
+                            if upper_bb and lower_bb and middle_bb:
+                                bb_range = upper_bb - lower_bb
+                                target_position = (strike_price - lower_bb) / bb_range
+                                target_position = max(0, min(1, target_position))
+                
+                                if direction == 'UP':
+                                    if target_position < 0.5:
+                                        score_a = int(round(WEIGHT_BOLLINGER * (1 - target_position / 0.5)))
+                                        score_a = min(score_a, WEIGHT_BOLLINGER)
+                                else:
+                                    if target_position > 0.5:
+                                        score_a = int(round(WEIGHT_BOLLINGER * ((target_position - 0.5) / 0.5)))
+                                        score_a = min(score_a, WEIGHT_BOLLINGER)
+            
+                            score_b = 0
+                            if atr:
+                                max_move = atr * math.sqrt(minutes_left) * ATR_MULTIPLIER
+                                dist = abs(real_price - strike_price)
+                
+                                if dist < max_move:
+                                    score_b = 0
+                                    distance_ratio = 0.0
+                                else:
+                                    if max_move > 0:
+                                        distance_ratio = min((dist - max_move) / max_move, 1.0)
+                                        score_b = int(round(WEIGHT_ATR * distance_ratio))
+            
+                            total_score = score_a + score_b
+                            print(f"   📊 SCORES: BB {score_a}/{WEIGHT_BOLLINGER} | ATR {score_b}/{WEIGHT_ATR} | TOTAL {total_score}/100")
+                            open_position['last_target_print'] = time.time()
+                        
+                        # Attempt close if target hit (position is losing)
+                        if (direction == 'UP' and real_price <= strike_price) or (direction == 'DOWN' and real_price >= strike_price):
+                            if not open_position.get('close_attempts'):
+                                open_position['close_attempts'] = 0
+                            
+                            open_position['close_attempts'] += 1
+                            attempt_num = open_position['close_attempts']
+                            
+                            print(f"\n🎯 TARGET HIT - Closing {direction} position (Attempt #{attempt_num})...")
+                            print(f"   Price: BTC ${real_price:,.2f}")
+                            
                             close_result = execute_close_trade(
                                 poly_client,
                                 open_position['token_id'],
-                                open_position['size']
+                                open_position['size'],
+                                real_price
                             )
+                            
                             if close_result and close_result.get('success'):
+                                print(f"   ✅ Position closed successfully on attempt #{attempt_num}")
                                 open_position['closed'] = True
-                        elif open_position['direction'] == 'DOWN' and real_price <= strike_price:
-                            print("\n🎯 TARGET HIT - Closing DOWN position...")
-                            close_result = execute_close_trade(
-                                poly_client,
-                                open_position['token_id'],
-                                open_position['size']
-                            )
-                            if close_result and close_result.get('success'):
-                                open_position['closed'] = True
+                                open_position['close_result'] = close_result
+                            else:
+                                print(f"   ⚠️  Close attempt #{attempt_num} failed. Will retry when target remains hit.")
+                                # Don't update 'closed' - keep trying
 
                     # 4. Time Window Announcements
                     window_midpoint = (TRADE_WINDOW_MIN + TRADE_WINDOW_MAX) / 2
@@ -1118,7 +1363,6 @@ def run_advisor():
                         # Max score for each component
                         MAX_SCORE_BB = WEIGHT_BOLLINGER
                         MAX_SCORE_ATR = WEIGHT_ATR
-                        MAX_SCORE_RSI = WEIGHT_RSI
                         
                         # === A. BOLLINGER BANDS SCORE (Proportional, Max 34) ===
                         upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=BOLLINGER_PERIOD, std_dev=2.0)
@@ -1203,34 +1447,6 @@ def run_advisor():
                         except Exception:
                             pass
                         
-                        # === E. RSI SCORE (Proportional, Max 10) ===
-                        score_e = 0
-                        rsi_val = calculate_rsi(closes, period=14)
-
-                        if rsi_val:
-                            if real_price > strike_price:  # UP trade
-                                # Score max (10) if RSI <= 30, Score 0 if RSI >= 75
-                                if rsi_val <= 30:
-                                    score_e = WEIGHT_RSI
-                                elif rsi_val >= 75:
-                                    score_e = 0
-                                else:
-                                    # Linear interpolation between 30 (10 pts) and 75 (0 pts)
-                                    score_e = int(round(WEIGHT_RSI * (1 - (rsi_val - 30) / (75 - 30))))
-                            else:  # DOWN trade
-                                # Score max (10) if RSI >= 70, Score 0 if RSI <= 25
-                                if rsi_val >= 70:
-                                    score_e = WEIGHT_RSI
-                                elif rsi_val <= 25:
-                                    score_e = 0
-                                else:
-                                    # Linear interpolation between 25 (0 pts) and 70 (10 pts)
-                                    score_e = int(round(WEIGHT_RSI * ((rsi_val - 25) / (70 - 25))))
-
-                        trade_score += score_e
-                        rsi_display = f"{rsi_val:.1f}" if rsi_val else "N/A"
-                        details.append(f"RSI({rsi_display}): {score_e}/{WEIGHT_RSI}")
-                        
                         # === DECISION ===
                         # Clamp negative scores to 0 for display
                         display_score = max(0, trade_score)
@@ -1238,7 +1454,6 @@ def run_advisor():
                         window_stats['total_evaluations'] += 1
                         window_stats['total_score_a'] += score_a
                         window_stats['total_score_b'] += score_b
-                        window_stats['total_score_e'] += score_e
                         window_stats['total_score_sum'] += display_score
                         
                         # Track maximum score hit during window (only if entry price is acceptable)
@@ -1247,7 +1462,6 @@ def run_advisor():
                                 window_stats['max_total_score'] = display_score
                                 window_stats['max_score_a'] = score_a
                                 window_stats['max_score_b'] = score_b
-                                window_stats['max_score_e'] = score_e
                                 window_stats['max_score_btc_price'] = real_price
                                 window_stats['max_score_direction'] = 'UP' if real_price > strike_price else 'DOWN'
                                 window_stats['max_score_minutes_left'] = minutes_left
@@ -1267,9 +1481,6 @@ def run_advisor():
                                 constraint_violations.append(f"Price too low (${share_price:.2f} < ${SHARE_PRICE_MIN})")
                             if share_price > SHARE_PRICE_MAX:
                                 constraint_violations.append(f"Price too high (${share_price:.2f} > ${SHARE_PRICE_MAX})")
-                        # Check Bollinger Bandwidth (squeeze detection)
-                        if bb_bandwidth is not None and bb_bandwidth < BB_BANDWIDTH_MIN:
-                            constraint_violations.append(f"BB Bandwidth too low ({bb_bandwidth:.3f} < {BB_BANDWIDTH_MIN}) - Squeeze detected")
                         
                         print("\n" + "-"*60)
                         if display_score >= SCORE_THRESHOLD:
@@ -1313,7 +1524,14 @@ def run_advisor():
                                             'direction': share_type,
                                             'price': None,
                                             'entry_time': minutes_left,
-                                            'btc_price': real_price
+                                            'btc_price': real_price,
+                                            'real_trade': {
+                                                'success': False,
+                                                'error': 'Share price unavailable from market data',
+                                                'log_lines': [
+                                                    '🚫 REAL_TRADE BLOCKED - Share price unavailable from market data'
+                                                ]
+                                            }
                                         }
                                     else:
                                         print(f"\n   💼 REAL_TRADE ENABLED - Attempting to place order...")
@@ -1344,14 +1562,19 @@ def run_advisor():
                                                         'btc_price': real_price,
                                                         'order_id': trade_result.get('order_id'),
                                                         'actual_size': trade_result.get('size'),
-                                                        'actual_cost': trade_result.get('cost')
+                                                        'actual_cost': trade_result.get('cost'),
+                                                        'real_trade': trade_result,
+                                                        'open_time': trade_result.get('open_time'),
+                                                        'open_btc_price': trade_result.get('open_btc_price')
                                                     }
                                                     open_position = {
                                                         'token_id': token_id_to_trade,
                                                         'size': trade_result.get('size'),
                                                         'direction': trade_direction,
                                                         'strike_price': strike_price,
-                                                        'closed': False
+                                                        'closed': False,
+                                                        'open_time': trade_result.get('open_time'),
+                                                        'open_btc_price': trade_result.get('open_btc_price')
                                                     }
                                                 else:
                                                     print(f"   ⚠️  Real trade execution failed, continuing in simulation mode")
@@ -1359,7 +1582,8 @@ def run_advisor():
                                                         'direction': share_type,
                                                         'price': share_price,
                                                         'entry_time': minutes_left,
-                                                        'btc_price': real_price
+                                                        'btc_price': real_price,
+                                                        'real_trade': trade_result
                                                     }
                                             else:
                                                 print(f"   ⚠️  Token ID not found for {trade_direction} trade")
@@ -1367,7 +1591,14 @@ def run_advisor():
                                                     'direction': share_type,
                                                     'price': share_price,
                                                     'entry_time': minutes_left,
-                                                    'btc_price': real_price
+                                                    'btc_price': real_price,
+                                                    'real_trade': {
+                                                        'success': False,
+                                                        'error': f'Token ID not found for {trade_direction} trade',
+                                                        'log_lines': [
+                                                            f'⚠️  Token ID not found for {trade_direction} trade'
+                                                        ]
+                                                    }
                                                 }
                                         else:
                                             print(f"   ⚠️  CLOB token IDs not available")
@@ -1375,7 +1606,14 @@ def run_advisor():
                                                 'direction': share_type,
                                                 'price': share_price,
                                                 'entry_time': minutes_left,
-                                                'btc_price': real_price
+                                                'btc_price': real_price,
+                                                'real_trade': {
+                                                    'success': False,
+                                                    'error': 'CLOB token IDs not available',
+                                                    'log_lines': [
+                                                        '⚠️  CLOB token IDs not available'
+                                                    ]
+                                                }
                                             }
                                 else:
                                     print(f"   ℹ️  REAL_TRADE is False - Running in SIMULATION MODE only")
@@ -1383,7 +1621,14 @@ def run_advisor():
                                         'direction': share_type,
                                         'price': share_price,
                                         'entry_time': minutes_left,
-                                        'btc_price': real_price
+                                        'btc_price': real_price,
+                                        'real_trade': {
+                                            'success': False,
+                                            'error': 'REAL_TRADE is False',
+                                            'log_lines': [
+                                                'ℹ️  REAL_TRADE is False - Running in SIMULATION MODE only'
+                                            ]
+                                        }
                                     }
                                 
                                 trade_signal_given = True
