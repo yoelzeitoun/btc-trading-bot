@@ -580,3 +580,72 @@
 [2026-02-09 12:30:02] | SESSION_END     | market=btc-updown-15m-1770632100 | strike=69468.95062945684 | evaluations=205 | signals=29 | max_total_score=78
 [2026-02-09 12:35:06] | TRADE_OPEN_OK   | direction=DOWN | price=0.88 | size=7.0 | btc=68619.4
 [2026-02-09 12:45:02] | SESSION_END     | market=btc-updown-15m-1770633000 | strike=68971.65728326757 | evaluations=54 | signals=1 | max_total_score=71 | trade_status=unknown | pnl_percent=0 | exit_price=0
+[2026-02-09 12:57:33] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=73 | btc=68746.8
+[2026-02-09 12:57:36] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=73 | btc=68746.9
+[2026-02-09 12:57:40] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=73 | btc=68746.9
+[2026-02-09 12:57:43] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=73 | btc=68746.9
+[2026-02-09 12:57:46] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=73 | btc=68746.9
+[2026-02-09 12:57:49] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=73 | btc=68746.9
+[2026-02-09 12:57:52] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=73 | btc=68750.0
+[2026-02-09 12:57:56] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68750.0
+[2026-02-09 12:57:59] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68750.0
+[2026-02-09 12:58:02] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68750.0
+[2026-02-09 12:58:05] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=74 | btc=68750.0
+[2026-02-09 12:58:10] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=74 | btc=68738.1
+[2026-02-09 12:58:13] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=74 | btc=68720.7
+[2026-02-09 12:58:16] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=74 | btc=68720.7
+[2026-02-09 12:58:21] | TRADE_OPEN_OK   | direction=UP | price=0.93 | size=7.0 | btc=68713.7
+[2026-02-09 13:00:01] | SESSION_END     | market=btc-updown-15m-1770633900 | strike=68556.1226215 | evaluations=212 | signals=4 | max_total_score=74 | trade_status=unknown | pnl_percent=0 | exit_price=0
+[2026-02-09 13:15:01] | SESSION_END     | market=btc-updown-15m-1770634800 | strike=68663.37329133043 | evaluations=212 | signals=0 | max_total_score=56
+[2026-02-09 13:22:03] | TRADE_OPEN_OK   | direction=UP | price=0.9 | size=7.0 | btc=68767.1
+[2026-02-09 13:30:01] | SESSION_END     | market=btc-updown-15m-1770635700 | strike=68543.83819178739 | evaluations=96 | signals=1 | max_total_score=89 | trade_status=unknown | pnl_percent=0 | exit_price=0
+[2026-02-09 13:45:02] | SESSION_END     | market=btc-updown-15m-1770636600 | strike=68805.70670804233 | evaluations=237 | signals=0 | max_total_score=63
+[2026-02-09 13:52:56] | TRADE_OPEN_OK   | direction=DOWN | price=0.91 | size=7.0 | btc=68651.2
+[2026-02-09 13:59:48] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 65.9% ($0.9100 → $0.3100) | btc_price=68789.1 | share_price=0.31 | strike=68849.56726165119
+[2026-02-09 13:59:50] | TRADE_CLOSE_OK  | size=6.9906 | price=0.83
+[2026-02-09 14:00:03] | SESSION_END     | market=btc-updown-15m-1770637500 | strike=68849.56726165119 | evaluations=112 | signals=1 | max_total_score=79 | trade_status=unknown | pnl_percent=0 | exit_price=0
+[2026-02-09 14:08:05] | TRADE_OPEN_OK   | direction=UP | price=0.91 | size=7.0 | btc=69087.2
+[2026-02-09 14:11:33] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69067.6
+[2026-02-09 14:11:37] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69089.3
+[2026-02-09 14:11:41] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69089.2
+[2026-02-09 14:11:44] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69089.2
+[2026-02-09 14:11:48] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69089.2
+[2026-02-09 14:11:52] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69089.3
+[2026-02-09 14:11:55] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69089.3
+[2026-02-09 14:11:59] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69119.1
+[2026-02-09 14:12:02] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=79 | btc=69120.6
+[2026-02-09 14:12:06] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=79 | btc=69146.0
+[2026-02-09 14:12:10] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=79 | btc=69130.7
+[2026-02-09 14:12:13] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=79 | btc=69130.7
+[2026-02-09 14:12:17] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=79 | btc=69130.7
+[2026-02-09 14:12:20] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=79 | btc=69130.7
+[2026-02-09 14:12:24] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=79 | btc=69130.7
+[2026-02-09 14:12:27] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=79 | btc=69137.4
+[2026-02-09 14:12:31] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=79 | btc=69137.4
+[2026-02-09 14:12:34] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=79 | btc=69126.0
+[2026-02-09 14:12:38] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=79 | btc=69126.0
+[2026-02-09 14:12:41] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=79 | btc=69126.0
+[2026-02-09 14:12:45] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=79 | btc=69126.1
+[2026-02-09 14:12:48] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=79 | btc=69145.9
+[2026-02-09 14:12:52] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=79 | btc=69146.0
+[2026-02-09 14:12:55] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=79 | btc=69165.0
+[2026-02-09 14:12:58] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=79 | btc=69165.0
+[2026-02-09 14:13:02] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69165.6
+[2026-02-09 14:13:05] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69165.6
+[2026-02-09 14:13:09] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69165.6
+[2026-02-09 14:13:12] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69165.6
+[2026-02-09 14:13:16] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69165.6
+[2026-02-09 14:13:19] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69120.2
+[2026-02-09 14:13:22] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69120.2
+[2026-02-09 14:13:26] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69144.8
+[2026-02-09 14:13:29] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69144.8
+[2026-02-09 14:13:33] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69144.8
+[2026-02-09 14:13:36] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69144.8
+[2026-02-09 14:13:40] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69157.1
+[2026-02-09 14:13:43] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69157.1
+[2026-02-09 14:13:47] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69149.9
+[2026-02-09 14:13:50] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69149.9
+[2026-02-09 14:13:54] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69149.9
+[2026-02-09 14:13:57] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69122.8
+[2026-02-09 14:14:00] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69122.8
+[2026-02-09 14:15:00] | SESSION_END     | market=btc-updown-15m-1770638400 | strike=68851.21658875681 | evaluations=43 | signals=0 | max_total_score=0

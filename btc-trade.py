@@ -190,15 +190,22 @@ def process_pending_claims():
                         print("      ❌ PAS ASSEZ DE MATIC pour le gas.")
                         remaining_claims.append(condition_id)
                         continue
-                    # If simulation fails (e.g. nothing to redeem), we skip sending
-                    # But we assume the list is valid from find_claims.py usually.
-                    # If it's "execution reverted", it likely means 0 balance to redeem.
-                    print(f"      ⚠️  Gas Est. Failed (Claim invalid/Already claimed?): {e}")
-                    # Don't keep in list if it's strictly a revert (likely already done)
-                    if "execution reverted" in str(e) or "GS026" in str(e):
-                         continue
+                    # Check for Safe-specific errors (GS013 = not an owner, GS026 = etc.)
+                    # These should be RETRIED, not deleted
+                    error_str = str(e)
+                    if "GS013" in error_str:
+                        print(f"      ⚠️  Gas Est. Failed (GS013 - Safe error): {e}")
+                        print(f"      💡 Will retry this claim in the next window")
+                        remaining_claims.append(condition_id)
+                        continue
                     
-                    # For other errors, keep it pending
+                    # For "execution reverted" without Safe errors, it's likely already claimed
+                    if "execution reverted" in error_str and "GS" not in error_str:
+                        print(f"      ⚠️  Gas Est. Failed (Claim already processed?): {e}")
+                        # Don't keep in list if truly already redeemed
+                        continue
+                    
+                    # For other errors, keep it pending for retry
                     remaining_claims.append(condition_id)
                     continue
 
@@ -916,6 +923,10 @@ def find_current_btc_15m_market():
                         clob_token_ids = extract_clob_token_ids(event.get('markets', []))
                         clob_token_ids = clob_token_ids or page_clob_token_ids
 
+                        condition_id = None
+                        if event.get('markets') and len(event['markets']) > 0:
+                            condition_id = event['markets'][0].get('conditionId')
+
                         market_data = {
                             'slug': live_slug,
                             'title': event.get('title', '').upper(),
@@ -926,7 +937,8 @@ def find_current_btc_15m_market():
                             'end_timestamp': market_end_timestamp,
                             'strike_price': strike_price,  # Include scraped strike price
                             'outcome_prices': outcome_prices,  # Include outcome prices
-                            'clob_token_ids': clob_token_ids
+                            'clob_token_ids': clob_token_ids,
+                            'condition_id': condition_id
                         }
                         
                         print(f"   🎯 Selected LIVE market: {live_slug}")
@@ -953,7 +965,8 @@ def find_current_btc_15m_market():
                     'end_timestamp': market_end_timestamp,
                     'strike_price': strike_price,  # Include scraped strike price
                     'outcome_prices': outcome_prices,  # Include outcome prices
-                    'clob_token_ids': page_clob_token_ids
+                    'clob_token_ids': page_clob_token_ids,
+                    'condition_id': None  # Unknown when website data only
                 }
         
         print("   ⚠️  Could not find live market on website, trying API...")
@@ -1001,6 +1014,7 @@ def find_current_btc_15m_market():
                             
                             # Include markets that haven't expired yet (even if slightly negative due to timing)
                             if time_remaining > -5:  # Allow 5 min grace period for recently closed
+                                condition_id = markets[0].get('conditionId') if markets else None
                                 all_btc_markets.append({
                                     'slug': slug,
                                     'title': title,
@@ -1008,7 +1022,8 @@ def find_current_btc_15m_market():
                                     'markets': markets,
                                     'end_date': event.get('end_date_iso', ''),
                                     'time_remaining': time_remaining,
-                                    'end_timestamp': market_end_timestamp
+                                    'end_timestamp': market_end_timestamp,
+                                    'condition_id': condition_id
                                 })
         
         print(f"   Found {len(all_btc_markets)} BTC 15m markets")
@@ -1360,45 +1375,86 @@ def run_advisor():
                         direction = signal_details.get('direction')
                         entry_price = signal_details.get('price')
                         
-                        # Determine win/loss
-                        is_win = False
-                        if direction == "YES" and final_price > strike_price:
-                            is_win = True
-                            wins += 1
-                        elif direction == "NO" and final_price < strike_price:
-                            is_win = True
-                            wins += 1
+                        # Check if position was closed early
+                        if open_position and open_position.get('closed'):
+                            # Position was closed before expiration - use actual close price
+                            close_result = open_position.get('close_result', {})
+                            close_price = close_result.get('price')
+                            close_size = close_result.get('size')
+                            entry_size = signal_details.get('actual_size', 1)
+                            
+                            if close_price and close_size and entry_price:
+                                # Actual P&L from close trade
+                                entry_cost = entry_price * entry_size
+                                close_proceeds = close_price * close_size
+                                profit = close_proceeds - entry_cost
+                                profit_pct = (profit / entry_cost * 100) if entry_cost > 0 else 0
+                                
+                                # Determine win/loss based on actual close
+                                if profit >= 0:
+                                    is_win = True
+                                    wins += 1
+                                    result_status = "WIN"
+                                    print(f"\n✅ TRADE WIN (Closed Early)!")
+                                else:
+                                    is_win = False
+                                    losses += 1
+                                    result_status = "LOSS"
+                                    print(f"\n❌ TRADE LOSS (Closed Early)!")
+                                
+                                print(f"   Direction: {direction}")
+                                print(f"   Entry: ${entry_price:.4f} | Close: ${close_price:.4f}")
+                                print(f"   Size: {close_size:.4f} shares")
+                                print(f"   P&L: ${profit:.2f} ({profit_pct:+.1f}%)")
+                            else:
+                                # Fallback if close price not available
+                                profit = 0
+                                profit_pct = 0
+                                result_status = "UNKNOWN"
+                                is_win = False
+                                losses += 1
+                                print(f"\n⚠️  TRADE RESULT UNKNOWN - Missing close price!")
                         else:
-                            losses += 1
-                        
-                        # Calculate P&L (assuming $100 trade)
-                        trade_amount = 100
-                        if entry_price is None:
-                            # No entry price available (trade signal had no price data)
-                            profit = 0
-                            profit_pct = 0
-                            result_status = "UNKNOWN"
-                            print(f"\n⚠️  TRADE RESULT UNKNOWN - No entry price data!")
-                            print(f"   Direction: {direction}")
-                            print(f"   Entry: UNAVAILABLE")
-                            print(f"   Final BTC: ${final_price:,.2f}")
-                        elif is_win:
-                            payout = trade_amount / entry_price
-                            profit = payout - trade_amount
-                            profit_pct = (profit / trade_amount) * 100
-                            result_status = "WIN"
-                            print(f"\n✅ TRADE WIN!")
-                            print(f"   Direction: {direction}")
-                            print(f"   Entry: ${entry_price:.2f}")
-                            print(f"   Profit: ${profit:.2f} (+{profit_pct:.1f}%)")
-                        else:
-                            profit = -trade_amount
-                            profit_pct = -100
-                            result_status = "LOSS"
-                            print(f"\n❌ TRADE LOSS!")
-                            print(f"   Direction: {direction}")
-                            print(f"   Entry: ${entry_price:.2f}")
-                            print(f"   Loss: -${trade_amount:.2f}")
+                            # Position held to expiration - use final price
+                            # Determine win/loss
+                            is_win = False
+                            if direction == "YES" and final_price > strike_price:
+                                is_win = True
+                                wins += 1
+                            elif direction == "NO" and final_price < strike_price:
+                                is_win = True
+                                wins += 1
+                            else:
+                                losses += 1
+                            
+                            # Calculate P&L (assuming $100 trade)
+                            trade_amount = 100
+                            if entry_price is None:
+                                # No entry price available (trade signal had no price data)
+                                profit = 0
+                                profit_pct = 0
+                                result_status = "UNKNOWN"
+                                print(f"\n⚠️  TRADE RESULT UNKNOWN - No entry price data!")
+                                print(f"   Direction: {direction}")
+                                print(f"   Entry: UNAVAILABLE")
+                                print(f"   Final BTC: ${final_price:,.2f}")
+                            elif is_win:
+                                payout = trade_amount / entry_price
+                                profit = payout - trade_amount
+                                profit_pct = (profit / trade_amount) * 100
+                                result_status = "WIN"
+                                print(f"\n✅ TRADE WIN!")
+                                print(f"   Direction: {direction}")
+                                print(f"   Entry: ${entry_price:.2f}")
+                                print(f"   Profit: ${profit:.2f} (+{profit_pct:.1f}%)")
+                            else:
+                                profit = -trade_amount
+                                profit_pct = -100
+                                result_status = "LOSS"
+                                print(f"\n❌ TRADE LOSS!")
+                                print(f"   Direction: {direction}")
+                                print(f"   Entry: ${entry_price:.2f}")
+                                print(f"   Loss: -${trade_amount:.2f}")
                         
                         # Prepare trade result for CSV
                         result_data = {
@@ -1690,6 +1746,20 @@ def run_advisor():
                                 open_position['close_result'] = close_result
                                 open_position['close_trigger'] = close_reason
                                 print(f"{'='*70}\n")
+                                
+                                # Remove from pending_claims since position is closed
+                                try:
+                                    condition_id = market_data.get('condition_id')
+                                    if condition_id and os.path.exists(CLAIMS_FILE):
+                                        with open(CLAIMS_FILE, 'r') as f:
+                                            claims = json.load(f)
+                                        if condition_id in claims:
+                                            claims.remove(condition_id)
+                                            with open(CLAIMS_FILE, 'w') as f:
+                                                json.dump(claims, f)
+                                            print(f"   REMOVED from pending claims (position closed early)")
+                                except Exception as e:
+                                    print(f"   WARNING: Could not update pending claims: {e}")
                             else:
                                 error = close_result.get('error') if close_result else 'Unknown error'
                                 log_to_results("TRADE_CLOSE_FAIL", {
@@ -1926,6 +1996,26 @@ def run_advisor():
                                                     print(f"   🎉 SUCCESS! Size: {trade_result.get('size')}")
                                                     
                                                     cond_id = market_data.get('condition_id')
+                                                    if not cond_id:
+                                                        # If condition_id is None, try to fetch from API
+                                                        try:
+                                                            api_url = "https://gamma-api.polymarket.com"
+                                                            slug = market_data.get('slug', '')
+                                                            events_response = requests.get(
+                                                                f"{api_url}/events",
+                                                                params={"slug": slug},
+                                                                timeout=10
+                                                            )
+                                                            if events_response.status_code == 200:
+                                                                events_data = events_response.json()
+                                                                if events_data and len(events_data) > 0:
+                                                                    event = events_data[0] if isinstance(events_data, list) else events_data
+                                                                    markets = event.get('markets', [])
+                                                                    if markets and len(markets) > 0:
+                                                                        cond_id = markets[0].get('conditionId')
+                                                        except Exception as e:
+                                                            print(f"   ⚠️  Could not fetch condition_id from API: {e}")
+                                                    
                                                     if cond_id:
                                                         save_pending_claim(cond_id)
 
