@@ -200,13 +200,16 @@ def process_pending_claims():
                         remaining_claims.append(condition_id)
                         continue
                     
-                    # For "execution reverted" without Safe errors, it's likely already claimed
+                    # For "execution reverted" without Safe errors:
+                    # Could mean "Already Claimed", "Zero Balance", or "Lost".
+                    # We remove it to prevent clogging the list forever.
                     if "execution reverted" in error_str and "GS" not in error_str:
-                        print(f"      ⚠️  Gas Est. Failed (Claim already processed?): {e}")
-                        # Don't keep in list if truly already redeemed
+                        print(f"      ⚠️  Transaction Reverted (Likely 0 balance or already claimed).")
+                        print(f"          🗑️  Removing {condition_id[:10]}... from queue.")
                         continue
                     
-                    # For other errors, keep it pending for retry
+                    # For retryable network errors (timeout, rpc down):
+                    # We keep it.
                     remaining_claims.append(condition_id)
                     continue
 
@@ -223,6 +226,8 @@ def process_pending_claims():
                 signed_txn = w3.eth.account.sign_transaction(txn, private_key=PRIVATE_KEY)
                 tx_hash = w3.eth.send_raw_transaction(signed_txn.raw_transaction)
                 print(f"   🚀 Claim envoyé ! Hash: {w3.to_hex(tx_hash)}")
+                print(f"      ✅ Succès ! Retrait de la liste d'attente.")
+
                 
             except Exception as e:
                 print(f"   ❌ Erreur claim loop: {e}")
@@ -660,7 +665,7 @@ def get_max_sellable_size(poly_client, token_id):
     
     except Exception as e:
         print(f"   ❌ Erreur lecture solde MAX: {e}")
-        return 0.0
+        return None  # Change: Return None on error to distinguish from 0 balance
 
 def execute_close_trade(poly_client, token_id, size, current_btc_price=None):
     """
@@ -673,24 +678,43 @@ def execute_close_trade(poly_client, token_id, size, current_btc_price=None):
     
     # 0. Cancel open orders to free up liquidity (Fix for SL failure)
     try:
-        print("   🧹 Cancelling open orders to free up liquidity...")
+        # Only cancel if we suspect we have balance but can't see it? 
+        # No, safe to always cancel before closing.
+        # But to be less spammy, maybe we can check balance first?
+        # For now, keep it robust.
+        # Silencing logs a bit.
         poly_client.cancel_all()
-        time.sleep(1) # Wait for propagation
+        time.sleep(1) 
     except Exception as e:
-        print(f"   ⚠️  Warning: Failed to cancel orders: {e}")
+        pass
 
     # 1. On demande le MAX exact et nettoyé
     max_size = get_max_sellable_size(poly_client, token_id)
     
-    if max_size > 0:
+    # CASE A: Balance is explicitly 0 (or dust) -> SUCCESS (Already closed)
+    if max_size is not None and max_size == 0.0:
+        print(f"   ✅ Solde détecté à 0 (ou poussière). Position considérée fermée.")
+        return {
+            'success': True,
+            'order_id': 'ALREADY_CLOSED_ZERO_BAL',
+            'price': 0,
+            'size': 0,
+            'token_id': token_id,
+            'close_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'close_btc_price': current_btc_price
+        }
+
+    # CASE B: Healthy balance detected
+    if max_size is not None and max_size > 0:
         print(f"   💰 Solde exact détecté : {max_size:.4f} parts")
         trade_size = max_size
+    
+    # CASE C: API Error (None) -> Fallback to memory
     else:
-        # Fallback si l'API de solde échoue : on utilise la taille en mémoire
-        print(f"   ⚠️  Impossible de lire le solde, utilisation de la taille mémoire : {size}")
+        print(f"   ⚠️  Impossible de lire le solde (API Error), utilisation de la taille mémoire : {size}")
         trade_size = float(size)
     
-    # 2. On lance l'ordre UNE SEULE FOIS (plus besoin de boucle)
+    # 2. On lance l'ordre UNE SEULE FOIS
     try:
         # Get best bid
         book_url = f"https://clob.polymarket.com/book?token_id={token_id}"
@@ -780,6 +804,21 @@ def execute_close_trade(poly_client, token_id, size, current_btc_price=None):
     except Exception as e:
         error_str = str(e)
         print(f"   ❌ Erreur fermeture : {error_str}")
+
+        # FIX: If API says "not enough balance", it means we have 0 shares.
+        # Mark as closed to stop the infinite loop.
+        if 'not enough balance' in error_str.lower():
+             print(f"   ✅ Close failed (Empty Balance). Marking as closed.")
+             return {
+                'success': True,
+                'order_id': 'ALREADY_CLOSED_NO_BAL',
+                'price': 0,
+                'size': 0,
+                'token_id': token_id,
+                'close_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'close_btc_price': current_btc_price
+            }
+        
         return {
             'success': False,
             'error': error_str,
@@ -1775,19 +1814,24 @@ def run_advisor():
                                 open_position['close_trigger'] = close_reason
                                 print(f"{'='*70}\n")
                                 
-                                # Remove from pending_claims since position is closed
-                                try:
-                                    condition_id = market_data.get('condition_id')
-                                    if condition_id and os.path.exists(CLAIMS_FILE):
-                                        with open(CLAIMS_FILE, 'r') as f:
-                                            claims = json.load(f)
-                                        if condition_id in claims:
-                                            claims.remove(condition_id)
-                                            with open(CLAIMS_FILE, 'w') as f:
-                                                json.dump(claims, f)
-                                            print(f"   REMOVED from pending claims (position closed early)")
-                                except Exception as e:
-                                    print(f"   WARNING: Could not update pending claims: {e}")
+                                # CHANGE: Do NOT remove from pending_claims automatically.
+                                # Reason: Often small "dust" (e.g. 0.0253 shares) remains due to float precision or partial fills.
+                                # If we remove it here, we lose the chance to claim that dust if the trade wins.
+                                # Better to let process_pending_claims try and fail (revert) later.
+                                # 
+                                # try:
+                                #     condition_id = market_data.get('condition_id')
+                                #     if condition_id and os.path.exists(CLAIMS_FILE):
+                                #         with open(CLAIMS_FILE, 'r') as f:
+                                #             claims = json.load(f)
+                                #         if condition_id in claims:
+                                #             claims.remove(condition_id)
+                                #             with open(CLAIMS_FILE, 'w') as f:
+                                #                 json.dump(claims, f)
+                                #             print(f"   REMOVED from pending claims (position closed early)")
+                                # except Exception as e:
+                                #     print(f"   WARNING: Could not update pending claims: {e}")
+
                             else:
                                 error = close_result.get('error') if close_result else 'Unknown error'
                                 log_to_results("TRADE_CLOSE_FAIL", {
