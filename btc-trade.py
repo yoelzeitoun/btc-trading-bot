@@ -1656,7 +1656,9 @@ def run_advisor():
                                     lines.append(f"   ⛔ {violation}")
                             else:
                                 # TRADE TRIGGER!
-                                ui.commit() # Freeze scanning view
+                                ui.refresh(lines) # Show the winning Score 72 scan
+                                ui.commit()       # Lock it in place
+                                lines = []        # Prevent duplicate print
                                 
                                 window_stats['signals_triggered'] += 1
                                 window_stats['signal_score'] = display_score
@@ -1748,12 +1750,9 @@ def run_advisor():
                                 lines.append(f"\n✅ SIGNAL ALREADY TAKEN for this session")
                     
                     # RENDER THE UI
-                    if not open_position or trade_signal_given:
-                         # Use list buffer if we are scanning
+                    if lines:
                          ui.refresh(lines)
-                    else:
-                         ui.refresh(lines)
-
+                    
                     time.sleep(LOOP_SLEEP_SECONDS)
 
                 except Exception as e:
