@@ -828,16 +828,18 @@ def execute_close_trade(poly_client, token_id, size, current_btc_price=None):
         }
 
 # --- 4. FETCH CURRENT BTC 15M MARKET AUTOMATICALLY ---
-def find_current_btc_15m_market():
+def find_current_btc_15m_market(verbose=True):
     """
     Finds the current LIVE BTC 15m market by scraping the Polymarket crypto/15M page.
     This gets the actual live market shown on the website.
     """
-    print("🔍 Searching for current LIVE BTC 15m market on Polymarket...")
+    if verbose:
+        print("🔍 Searching for current LIVE BTC 15m market on Polymarket...")
     
     try:
         # First, try to scrape the live market from the crypto/15M page
-        print("   Fetching live market from Polymarket website...")
+        if verbose:
+            print("   Fetching live market from Polymarket website...")
         crypto_page_url = "https://polymarket.com/crypto/15M"
         
         headers = {
@@ -854,7 +856,8 @@ def find_current_btc_15m_market():
         if market_links:
             # Get the first one (should be the live market)
             live_slug = market_links[0]
-            print(f"   ✅ Found LIVE market on website: {live_slug}")
+            if verbose:
+                print(f"   ✅ Found LIVE market on website: {live_slug}")
             
             # Fetch the individual market page to get strike price and outcome prices
             strike_price = None
@@ -884,7 +887,8 @@ def find_current_btc_15m_market():
                         for start_time, end_time, open_price, close_price, outcome, pct in matches:
                             if target_end_time in end_time:
                                 strike_price = float(close_price)
-                                print(f"   💰 Strike Price (Price to Beat): ${strike_price:,.2f}")
+                                if verbose:
+                                    print(f"   💰 Strike Price (Price to Beat): ${strike_price:,.2f}")
                                 break
 
                     # Also extract outcome prices from the page (Up/Down market prices)
@@ -907,17 +911,20 @@ def find_current_btc_15m_market():
                     if strike_price is not None:
                         break
                 except Exception as e:
-                    print(f"   ⚠️  Could not extract data from page (attempt {attempt}/5): {e}")
+                    if verbose:
+                        print(f"   ⚠️  Could not extract data from page (attempt {attempt}/5): {e}")
 
                 time.sleep(2)
 
             if strike_price is None:
-                print("   ❌ Price to Beat not found. Retrying market discovery...")
+                if verbose:
+                    print("   ❌ Price to Beat not found. Retrying market discovery...")
                 return None
             
             # Now fetch details from Gamma API
             api_url = "https://gamma-api.polymarket.com"
-            print(f"   Fetching market details from API...")
+            if verbose:
+                print(f"   Fetching market details from API...")
 
             # Try direct slug lookup first (more reliable for active markets)
             try:
@@ -1294,18 +1301,24 @@ def run_advisor():
     
     while True:
         try:
+            # Auto-detect current market (Silent Mode)
+            sys.stdout.write("\r🔍 Scanning for active market...  ")
+            sys.stdout.flush()
+            
+            market_data = find_current_btc_15m_market(verbose=False)
+            
+            if not market_data:
+                # No market found
+                sys.stdout.write("\r⏳ No active market found. Waiting 15s...    ")
+                sys.stdout.flush()
+                time.sleep(15)
+                continue
+            
+            # MARKET FOUND!
             total_markets += 1
             print(f"\n\n{'='*60}")
             print(f"🔄 MARKET #{total_markets}")
             print(f"{'='*60}")
-            
-            # Auto-detect current market
-            print("\n🔍 Auto-detecting current BTC 15m market...")
-            market_data = find_current_btc_15m_market()
-            if not market_data:
-                print("\n⚠️  No active markets found. Waiting 15 seconds...")
-                time.sleep(15)
-                continue
     
             # === Extract market details ===
             title = market_data.get('title', 'N/A')
@@ -1450,6 +1463,17 @@ def run_advisor():
                             close_size = close_result.get('size')
                             entry_size = signal_details.get('actual_size', 1)
                             
+                            # === DATA TRACKING FOR GHOST WIN/LOSS (COUNTERFACTUAL) ===
+                            ghost_win = False
+                            if direction == "YES" and final_price > strike_price:
+                                ghost_win = True
+                            elif direction == "NO" and final_price < strike_price:
+                                ghost_win = True
+                            
+                            counterfactual_str = "(WOULD HAVE WON)" if ghost_win else "(WOULD HAVE LOST)"
+                            print(f"   📉 Counterfactual: Trade {counterfactual_str}")
+                            # ==========================================================
+                            
                             if close_price and close_size and entry_price:
                                 # Actual P&L from close trade
                                 entry_cost = entry_price * entry_size
@@ -1473,6 +1497,21 @@ def run_advisor():
                                 print(f"   Entry: ${entry_price:.4f} | Close: ${close_price:.4f}")
                                 print(f"   Size: {close_size:.4f} shares")
                                 print(f"   P&L: ${profit:.2f} ({profit_pct:+.1f}%)")
+                                
+                                # Log Enhanced Stats for Analysis
+                                entry_stats = open_position.get('entry_stats', {})
+                                max_loss_score = open_position.get('max_loss_signal_score', 'N/A')
+                                
+                                log_to_results("TRADE_RESULT_DETAILED", {
+                                    "status": result_status,
+                                    "pnl": f"${profit:.2f} ({profit_pct:+.1f}%)",
+                                    "entry_summary": f"SCORE: {entry_stats.get('total_score')} | BB: {entry_stats.get('bb_score')} | ATR: {entry_stats.get('atr_score')} ({entry_stats.get('atr_ratio')})",
+                                    "closed_early": True,
+                                    "counterfactual": "WON" if ghost_win else "LOST",
+                                    "max_loss_signal_score": max_loss_score,
+                                    "btc_final_diff": f"${final_price - strike_price:.2f}"
+                                })
+
                             else:
                                 # Fallback if close price not available
                                 profit = 0
@@ -1522,6 +1561,20 @@ def run_advisor():
                                 print(f"   Direction: {direction}")
                                 print(f"   Entry: ${entry_price:.2f}")
                                 print(f"   Loss: -${trade_amount:.2f}")
+                            
+                            # Log Enhanced Stats for Analysis (Held to Expiry)
+                            entry_stats = open_position.get('entry_stats', {}) if open_position else {}
+                            max_loss_score = open_position.get('max_loss_signal_score', 'N/A') if open_position else 'N/A'
+                            
+                            log_to_results("TRADE_RESULT_DETAILED", {
+                                "status": result_status,
+                                "pnl": f"${profit:.2f} ({profit_pct:+.1f}%)",
+                                "entry_summary": f"SCORE: {entry_stats.get('total_score', '?')} | BB: {entry_stats.get('bb_score', '?')} | ATR: {entry_stats.get('atr_score', '?')} ({entry_stats.get('atr_ratio', '?')})",
+                                "closed_early": False,
+                                "counterfactual": "SAME",
+                                "max_loss_signal_score": max_loss_score,
+                                "btc_final_diff": f"${final_price - strike_price:.2f}"
+                            })
                         
                         # Prepare trade result for CSV
                         result_data = {
@@ -1854,6 +1907,19 @@ def run_advisor():
                         lines.append(f"{Colors.WARNING}\n⚠️  APPROACHING LOCK [T-{minutes_left:.1f}min]{Colors.ENDC}")
                         three_min_announced = True
                     
+                    # Track Max Loss Score (Highest score seen while LOSING)
+                    if open_position and not open_position['closed']:
+                         # Calculate current score again for tracking? 
+                         # Actually we have display_score from this loop iteration calculated above.
+                         # Only if direction implies loss.
+                         pos_direction = open_position['direction']
+                         is_winning = (real_price > strike_price) if pos_direction == 'UP' else (real_price < strike_price)
+                         
+                         if not is_winning:
+                             current_max_loss_score = open_position.get('max_loss_signal_score', 0)
+                             if display_score > current_max_loss_score:
+                                 open_position['max_loss_signal_score'] = display_score
+                    
                     # 5. EXECUTION WINDOW CHECK
                     if TRADE_WINDOW_MIN <= minutes_left <= TRADE_WINDOW_MAX and not trade_signal_given:
 
@@ -1940,6 +2006,16 @@ def run_advisor():
                             ratio_value = (dist / max_move) if max_move else 0
                             atr_explain = f"Dist ${dist:.2f} / Move ${max_move:.2f} (x{ratio_value:.1f})"
                         
+                        # --- START CAPTURE FOR LOGGING ---
+                        entry_logging_stats = {
+                            "total_score": max(0, trade_score),
+                            "bb_score": f"{score_a}/{MAX_SCORE_BB}",
+                            "atr_score": f"{score_b}/{MAX_SCORE_ATR}",
+                            "atr_ratio": f"x{ratio_value:.1f}" if atr else "N/A",
+                            "minutes_left": minutes_left
+                        }
+                        # --- END CAPTURE ---
+
                         details.append(f"ATR: {score_b}/{MAX_SCORE_ATR} - {atr_explain}")
                         
                         # Get share_price and share_type for constraints (not scoring)
@@ -2102,6 +2178,7 @@ def run_advisor():
                                                         'open_time': trade_result.get('open_time'),
                                                         'open_btc_price': trade_result.get('open_btc_price')
                                                     }
+                                                    # Add entry stats to open_position
                                                     open_position = {
                                                         'token_id': token_id_to_trade,
                                                         'size': trade_result.get('size'),
@@ -2111,8 +2188,16 @@ def run_advisor():
                                                         'share_price': share_price,
                                                         'closed': False,
                                                         'open_time': trade_result.get('open_time'),
-                                                        'open_btc_price': trade_result.get('open_btc_price')
+                                                        'open_btc_price': trade_result.get('open_btc_price'),
+                                                        'entry_stats': entry_logging_stats
                                                     }
+                                                    
+                                                    # Log Detailed Entry
+                                                    log_to_results("ENTRY_DETAILS", {
+                                                        "score_summary": f"TOTAL: {entry_logging_stats['total_score']}/100 | BB: {entry_logging_stats['bb_score']} | ATR: {entry_logging_stats['atr_score']} - ratio: {entry_logging_stats['atr_ratio']}",
+                                                        "time_left": f"T-{entry_logging_stats['minutes_left']:.2f}min"
+                                                    })
+
                                                     trade_signal_given = True
                                                 else:
                                                     print(f"   ⚠️  FAILED: {trade_result.get('error')}")
