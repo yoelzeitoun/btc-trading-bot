@@ -649,3 +649,189 @@
 [2026-02-09 14:13:57] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69122.8
 [2026-02-09 14:14:00] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69122.8
 [2026-02-09 14:15:00] | SESSION_END     | market=btc-updown-15m-1770638400 | strike=68851.21658875681 | evaluations=43 | signals=0 | max_total_score=0
+[2026-02-09 14:23:31] | TRADE_OPEN_OK   | direction=DOWN | price=0.77 | size=7.0 | btc=69030.9
+[2026-02-09 14:30:01] | SESSION_END     | market=btc-updown-15m-1770639300 | strike=69129.88628663469 | evaluations=112 | signals=1 | max_total_score=71 | trade_status=unknown | pnl_percent=0 | exit_price=0
+[2026-02-09 14:41:18] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=75 | btc=69116.5
+[2026-02-09 14:41:22] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=75 | btc=69155.9
+[2026-02-09 14:41:25] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=75 | btc=69147.0
+[2026-02-09 14:41:28] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=75 | btc=69147.0
+[2026-02-09 14:41:32] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=75 | btc=69147.0
+[2026-02-09 14:41:35] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=75 | btc=69147.0
+[2026-02-09 14:41:39] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=75 | btc=69148.6
+[2026-02-09 14:41:42] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=75 | btc=69148.6
+[2026-02-09 14:41:46] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=75 | btc=69148.2
+[2026-02-09 14:41:50] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=75 | btc=69148.2
+[2026-02-09 14:41:53] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=75 | btc=69120.7
+[2026-02-09 14:41:57] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=75 | btc=69120.7
+[2026-02-09 14:42:01] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69120.7
+[2026-02-09 14:42:04] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69138.5
+[2026-02-09 14:42:08] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69138.5
+[2026-02-09 14:42:11] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69138.5
+[2026-02-09 14:42:15] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69148.0
+[2026-02-09 14:42:18] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69148.0
+[2026-02-09 14:42:22] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69148.0
+[2026-02-09 14:42:25] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69128.2
+[2026-02-09 14:42:29] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69128.2
+[2026-02-09 14:42:32] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69128.2
+[2026-02-09 14:42:35] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69123.5
+[2026-02-09 14:42:39] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69123.5
+[2026-02-09 14:42:43] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69134.6
+[2026-02-09 14:42:46] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69134.6
+[2026-02-09 14:42:49] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69134.2
+[2026-02-09 14:42:53] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69125.3
+[2026-02-09 14:42:56] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69115.4
+[2026-02-09 14:43:00] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69115.4
+[2026-02-09 14:43:04] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69115.4
+[2026-02-09 14:43:07] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69108.3
+[2026-02-09 14:43:11] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69108.3
+[2026-02-09 14:43:14] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69108.3
+[2026-02-09 14:43:18] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69108.3
+[2026-02-09 14:43:21] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69108.3
+[2026-02-09 14:43:24] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69108.3
+[2026-02-09 14:43:28] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69108.3
+[2026-02-09 14:43:31] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69108.3
+[2026-02-09 14:43:35] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69108.3
+[2026-02-09 14:43:38] | TRADE_BLOCKED   | reason=Share price unavailable | btc=69108.3
+[2026-02-09 14:43:42] | TRADE_BLOCKED   | reason=Share price unavailable | btc=69119.7
+[2026-02-09 14:43:46] | TRADE_BLOCKED   | reason=Share price unavailable | btc=69119.7
+[2026-02-09 14:43:50] | TRADE_BLOCKED   | reason=Share price unavailable | btc=69119.7
+[2026-02-09 14:43:53] | TRADE_BLOCKED   | reason=Share price unavailable | btc=69119.7
+[2026-02-09 14:43:57] | TRADE_BLOCKED   | reason=Share price unavailable | btc=69122.4
+[2026-02-09 14:44:00] | TRADE_BLOCKED   | reason=Share price unavailable | btc=69122.4
+[2026-02-09 14:45:01] | SESSION_END     | market=btc-updown-15m-1770640200 | strike=68977.97439884266 | evaluations=219 | signals=7 | max_total_score=67
+[2026-02-09 14:52:06] | TRADE_OPEN_OK   | direction=DOWN | price=0.84 | size=7.0 | btc=68991.7
+[2026-02-09 14:59:18] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 51.2% ($0.8400 → $0.4100) | btc_price=69079.8 | share_price=0.41 | strike=69084.26750278038
+[2026-02-09 14:59:20] | TRADE_CLOSE_OK  | size=6.9684 | price=0.45
+[2026-02-09 15:00:02] | SESSION_END     | market=btc-updown-15m-1770641100 | strike=69084.26750278038 | evaluations=98 | signals=1 | max_total_score=71 | trade_status=unknown | pnl_percent=0 | exit_price=0
+[2026-02-09 15:04:52] | TRADE_OPEN_OK   | direction=DOWN | price=0.82 | size=7.0 | btc=68938.2
+[2026-02-09 15:11:13] | TRIGGER_CLOSE   | reason=⚠️ STOP LOSS - STRIKE HIT: BTC $69,148.20 >= $69,082.39 | btc_price=69148.2 | share_price=0.45 | strike=69082.39026009759
+[2026-02-09 15:11:19] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=None, error_message=Request exception!] | attempt=1
+[2026-02-09 15:11:21] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 50.0% ($0.8200 → $0.4100) | btc_price=69142.6 | share_price=0.41 | strike=69082.39026009759
+[2026-02-09 15:11:27] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=None, error_message=Request exception!] | attempt=2
+[2026-02-09 15:11:30] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 67.1% ($0.8200 → $0.2700) | btc_price=69153.8 | share_price=0.27 | strike=69082.39026009759
+[2026-02-09 15:11:36] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=None, error_message=Request exception!] | attempt=3
+[2026-02-09 15:11:38] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 72.0% ($0.8200 → $0.2300) | btc_price=69170.0 | share_price=0.23 | strike=69082.39026009759
+[2026-02-09 15:11:44] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=None, error_message=Request exception!] | attempt=4
+[2026-02-09 15:11:47] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 73.2% ($0.8200 → $0.2200) | btc_price=69169.6 | share_price=0.22 | strike=69082.39026009759
+[2026-02-09 15:11:49] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=5
+[2026-02-09 15:11:51] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 68.3% ($0.8200 → $0.2600) | btc_price=69169.6 | share_price=0.26 | strike=69082.39026009759
+[2026-02-09 15:11:52] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=6
+[2026-02-09 15:11:55] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 75.6% ($0.8200 → $0.2000) | btc_price=69169.6 | share_price=0.2 | strike=69082.39026009759
+[2026-02-09 15:11:55] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=7
+[2026-02-09 15:11:58] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 76.8% ($0.8200 → $0.1900) | btc_price=69170.0 | share_price=0.19 | strike=69082.39026009759
+[2026-02-09 15:11:59] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=8
+[2026-02-09 15:12:01] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 76.8% ($0.8200 → $0.1900) | btc_price=69170.1 | share_price=0.19 | strike=69082.39026009759
+[2026-02-09 15:12:02] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=9
+[2026-02-09 15:12:05] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 76.8% ($0.8200 → $0.1900) | btc_price=69170.0 | share_price=0.19 | strike=69082.39026009759
+[2026-02-09 15:12:06] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=10
+[2026-02-09 15:12:08] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 65.9% ($0.8200 → $0.2800) | btc_price=69167.4 | share_price=0.28 | strike=69082.39026009759
+[2026-02-09 15:12:09] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=11
+[2026-02-09 15:12:11] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 58.5% ($0.8200 → $0.3400) | btc_price=69162.0 | share_price=0.34 | strike=69082.39026009759
+[2026-02-09 15:12:12] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=12
+[2026-02-09 15:12:15] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 61.0% ($0.8200 → $0.3200) | btc_price=69127.0 | share_price=0.32 | strike=69082.39026009759
+[2026-02-09 15:12:15] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=13
+[2026-02-09 15:12:18] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 62.2% ($0.8200 → $0.3100) | btc_price=69127.0 | share_price=0.31 | strike=69082.39026009759
+[2026-02-09 15:12:19] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=14
+[2026-02-09 15:12:21] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 74.4% ($0.8200 → $0.2100) | btc_price=69129.4 | share_price=0.21 | strike=69082.39026009759
+[2026-02-09 15:12:22] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=15
+[2026-02-09 15:12:25] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 78.0% ($0.8200 → $0.1800) | btc_price=69143.2 | share_price=0.18 | strike=69082.39026009759
+[2026-02-09 15:12:25] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=16
+[2026-02-09 15:12:28] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 79.3% ($0.8200 → $0.1700) | btc_price=69143.2 | share_price=0.17 | strike=69082.39026009759
+[2026-02-09 15:12:29] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=17
+[2026-02-09 15:12:31] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 79.3% ($0.8200 → $0.1700) | btc_price=69143.2 | share_price=0.17 | strike=69082.39026009759
+[2026-02-09 15:12:32] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=18
+[2026-02-09 15:12:35] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 73.2% ($0.8200 → $0.2200) | btc_price=69162.5 | share_price=0.22 | strike=69082.39026009759
+[2026-02-09 15:12:35] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=19
+[2026-02-09 15:12:38] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 73.2% ($0.8200 → $0.2200) | btc_price=69162.4 | share_price=0.22 | strike=69082.39026009759
+[2026-02-09 15:12:39] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=20
+[2026-02-09 15:12:41] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 78.0% ($0.8200 → $0.1800) | btc_price=69129.0 | share_price=0.18 | strike=69082.39026009759
+[2026-02-09 15:12:42] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=21
+[2026-02-09 15:12:45] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 84.1% ($0.8200 → $0.1300) | btc_price=69129.0 | share_price=0.13 | strike=69082.39026009759
+[2026-02-09 15:12:45] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=22
+[2026-02-09 15:12:48] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) | btc_price=69195.0 | share_price=0.09 | strike=69082.39026009759
+[2026-02-09 15:12:49] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=23
+[2026-02-09 15:12:52] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) | btc_price=69200.0 | share_price=0.05 | strike=69082.39026009759
+[2026-02-09 15:12:53] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=24
+[2026-02-09 15:12:55] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) | btc_price=69220.2 | share_price=0.05 | strike=69082.39026009759
+[2026-02-09 15:12:56] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=25
+[2026-02-09 15:12:58] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) | btc_price=69220.2 | share_price=0.05 | strike=69082.39026009759
+[2026-02-09 15:12:59] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=26
+[2026-02-09 15:13:02] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) | btc_price=69220.2 | share_price=0.04 | strike=69082.39026009759
+[2026-02-09 15:13:02] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=27
+[2026-02-09 15:13:05] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) | btc_price=69220.2 | share_price=0.05 | strike=69082.39026009759
+[2026-02-09 15:13:06] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=28
+[2026-02-09 15:13:08] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) | btc_price=69217.9 | share_price=0.07 | strike=69082.39026009759
+[2026-02-09 15:13:09] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=29
+[2026-02-09 15:13:12] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) | btc_price=69217.9 | share_price=0.07 | strike=69082.39026009759
+[2026-02-09 15:13:12] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=30
+[2026-02-09 15:13:15] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) | btc_price=69214.2 | share_price=0.07 | strike=69082.39026009759
+[2026-02-09 15:13:16] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=31
+[2026-02-09 15:13:18] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) | btc_price=69190.5 | share_price=0.04 | strike=69082.39026009759
+[2026-02-09 15:13:19] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=32
+[2026-02-09 15:13:21] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) | btc_price=69190.5 | share_price=0.06 | strike=69082.39026009759
+[2026-02-09 15:13:22] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=33
+[2026-02-09 15:13:25] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) | btc_price=69192.2 | share_price=0.07 | strike=69082.39026009759
+[2026-02-09 15:13:25] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=34
+[2026-02-09 15:13:28] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) | btc_price=69192.2 | share_price=0.04 | strike=69082.39026009759
+[2026-02-09 15:13:29] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=35
+[2026-02-09 15:13:32] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) | btc_price=69192.4 | share_price=0.04 | strike=69082.39026009759
+[2026-02-09 15:13:32] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=36
+[2026-02-09 15:13:35] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) | btc_price=69192.4 | share_price=0.05 | strike=69082.39026009759
+[2026-02-09 15:13:36] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=37
+[2026-02-09 15:13:38] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) | btc_price=69192.4 | share_price=0.09 | strike=69082.39026009759
+[2026-02-09 15:13:39] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=38
+[2026-02-09 15:13:42] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 85.4% ($0.8200 → $0.1200) | btc_price=69185.4 | share_price=0.12 | strike=69082.39026009759
+[2026-02-09 15:13:42] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=39
+[2026-02-09 15:13:45] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) | btc_price=69157.0 | share_price=0.09 | strike=69082.39026009759
+[2026-02-09 15:13:46] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=40
+[2026-02-09 15:13:49] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) | btc_price=69157.1 | share_price=0.05 | strike=69082.39026009759
+[2026-02-09 15:13:49] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=41
+[2026-02-09 15:13:52] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) | btc_price=69171.4 | share_price=0.05 | strike=69082.39026009759
+[2026-02-09 15:13:53] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=42
+[2026-02-09 15:13:56] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) | btc_price=69172.3 | share_price=0.04 | strike=69082.39026009759
+[2026-02-09 15:13:56] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=43
+[2026-02-09 15:13:59] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) | btc_price=69192.4 | share_price=0.06 | strike=69082.39026009759
+[2026-02-09 15:14:00] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=44
+[2026-02-09 15:14:03] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) | btc_price=69192.4 | share_price=0.06 | strike=69082.39026009759
+[2026-02-09 15:14:03] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=45
+[2026-02-09 15:14:06] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) | btc_price=69192.4 | share_price=0.03 | strike=69082.39026009759
+[2026-02-09 15:14:07] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=46
+[2026-02-09 15:14:09] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) | btc_price=69192.3 | share_price=0.05 | strike=69082.39026009759
+[2026-02-09 15:14:10] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=47
+[2026-02-09 15:14:13] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) | btc_price=69192.2 | share_price=0.03 | strike=69082.39026009759
+[2026-02-09 15:14:13] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=48
+[2026-02-09 15:14:16] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) | btc_price=69192.2 | share_price=0.03 | strike=69082.39026009759
+[2026-02-09 15:14:17] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=49
+[2026-02-09 15:14:19] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) | btc_price=69172.7 | share_price=0.06 | strike=69082.39026009759
+[2026-02-09 15:14:20] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=50
+[2026-02-09 15:14:23] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) | btc_price=69155.2 | share_price=0.03 | strike=69082.39026009759
+[2026-02-09 15:14:23] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=51
+[2026-02-09 15:14:26] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) | btc_price=69153.8 | share_price=0.04 | strike=69082.39026009759
+[2026-02-09 15:14:27] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=52
+[2026-02-09 15:14:29] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) | btc_price=69153.8 | share_price=0.06 | strike=69082.39026009759
+[2026-02-09 15:14:30] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=53
+[2026-02-09 15:14:33] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) | btc_price=69139.6 | share_price=0.09 | strike=69082.39026009759
+[2026-02-09 15:14:33] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=54
+[2026-02-09 15:14:36] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) | btc_price=69144.0 | share_price=0.07 | strike=69082.39026009759
+[2026-02-09 15:14:37] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=55
+[2026-02-09 15:14:39] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) | btc_price=69144.3 | share_price=0.09 | strike=69082.39026009759
+[2026-02-09 15:14:40] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=56
+[2026-02-09 15:14:43] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) | btc_price=69144.3 | share_price=0.05 | strike=69082.39026009759
+[2026-02-09 15:14:44] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=57
+[2026-02-09 15:14:46] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) | btc_price=69142.9 | share_price=0.06 | strike=69082.39026009759
+[2026-02-09 15:14:47] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=58
+[2026-02-09 15:14:50] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) | btc_price=69142.8 | share_price=0.03 | strike=69082.39026009759
+[2026-02-09 15:14:50] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=59
+[2026-02-09 15:14:53] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 97.6% ($0.8200 → $0.0200) | btc_price=69142.8 | share_price=0.02 | strike=69082.39026009759
+[2026-02-09 15:14:54] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=60
+[2026-02-09 15:14:56] | TRIGGER_CLOSE   | reason=⚠️ STOP LOSS - STRIKE HIT: BTC $69,142.80 >= $69,082.39 | btc_price=69142.8 | share_price=0.82 | strike=69082.39026009759
+[2026-02-09 15:14:57] | TRADE_CLOSE_FAIL | error=Unknown error | attempt=61
+[2026-02-09 15:15:00] | TRIGGER_CLOSE   | reason=⚠️ STOP LOSS - STRIKE HIT: BTC $69,167.70 >= $69,082.39 | btc_price=69167.7 | share_price=0.82 | strike=69082.39026009759
+[2026-02-09 15:15:00] | TRADE_CLOSE_FAIL | error=Unknown error | attempt=62
+[2026-02-09 15:15:02] | SESSION_END     | market=btc-updown-15m-1770642000 | strike=69082.39026009759 | evaluations=45 | signals=1 | max_total_score=71 | trade_status=unknown | pnl_percent=0 | exit_price=0
+[2026-02-09 15:30:01] | SESSION_END     | market=btc-updown-15m-1770642900 | strike=69180.55358507144 | evaluations=220 | signals=0 | max_total_score=63
+[2026-02-09 15:35:16] | TRADE_OPEN_OK   | direction=DOWN | price=0.83 | size=7.0 | btc=69020.8
+[2026-02-09 15:45:01] | SESSION_END     | market=btc-updown-15m-1770643800 | strike=69204.50542305519 | evaluations=55 | signals=1 | max_total_score=81 | trade_status=unknown | pnl_percent=0 | exit_price=0
+[2026-02-09 15:52:09] | TRADE_OPEN_OK   | direction=DOWN | price=0.9 | size=7.0 | btc=68764.7
+[2026-02-09 16:00:02] | SESSION_END     | market=btc-updown-15m-1770644700 | strike=69012.09087294654 | evaluations=62 | signals=1 | max_total_score=72 | trade_status=unknown | pnl_percent=0 | exit_price=0
+[2026-02-09 16:15:00] | SESSION_END     | market=btc-updown-15m-1770645600 | strike=68536.12995586658 | evaluations=211 | signals=0 | max_total_score=70

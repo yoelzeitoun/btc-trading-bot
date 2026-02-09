@@ -194,8 +194,9 @@ def process_pending_claims():
                     # These should be RETRIED, not deleted
                     error_str = str(e)
                     if "GS013" in error_str:
-                        print(f"      ⚠️  Gas Est. Failed (GS013 - Safe error): {e}")
-                        print(f"      💡 Will retry this claim in the next window")
+                        print(f"      ⚠️  Gas Est. Failed (Safe GS013): Execution Reverted.")
+                        print(f"          Possible reasons: Market not resolved yet on-chain, or Invalid Signature.")
+                        print(f"      💡 Retrying next window.")
                         remaining_claims.append(condition_id)
                         continue
                     
@@ -232,6 +233,9 @@ def process_pending_claims():
             with open(CLAIMS_FILE, 'w') as f:
                 json.dump(remaining_claims, f)
             print(f"   💾 Liste mise à jour. Restants: {len(remaining_claims)}")
+        elif len(remaining_claims) > 0:
+            print(f"   ⏳ {len(remaining_claims)} claim(s) en attente (Maintien pour prochain cycle).")
+
         else:
              print("   ⚠️  Aucun claim n'a abouti (Gas ou Déjà fait).")
 
@@ -648,6 +652,10 @@ def get_max_sellable_size(poly_client, token_id):
         # Ex: 7.9999999 -> 7.9999
         safe_size = math.floor(real_size * 10000) / 10000
         
+        # Consider very small dust as 0 to avoid API errors
+        if safe_size < 0.1:
+            return 0.0
+
         return safe_size if safe_size > 0 else 0.0
     
     except Exception as e:
@@ -663,6 +671,14 @@ def execute_close_trade(poly_client, token_id, size, current_btc_price=None):
     from datetime import datetime
     from py_clob_client.clob_types import OrderArgs
     
+    # 0. Cancel open orders to free up liquidity (Fix for SL failure)
+    try:
+        print("   🧹 Cancelling open orders to free up liquidity...")
+        poly_client.cancel_all()
+        time.sleep(1) # Wait for propagation
+    except Exception as e:
+        print(f"   ⚠️  Warning: Failed to cancel orders: {e}")
+
     # 1. On demande le MAX exact et nettoyé
     max_size = get_max_sellable_size(poly_client, token_id)
     
@@ -736,6 +752,18 @@ def execute_close_trade(poly_client, token_id, size, current_btc_price=None):
                 'size': trade_size,
                 'token_id': token_id,
                 'close_time': close_time,
+                'close_btc_price': current_btc_price
+            }
+        elif isinstance(response, dict) and "lower than minimum" in response.get("error", "").lower():
+             # Special handling for dust errors: treat as success (empty balance)
+             print(f"   ⚠️  Close skipped: Balance too low (Dust). Marking as closed.")
+             return {
+                'success': True,
+                'order_id': 'DUST_CLEARED',
+                'price': best_bid_price,
+                'size': 0,
+                'token_id': token_id,
+                'close_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                 'close_btc_price': current_btc_price
             }
         else:
