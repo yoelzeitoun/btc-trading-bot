@@ -3021,3 +3021,1252 @@
      - Potential Profit: $0.70
      - ROI if Win: 7.5%
 ================================================================================
+
+================================================================================
+📅 2026-02-08 11:00 | Market: https://polymarket.com/market/btc-updown-15m-1770547500
+🎯 Strike Price: $70,180.07
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (79 evaluations, 1 signals triggered):
+   • Bollinger Bands:    1/30 (max score)
+   • ATR Kinetic:        70/70 (max score)
+   • MAX TOTAL SCORE:    71/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-9.0min
+   Current BTC Price:   $70,327.80
+   Entry Price:        $0.790
+   Final BTC:          $70,204.20
+   Direction:           UP
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +26.58% ($+26.58)
+--------------------------------------------------------------------------------
+💼 TRADE EXECUTED:
+   Signal Score:  71/100
+   Direction:     YES
+   Entry Price:   $0.790
+   Final BTC:     $70,204.20
+   Trade Amount:  $100.00
+   Result:        WIN
+   P&L:           +26.58% ($+26.58)
+   Real Trade Open: SUCCESS
+   Open Time:     2026-02-08 12:51:03
+   Open BTC Price: $70,327.80
+   Open Trade Logs:
+     - 🔄 EXECUTING REAL TRADE... [2026-02-08 12:51:01]
+     - Direction: UP
+     - Token ID: 109089775925752251457067431353434985521393856988555638582126286147536666619265
+     - Price: $0.800
+     - Size: 10.0 shares
+     - Total Cost: $8.00
+     - Expected Strategy: BTC > $70,180.07
+     - Current BTC: $70,327.80
+     - ✅ ORDER PLACED SUCCESSFULLY!
+     - Order ID: 0x0ad38a4bc08c0093c589ed6dace0718d082439649b7cb36a9478c076f74fb4d0
+     - Cost: $8.00
+     - Potential Profit: $2.00
+     - ROI if Win: 25.0%
+   Position Monitoring:
+     [T-8.90min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,327.80 > $70,180.07)
+     📊 SCORES: TOTAL 71/100 | BB 1/30 - Strike at 48.5% from BOTTOM of band | ATR 70/70 - Distance: $147.73 - Max move: $57.47 - Ratio: 2.57
+     [T-8.85min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,312.00 > $70,180.07)
+     📊 SCORES: TOTAL 71/100 | BB 1/30 - Strike at 48.5% from BOTTOM of band | ATR 70/70 - Distance: $131.93 - Max move: $57.31 - Ratio: 2.30
+     [T-8.80min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,311.90 > $70,180.07)
+     📊 SCORES: TOTAL 71/100 | BB 1/30 - Strike at 48.5% from BOTTOM of band | ATR 70/70 - Distance: $131.83 - Max move: $57.16 - Ratio: 2.31
+     [T-8.76min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,311.90 > $70,180.07)
+     📊 SCORES: TOTAL 71/100 | BB 1/30 - Strike at 48.5% from BOTTOM of band | ATR 70/70 - Distance: $131.83 - Max move: $57.00 - Ratio: 2.31
+     [T-8.71min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,311.90 > $70,180.07)
+     📊 SCORES: TOTAL 71/100 | BB 1/30 - Strike at 48.5% from BOTTOM of band | ATR 70/70 - Distance: $131.83 - Max move: $56.85 - Ratio: 2.32
+     [T-8.66min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,312.00 > $70,180.07)
+     📊 SCORES: TOTAL 71/100 | BB 1/30 - Strike at 48.5% from BOTTOM of band | ATR 70/70 - Distance: $131.93 - Max move: $56.70 - Ratio: 2.33
+     [T-8.61min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,312.00 > $70,180.07)
+     📊 SCORES: TOTAL 71/100 | BB 1/30 - Strike at 48.5% from BOTTOM of band | ATR 70/70 - Distance: $131.93 - Max move: $56.54 - Ratio: 2.33
+     [T-8.57min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,312.00 > $70,180.07)
+     📊 SCORES: TOTAL 71/100 | BB 1/30 - Strike at 48.5% from BOTTOM of band | ATR 70/70 - Distance: $131.93 - Max move: $56.38 - Ratio: 2.34
+     [T-8.52min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,333.00 > $70,180.07)
+     📊 SCORES: TOTAL 71/100 | BB 1/30 - Strike at 48.2% from BOTTOM of band | ATR 70/70 - Distance: $152.93 - Max move: $56.93 - Ratio: 2.69
+     [T-8.47min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,313.30 > $70,180.07)
+     📊 SCORES: TOTAL 71/100 | BB 1/30 - Strike at 48.4% from BOTTOM of band | ATR 70/70 - Distance: $133.23 - Max move: $56.77 - Ratio: 2.35
+     [T-8.42min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,313.30 > $70,180.07)
+     📊 SCORES: TOTAL 71/100 | BB 1/30 - Strike at 48.4% from BOTTOM of band | ATR 70/70 - Distance: $133.23 - Max move: $56.60 - Ratio: 2.35
+     [T-8.37min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,326.50 > $70,180.07)
+     📊 SCORES: TOTAL 71/100 | BB 1/30 - Strike at 48.3% from BOTTOM of band | ATR 70/70 - Distance: $146.43 - Max move: $56.43 - Ratio: 2.59
+     [T-8.32min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,326.50 > $70,180.07)
+     📊 SCORES: TOTAL 71/100 | BB 1/30 - Strike at 48.3% from BOTTOM of band | ATR 70/70 - Distance: $146.43 - Max move: $56.27 - Ratio: 2.60
+     [T-8.28min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,326.50 > $70,180.07)
+     📊 SCORES: TOTAL 71/100 | BB 1/30 - Strike at 48.3% from BOTTOM of band | ATR 70/70 - Distance: $146.43 - Max move: $56.11 - Ratio: 2.61
+     [T-8.23min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,326.50 > $70,180.07)
+     📊 SCORES: TOTAL 71/100 | BB 1/30 - Strike at 48.4% from BOTTOM of band | ATR 70/70 - Distance: $146.43 - Max move: $55.96 - Ratio: 2.62
+     [T-8.18min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,313.10 > $70,180.07)
+     📊 SCORES: TOTAL 71/100 | BB 1/30 - Strike at 48.4% from BOTTOM of band | ATR 70/70 - Distance: $133.03 - Max move: $55.79 - Ratio: 2.38
+     [T-8.14min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,313.10 > $70,180.07)
+     📊 SCORES: TOTAL 71/100 | BB 1/30 - Strike at 48.4% from BOTTOM of band | ATR 70/70 - Distance: $133.03 - Max move: $55.63 - Ratio: 2.39
+     [T-8.09min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,313.10 > $70,180.07)
+     📊 SCORES: TOTAL 71/100 | BB 1/30 - Strike at 48.4% from BOTTOM of band | ATR 70/70 - Distance: $133.03 - Max move: $55.47 - Ratio: 2.40
+     [T-8.04min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,313.10 > $70,180.07)
+     📊 SCORES: TOTAL 71/100 | BB 1/30 - Strike at 48.5% from BOTTOM of band | ATR 70/70 - Distance: $133.03 - Max move: $55.31 - Ratio: 2.41
+     [T-7.99min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,312.00 > $70,180.07)
+     📊 SCORES: TOTAL 71/100 | BB 1/30 - Strike at 48.5% from BOTTOM of band | ATR 70/70 - Distance: $131.93 - Max move: $55.15 - Ratio: 2.39
+     [T-7.95min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,312.00 > $70,180.07)
+     📊 SCORES: TOTAL 71/100 | BB 1/30 - Strike at 48.5% from BOTTOM of band | ATR 70/70 - Distance: $131.93 - Max move: $54.99 - Ratio: 2.40
+     [T-7.90min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,311.90 > $70,180.07)
+     📊 SCORES: TOTAL 74/100 | BB 4/30 - Strike at 44.1% from BOTTOM of band | ATR 70/70 - Distance: $131.83 - Max move: $48.63 - Ratio: 2.71
+     [T-7.85min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,311.90 > $70,180.07)
+     📊 SCORES: TOTAL 74/100 | BB 4/30 - Strike at 44.1% from BOTTOM of band | ATR 70/70 - Distance: $131.83 - Max move: $48.49 - Ratio: 2.72
+     [T-7.81min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,311.90 > $70,180.07)
+     📊 SCORES: TOTAL 74/100 | BB 4/30 - Strike at 44.1% from BOTTOM of band | ATR 70/70 - Distance: $131.83 - Max move: $48.34 - Ratio: 2.73
+     [T-7.76min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,311.90 > $70,180.07)
+     📊 SCORES: TOTAL 74/100 | BB 4/30 - Strike at 44.1% from BOTTOM of band | ATR 70/70 - Distance: $131.83 - Max move: $48.19 - Ratio: 2.74
+     [T-7.71min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,311.90 > $70,180.07)
+     📊 SCORES: TOTAL 74/100 | BB 4/30 - Strike at 44.1% from BOTTOM of band | ATR 70/70 - Distance: $131.83 - Max move: $48.04 - Ratio: 2.74
+     [T-7.66min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,311.90 > $70,180.07)
+     📊 SCORES: TOTAL 74/100 | BB 4/30 - Strike at 44.1% from BOTTOM of band | ATR 70/70 - Distance: $131.83 - Max move: $47.90 - Ratio: 2.75
+     [T-7.62min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,311.90 > $70,180.07)
+     📊 SCORES: TOTAL 74/100 | BB 4/30 - Strike at 44.1% from BOTTOM of band | ATR 70/70 - Distance: $131.83 - Max move: $47.75 - Ratio: 2.76
+     [T-7.57min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,311.90 > $70,180.07)
+     📊 SCORES: TOTAL 74/100 | BB 4/30 - Strike at 44.1% from BOTTOM of band | ATR 70/70 - Distance: $131.83 - Max move: $47.60 - Ratio: 2.77
+     [T-7.52min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,311.90 > $70,180.07)
+     📊 SCORES: TOTAL 73/100 | BB 3/30 - Strike at 44.2% from BOTTOM of band | ATR 70/70 - Distance: $131.83 - Max move: $47.78 - Ratio: 2.76
+     [T-7.47min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,294.10 > $70,180.07)
+     📊 SCORES: TOTAL 73/100 | BB 3/30 - Strike at 44.3% from BOTTOM of band | ATR 70/70 - Distance: $114.03 - Max move: $49.37 - Ratio: 2.31
+     [T-7.42min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,294.10 > $70,180.07)
+     📊 SCORES: TOTAL 73/100 | BB 3/30 - Strike at 44.3% from BOTTOM of band | ATR 70/70 - Distance: $114.03 - Max move: $49.22 - Ratio: 2.32
+     [T-7.37min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,294.10 > $70,180.07)
+     📊 SCORES: TOTAL 73/100 | BB 3/30 - Strike at 44.4% from BOTTOM of band | ATR 70/70 - Distance: $114.03 - Max move: $50.11 - Ratio: 2.28
+     [T-7.33min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,285.00 > $70,180.07)
+     📊 SCORES: TOTAL 73/100 | BB 3/30 - Strike at 44.5% from BOTTOM of band | ATR 70/70 - Distance: $104.93 - Max move: $50.52 - Ratio: 2.08
+     [T-7.27min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,285.00 > $70,180.07)
+     📊 SCORES: TOTAL 73/100 | BB 3/30 - Strike at 44.5% from BOTTOM of band | ATR 70/70 - Distance: $104.93 - Max move: $50.34 - Ratio: 2.08
+     [T-7.23min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,280.10 > $70,180.07)
+     📊 SCORES: TOTAL 73/100 | BB 3/30 - Strike at 44.5% from BOTTOM of band | ATR 70/70 - Distance: $100.03 - Max move: $50.17 - Ratio: 1.99
+     [T-7.18min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,280.10 > $70,180.07)
+     📊 SCORES: TOTAL 73/100 | BB 3/30 - Strike at 44.5% from BOTTOM of band | ATR 70/70 - Distance: $100.03 - Max move: $50.01 - Ratio: 2.00
+     [T-7.13min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,280.10 > $70,180.07)
+     📊 SCORES: TOTAL 73/100 | BB 3/30 - Strike at 44.5% from BOTTOM of band | ATR 70/70 - Distance: $100.03 - Max move: $49.85 - Ratio: 2.01
+     [T-7.09min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,280.10 > $70,180.07)
+     📊 SCORES: TOTAL 73/100 | BB 3/30 - Strike at 44.5% from BOTTOM of band | ATR 70/70 - Distance: $100.03 - Max move: $49.68 - Ratio: 2.01
+     [T-7.04min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,280.10 > $70,180.07)
+     📊 SCORES: TOTAL 73/100 | BB 3/30 - Strike at 44.5% from BOTTOM of band | ATR 70/70 - Distance: $100.03 - Max move: $49.52 - Ratio: 2.02
+     [T-6.99min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,280.10 > $70,180.07)
+     📊 SCORES: TOTAL 73/100 | BB 3/30 - Strike at 44.5% from BOTTOM of band | ATR 70/70 - Distance: $100.03 - Max move: $49.34 - Ratio: 2.03
+     [T-6.94min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,261.00 > $70,180.07)
+     📊 SCORES: TOTAL 53/100 | BB 7/30 - Strike at 38.3% from BOTTOM of band | ATR 46/70 - Distance: $80.93 - Max move: $48.78 - Ratio: 1.66
+     [T-6.89min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,261.00 > $70,180.07)
+     📊 SCORES: TOTAL 54/100 | BB 7/30 - Strike at 38.3% from BOTTOM of band | ATR 47/70 - Distance: $80.93 - Max move: $48.62 - Ratio: 1.66
+     [T-6.85min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,250.90 > $70,180.07)
+     📊 SCORES: TOTAL 39/100 | BB 7/30 - Strike at 38.3% from BOTTOM of band | ATR 32/70 - Distance: $70.83 - Max move: $48.46 - Ratio: 1.46
+     [T-6.80min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,250.90 > $70,180.07)
+     📊 SCORES: TOTAL 37/100 | BB 7/30 - Strike at 38.4% from BOTTOM of band | ATR 30/70 - Distance: $70.83 - Max move: $49.42 - Ratio: 1.43
+     [T-6.75min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,250.90 > $70,180.07)
+     📊 SCORES: TOTAL 38/100 | BB 7/30 - Strike at 38.4% from BOTTOM of band | ATR 31/70 - Distance: $70.83 - Max move: $49.25 - Ratio: 1.44
+     [T-6.70min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,250.90 > $70,180.07)
+     📊 SCORES: TOTAL 38/100 | BB 7/30 - Strike at 38.4% from BOTTOM of band | ATR 31/70 - Distance: $70.83 - Max move: $49.07 - Ratio: 1.44
+     [T-6.66min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,250.90 > $70,180.07)
+     📊 SCORES: TOTAL 36/100 | BB 7/30 - Strike at 38.6% from BOTTOM of band | ATR 29/70 - Distance: $70.83 - Max move: $50.02 - Ratio: 1.42
+     [T-6.61min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,240.70 > $70,180.07)
+     📊 SCORES: TOTAL 20/100 | BB 7/30 - Strike at 38.8% from BOTTOM of band | ATR 13/70 - Distance: $60.63 - Max move: $51.29 - Ratio: 1.18
+     [T-6.56min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,228.70 > $70,180.07)
+     📊 SCORES: TOTAL 7/100 | BB 7/30 - Strike at 38.8% from BOTTOM of band | ATR 0/70 - Distance: $48.63 - Max move: $51.11 - Ratio: 0.95
+     [T-6.52min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,228.70 > $70,180.07)
+     📊 SCORES: TOTAL 7/100 | BB 7/30 - Strike at 38.8% from BOTTOM of band | ATR 0/70 - Distance: $48.63 - Max move: $50.93 - Ratio: 0.95
+     [T-6.47min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,228.70 > $70,180.07)
+     📊 SCORES: TOTAL 7/100 | BB 7/30 - Strike at 38.8% from BOTTOM of band | ATR 0/70 - Distance: $48.63 - Max move: $50.74 - Ratio: 0.96
+     [T-6.42min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,228.70 > $70,180.07)
+     📊 SCORES: TOTAL 7/100 | BB 7/30 - Strike at 38.8% from BOTTOM of band | ATR 0/70 - Distance: $48.63 - Max move: $50.55 - Ratio: 0.96
+     [T-6.37min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,245.80 > $70,180.07)
+     📊 SCORES: TOTAL 28/100 | BB 7/30 - Strike at 38.5% from BOTTOM of band | ATR 21/70 - Distance: $65.73 - Max move: $50.36 - Ratio: 1.31
+     [T-6.33min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,245.80 > $70,180.07)
+     📊 SCORES: TOTAL 29/100 | BB 7/30 - Strike at 38.5% from BOTTOM of band | ATR 22/70 - Distance: $65.73 - Max move: $50.18 - Ratio: 1.31
+     [T-6.28min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,245.80 > $70,180.07)
+     📊 SCORES: TOTAL 29/100 | BB 7/30 - Strike at 38.5% from BOTTOM of band | ATR 22/70 - Distance: $65.73 - Max move: $49.99 - Ratio: 1.31
+     [T-6.23min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,245.80 > $70,180.07)
+     📊 SCORES: TOTAL 29/100 | BB 7/30 - Strike at 38.5% from BOTTOM of band | ATR 22/70 - Distance: $65.73 - Max move: $49.80 - Ratio: 1.32
+     [T-6.18min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,245.20 > $70,180.07)
+     📊 SCORES: TOTAL 29/100 | BB 7/30 - Strike at 38.5% from BOTTOM of band | ATR 22/70 - Distance: $65.13 - Max move: $49.61 - Ratio: 1.31
+     [T-6.14min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,245.20 > $70,180.07)
+     📊 SCORES: TOTAL 29/100 | BB 7/30 - Strike at 38.6% from BOTTOM of band | ATR 22/70 - Distance: $65.13 - Max move: $49.42 - Ratio: 1.32
+     [T-6.09min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,241.60 > $70,180.07)
+     📊 SCORES: TOTAL 24/100 | BB 7/30 - Strike at 38.6% from BOTTOM of band | ATR 17/70 - Distance: $61.53 - Max move: $49.23 - Ratio: 1.25
+     [T-6.04min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,241.60 > $70,180.07)
+     📊 SCORES: TOTAL 25/100 | BB 7/30 - Strike at 38.6% from BOTTOM of band | ATR 18/70 - Distance: $61.53 - Max move: $49.04 - Ratio: 1.25
+     [T-5.99min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,241.60 > $70,180.07)
+     📊 SCORES: TOTAL 41/100 | BB 11/30 - Strike at 31.2% from BOTTOM of band | ATR 30/70 - Distance: $61.53 - Max move: $43.13 - Ratio: 1.43
+     [T-5.95min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,241.60 > $70,180.07)
+     📊 SCORES: TOTAL 41/100 | BB 11/30 - Strike at 31.2% from BOTTOM of band | ATR 30/70 - Distance: $61.53 - Max move: $42.96 - Ratio: 1.43
+     [T-5.90min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,241.60 > $70,180.07)
+     📊 SCORES: TOTAL 42/100 | BB 11/30 - Strike at 31.2% from BOTTOM of band | ATR 31/70 - Distance: $61.53 - Max move: $42.79 - Ratio: 1.44
+     [T-5.85min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,241.60 > $70,180.07)
+     📊 SCORES: TOTAL 42/100 | BB 11/30 - Strike at 31.2% from BOTTOM of band | ATR 31/70 - Distance: $61.53 - Max move: $42.62 - Ratio: 1.44
+     [T-5.80min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,241.60 > $70,180.07)
+     📊 SCORES: TOTAL 42/100 | BB 11/30 - Strike at 31.2% from BOTTOM of band | ATR 31/70 - Distance: $61.53 - Max move: $42.44 - Ratio: 1.45
+     [T-5.75min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,241.60 > $70,180.07)
+     📊 SCORES: TOTAL 43/100 | BB 11/30 - Strike at 31.2% from BOTTOM of band | ATR 32/70 - Distance: $61.53 - Max move: $42.27 - Ratio: 1.46
+     [T-5.71min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,241.60 > $70,180.07)
+     📊 SCORES: TOTAL 43/100 | BB 11/30 - Strike at 31.2% from BOTTOM of band | ATR 32/70 - Distance: $61.53 - Max move: $42.10 - Ratio: 1.46
+     [T-5.66min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,241.60 > $70,180.07)
+     📊 SCORES: TOTAL 40/100 | BB 11/30 - Strike at 31.5% from BOTTOM of band | ATR 29/70 - Distance: $61.53 - Max move: $43.52 - Ratio: 1.41
+     [T-5.61min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,225.80 > $70,180.07)
+     📊 SCORES: TOTAL 15/100 | BB 11/30 - Strike at 31.5% from BOTTOM of band | ATR 4/70 - Distance: $45.73 - Max move: $43.34 - Ratio: 1.06
+     [T-5.56min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,225.80 > $70,180.07)
+     📊 SCORES: TOTAL 15/100 | BB 11/30 - Strike at 31.5% from BOTTOM of band | ATR 4/70 - Distance: $45.73 - Max move: $43.16 - Ratio: 1.06
+     [T-5.52min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,225.80 > $70,180.07)
+     📊 SCORES: TOTAL 15/100 | BB 11/30 - Strike at 31.5% from BOTTOM of band | ATR 4/70 - Distance: $45.73 - Max move: $42.97 - Ratio: 1.06
+     [T-5.47min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,225.80 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 11/30 - Strike at 31.5% from BOTTOM of band | ATR 5/70 - Distance: $45.73 - Max move: $42.79 - Ratio: 1.07
+     [T-5.42min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,225.80 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 11/30 - Strike at 31.5% from BOTTOM of band | ATR 5/70 - Distance: $45.73 - Max move: $42.61 - Ratio: 1.07
+     [T-5.37min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,225.80 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 11/30 - Strike at 31.5% from BOTTOM of band | ATR 5/70 - Distance: $45.73 - Max move: $42.42 - Ratio: 1.08
+     [T-5.32min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,225.90 > $70,180.07)
+     📊 SCORES: TOTAL 17/100 | BB 11/30 - Strike at 31.5% from BOTTOM of band | ATR 6/70 - Distance: $45.83 - Max move: $42.20 - Ratio: 1.09
+     [T-5.27min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,225.90 > $70,180.07)
+     📊 SCORES: TOTAL 17/100 | BB 11/30 - Strike at 31.5% from BOTTOM of band | ATR 6/70 - Distance: $45.83 - Max move: $42.01 - Ratio: 1.09
+     [T-5.22min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,225.90 > $70,180.07)
+     📊 SCORES: TOTAL 18/100 | BB 11/30 - Strike at 31.5% from BOTTOM of band | ATR 7/70 - Distance: $45.83 - Max move: $41.81 - Ratio: 1.10
+     [T-5.17min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,225.90 > $70,180.07)
+     📊 SCORES: TOTAL 18/100 | BB 11/30 - Strike at 31.5% from BOTTOM of band | ATR 7/70 - Distance: $45.83 - Max move: $41.61 - Ratio: 1.10
+     [T-5.13min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,225.80 > $70,180.07)
+     📊 SCORES: TOTAL 18/100 | BB 11/30 - Strike at 31.5% from BOTTOM of band | ATR 7/70 - Distance: $45.73 - Max move: $41.42 - Ratio: 1.10
+     [T-5.08min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,225.80 > $70,180.07)
+     📊 SCORES: TOTAL 19/100 | BB 11/30 - Strike at 31.5% from BOTTOM of band | ATR 8/70 - Distance: $45.73 - Max move: $41.23 - Ratio: 1.11
+     [T-5.03min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,225.80 > $70,180.07)
+     📊 SCORES: TOTAL 19/100 | BB 11/30 - Strike at 31.5% from BOTTOM of band | ATR 8/70 - Distance: $45.73 - Max move: $41.03 - Ratio: 1.11
+     [T-4.98min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,225.80 > $70,180.07)
+     📊 SCORES: TOTAL 19/100 | BB 11/30 - Strike at 31.5% from BOTTOM of band | ATR 8/70 - Distance: $45.73 - Max move: $40.84 - Ratio: 1.12
+     [T-4.94min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,225.80 > $70,180.07)
+     📊 SCORES: TOTAL 29/100 | BB 15/30 - Strike at 25.5% from BOTTOM of band | ATR 14/70 - Distance: $45.73 - Max move: $38.10 - Ratio: 1.20
+     [T-4.89min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,225.80 > $70,180.07)
+     📊 SCORES: TOTAL 29/100 | BB 15/30 - Strike at 25.5% from BOTTOM of band | ATR 14/70 - Distance: $45.73 - Max move: $37.92 - Ratio: 1.21
+     [T-4.84min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,225.80 > $70,180.07)
+     📊 SCORES: TOTAL 30/100 | BB 15/30 - Strike at 25.5% from BOTTOM of band | ATR 15/70 - Distance: $45.73 - Max move: $37.73 - Ratio: 1.21
+     [T-4.79min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,225.80 > $70,180.07)
+     📊 SCORES: TOTAL 30/100 | BB 15/30 - Strike at 25.5% from BOTTOM of band | ATR 15/70 - Distance: $45.73 - Max move: $37.54 - Ratio: 1.22
+     [T-4.74min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,225.80 > $70,180.07)
+     📊 SCORES: TOTAL 31/100 | BB 15/30 - Strike at 25.5% from BOTTOM of band | ATR 16/70 - Distance: $45.73 - Max move: $37.36 - Ratio: 1.22
+     [T-4.70min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,225.80 > $70,180.07)
+     📊 SCORES: TOTAL 31/100 | BB 15/30 - Strike at 25.5% from BOTTOM of band | ATR 16/70 - Distance: $45.73 - Max move: $37.17 - Ratio: 1.23
+     [T-4.65min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,209.90 > $70,180.07)
+     📊 SCORES: TOTAL 14/100 | BB 14/30 - Strike at 26.0% from BOTTOM of band | ATR 0/70 - Distance: $29.83 - Max move: $38.45 - Ratio: 0.78
+     [T-4.60min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,207.50 > $70,180.07)
+     📊 SCORES: TOTAL 14/100 | BB 14/30 - Strike at 26.1% from BOTTOM of band | ATR 0/70 - Distance: $27.43 - Max move: $38.47 - Ratio: 0.71
+     [T-4.56min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,207.50 > $70,180.07)
+     📊 SCORES: TOTAL 14/100 | BB 14/30 - Strike at 26.3% from BOTTOM of band | ATR 0/70 - Distance: $27.43 - Max move: $38.96 - Ratio: 0.70
+     [T-4.51min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,200.10 > $70,180.07)
+     📊 SCORES: TOTAL 14/100 | BB 14/30 - Strike at 26.3% from BOTTOM of band | ATR 0/70 - Distance: $20.03 - Max move: $38.75 - Ratio: 0.52
+     [T-4.46min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,200.10 > $70,180.07)
+     📊 SCORES: TOTAL 14/100 | BB 14/30 - Strike at 26.3% from BOTTOM of band | ATR 0/70 - Distance: $20.03 - Max move: $38.54 - Ratio: 0.52
+     [T-4.41min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,200.10 > $70,180.07)
+     📊 SCORES: TOTAL 14/100 | BB 14/30 - Strike at 26.3% from BOTTOM of band | ATR 0/70 - Distance: $20.03 - Max move: $38.34 - Ratio: 0.52
+     [T-4.36min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,200.10 > $70,180.07)
+     📊 SCORES: TOTAL 14/100 | BB 14/30 - Strike at 26.3% from BOTTOM of band | ATR 0/70 - Distance: $20.03 - Max move: $38.13 - Ratio: 0.53
+     [T-4.32min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.50 > $70,180.07)
+     📊 SCORES: TOTAL 14/100 | BB 14/30 - Strike at 26.5% from BOTTOM of band | ATR 0/70 - Distance: $15.43 - Max move: $38.34 - Ratio: 0.40
+     [T-4.27min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.50 > $70,180.07)
+     📊 SCORES: TOTAL 14/100 | BB 14/30 - Strike at 26.5% from BOTTOM of band | ATR 0/70 - Distance: $15.43 - Max move: $38.13 - Ratio: 0.40
+     [T-4.22min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.50 > $70,180.07)
+     📊 SCORES: TOTAL 14/100 | BB 14/30 - Strike at 26.5% from BOTTOM of band | ATR 0/70 - Distance: $15.43 - Max move: $37.92 - Ratio: 0.41
+     [T-4.18min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.50 > $70,180.07)
+     📊 SCORES: TOTAL 14/100 | BB 14/30 - Strike at 26.5% from BOTTOM of band | ATR 0/70 - Distance: $15.43 - Max move: $37.70 - Ratio: 0.41
+     [T-4.13min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 14/100 | BB 14/30 - Strike at 26.5% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $37.49 - Ratio: 0.41
+     [T-4.08min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 14/100 | BB 14/30 - Strike at 26.5% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $37.28 - Ratio: 0.42
+     [T-4.03min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 14/100 | BB 14/30 - Strike at 26.5% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $37.06 - Ratio: 0.42
+     [T-3.99min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 14/100 | BB 14/30 - Strike at 26.5% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $36.84 - Ratio: 0.42
+     [T-3.94min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 16/30 - Strike at 23.5% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $32.35 - Ratio: 0.48
+     [T-3.89min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 16/30 - Strike at 23.5% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $32.15 - Ratio: 0.48
+     [T-3.84min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 16/30 - Strike at 23.5% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $31.96 - Ratio: 0.49
+     [T-3.80min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.50 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 16/30 - Strike at 23.5% from BOTTOM of band | ATR 0/70 - Distance: $15.43 - Max move: $31.77 - Ratio: 0.49
+     [T-3.75min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.50 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 16/30 - Strike at 23.5% from BOTTOM of band | ATR 0/70 - Distance: $15.43 - Max move: $31.57 - Ratio: 0.49
+     [T-3.70min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.50 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 16/30 - Strike at 23.5% from BOTTOM of band | ATR 0/70 - Distance: $15.43 - Max move: $31.37 - Ratio: 0.49
+     [T-3.66min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.50 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 16/30 - Strike at 23.5% from BOTTOM of band | ATR 0/70 - Distance: $15.43 - Max move: $31.17 - Ratio: 0.49
+     [T-3.61min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.50 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 16/30 - Strike at 23.5% from BOTTOM of band | ATR 0/70 - Distance: $15.43 - Max move: $30.97 - Ratio: 0.50
+     [T-3.56min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.50 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 16/30 - Strike at 23.5% from BOTTOM of band | ATR 0/70 - Distance: $15.43 - Max move: $30.76 - Ratio: 0.50
+     [T-3.51min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.50 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 16/30 - Strike at 23.5% from BOTTOM of band | ATR 0/70 - Distance: $15.43 - Max move: $30.56 - Ratio: 0.50
+     [T-3.47min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.50 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 16/30 - Strike at 23.5% from BOTTOM of band | ATR 0/70 - Distance: $15.43 - Max move: $30.36 - Ratio: 0.51
+     [T-3.42min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.50 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 16/30 - Strike at 23.5% from BOTTOM of band | ATR 0/70 - Distance: $15.43 - Max move: $30.15 - Ratio: 0.51
+     [T-3.37min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.50 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 16/30 - Strike at 23.5% from BOTTOM of band | ATR 0/70 - Distance: $15.43 - Max move: $29.93 - Ratio: 0.52
+     [T-3.32min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 16/30 - Strike at 23.5% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $29.72 - Ratio: 0.52
+     [T-3.28min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 16/30 - Strike at 23.5% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $29.50 - Ratio: 0.53
+     [T-3.23min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 16/30 - Strike at 23.5% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $29.29 - Ratio: 0.53
+     [T-3.18min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 16/30 - Strike at 23.5% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $29.07 - Ratio: 0.53
+     [T-3.13min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 16/30 - Strike at 23.5% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $28.86 - Ratio: 0.54
+     [T-3.09min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 16/30 - Strike at 23.5% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $28.65 - Ratio: 0.54
+     [T-3.04min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 16/30 - Strike at 23.5% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $28.42 - Ratio: 0.55
+     [T-2.99min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 16/30 - Strike at 23.5% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $28.19 - Ratio: 0.55
+     [T-2.94min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 15/100 | BB 15/30 - Strike at 24.7% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $26.40 - Ratio: 0.59
+     [T-2.90min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 15/100 | BB 15/30 - Strike at 24.7% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $26.20 - Ratio: 0.59
+     [T-2.85min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 15/100 | BB 15/30 - Strike at 24.7% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $25.98 - Ratio: 0.60
+     [T-2.80min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 15/100 | BB 15/30 - Strike at 24.7% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $25.75 - Ratio: 0.60
+     [T-2.75min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 15/100 | BB 15/30 - Strike at 24.7% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $25.54 - Ratio: 0.61
+     [T-2.71min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 15/100 | BB 15/30 - Strike at 24.7% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $25.32 - Ratio: 0.61
+     [T-2.66min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 15/100 | BB 15/30 - Strike at 24.7% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $25.10 - Ratio: 0.62
+     [T-2.61min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 15/100 | BB 15/30 - Strike at 24.7% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $24.87 - Ratio: 0.62
+     [T-2.56min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 15/100 | BB 15/30 - Strike at 24.7% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $24.64 - Ratio: 0.63
+     [T-2.51min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.50 > $70,180.07)
+     📊 SCORES: TOTAL 15/100 | BB 15/30 - Strike at 24.7% from BOTTOM of band | ATR 0/70 - Distance: $15.43 - Max move: $24.41 - Ratio: 0.63
+     [T-2.47min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.50 > $70,180.07)
+     📊 SCORES: TOTAL 15/100 | BB 15/30 - Strike at 24.7% from BOTTOM of band | ATR 0/70 - Distance: $15.43 - Max move: $24.19 - Ratio: 0.64
+     [T-2.42min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 15/100 | BB 15/30 - Strike at 24.7% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $23.96 - Ratio: 0.65
+     [T-2.37min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 15/100 | BB 15/30 - Strike at 24.7% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $23.72 - Ratio: 0.65
+     [T-2.33min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 15/100 | BB 15/30 - Strike at 24.7% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $23.49 - Ratio: 0.66
+     [T-2.28min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.60 > $70,180.07)
+     📊 SCORES: TOTAL 15/100 | BB 15/30 - Strike at 24.7% from BOTTOM of band | ATR 0/70 - Distance: $15.53 - Max move: $23.25 - Ratio: 0.67
+     [T-2.23min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,195.50 > $70,180.07)
+     📊 SCORES: TOTAL 16/100 | BB 16/30 - Strike at 23.6% from BOTTOM of band | ATR 0/70 - Distance: $15.43 - Max move: $25.27 - Ratio: 0.61
+     [T-2.19min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,224.60 > $70,180.07)
+     📊 SCORES: TOTAL 71/100 | BB 16/30 - Strike at 23.6% from BOTTOM of band | ATR 55/70 - Distance: $44.53 - Max move: $24.99 - Ratio: 1.78
+     [T-2.14min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,224.60 > $70,180.07)
+     📊 SCORES: TOTAL 72/100 | BB 16/30 - Strike at 23.6% from BOTTOM of band | ATR 56/70 - Distance: $44.53 - Max move: $24.72 - Ratio: 1.80
+     [T-2.09min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,224.80 > $70,180.07)
+     📊 SCORES: TOTAL 74/100 | BB 16/30 - Strike at 23.6% from BOTTOM of band | ATR 58/70 - Distance: $44.73 - Max move: $24.44 - Ratio: 1.83
+     [T-2.04min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,224.80 > $70,180.07)
+     📊 SCORES: TOTAL 76/100 | BB 16/30 - Strike at 23.6% from BOTTOM of band | ATR 60/70 - Distance: $44.73 - Max move: $24.17 - Ratio: 1.85
+     [T-1.99min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,224.70 > $70,180.07)
+     📊 SCORES: TOTAL 86/100 | BB 16/30 - Strike at 23.9% from BOTTOM of band | ATR 70/70 - Distance: $44.63 - Max move: $22.32 - Ratio: 2.00
+     [T-1.94min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,224.70 > $70,180.07)
+     📊 SCORES: TOTAL 86/100 | BB 16/30 - Strike at 23.9% from BOTTOM of band | ATR 70/70 - Distance: $44.63 - Max move: $22.05 - Ratio: 2.02
+     [T-1.90min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,224.70 > $70,180.07)
+     📊 SCORES: TOTAL 86/100 | BB 16/30 - Strike at 23.9% from BOTTOM of band | ATR 70/70 - Distance: $44.63 - Max move: $21.77 - Ratio: 2.05
+     [T-1.85min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,224.70 > $70,180.07)
+     📊 SCORES: TOTAL 86/100 | BB 16/30 - Strike at 23.9% from BOTTOM of band | ATR 70/70 - Distance: $44.63 - Max move: $21.49 - Ratio: 2.08
+     [T-1.80min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,224.70 > $70,180.07)
+     📊 SCORES: TOTAL 86/100 | BB 16/30 - Strike at 23.9% from BOTTOM of band | ATR 70/70 - Distance: $44.63 - Max move: $21.21 - Ratio: 2.10
+     [T-1.75min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,224.70 > $70,180.07)
+     📊 SCORES: TOTAL 86/100 | BB 16/30 - Strike at 23.9% from BOTTOM of band | ATR 70/70 - Distance: $44.63 - Max move: $20.93 - Ratio: 2.13
+     [T-1.71min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,224.70 > $70,180.07)
+     📊 SCORES: TOTAL 86/100 | BB 16/30 - Strike at 23.9% from BOTTOM of band | ATR 70/70 - Distance: $44.63 - Max move: $20.65 - Ratio: 2.16
+     [T-1.66min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,224.70 > $70,180.07)
+     📊 SCORES: TOTAL 86/100 | BB 16/30 - Strike at 23.9% from BOTTOM of band | ATR 70/70 - Distance: $44.63 - Max move: $20.36 - Ratio: 2.19
+     [T-1.61min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,224.70 > $70,180.07)
+     📊 SCORES: TOTAL 86/100 | BB 16/30 - Strike at 23.9% from BOTTOM of band | ATR 70/70 - Distance: $44.63 - Max move: $20.06 - Ratio: 2.22
+     [T-1.56min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,224.70 > $70,180.07)
+     📊 SCORES: TOTAL 86/100 | BB 16/30 - Strike at 23.9% from BOTTOM of band | ATR 70/70 - Distance: $44.63 - Max move: $19.76 - Ratio: 2.26
+     [T-1.51min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,224.70 > $70,180.07)
+     📊 SCORES: TOTAL 86/100 | BB 16/30 - Strike at 24.1% from BOTTOM of band | ATR 70/70 - Distance: $44.63 - Max move: $19.67 - Ratio: 2.27
+     [T-1.46min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,220.30 > $70,180.07)
+     📊 SCORES: TOTAL 86/100 | BB 16/30 - Strike at 24.1% from BOTTOM of band | ATR 70/70 - Distance: $40.23 - Max move: $19.35 - Ratio: 2.08
+     [T-1.41min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,220.30 > $70,180.07)
+     📊 SCORES: TOTAL 86/100 | BB 16/30 - Strike at 24.1% from BOTTOM of band | ATR 70/70 - Distance: $40.23 - Max move: $19.03 - Ratio: 2.11
+     [T-1.37min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,220.30 > $70,180.07)
+     📊 SCORES: TOTAL 86/100 | BB 16/30 - Strike at 24.1% from BOTTOM of band | ATR 70/70 - Distance: $40.23 - Max move: $18.71 - Ratio: 2.15
+     [T-1.32min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,220.30 > $70,180.07)
+     📊 SCORES: TOTAL 86/100 | BB 16/30 - Strike at 24.1% from BOTTOM of band | ATR 70/70 - Distance: $40.23 - Max move: $18.38 - Ratio: 2.19
+     [T-1.27min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,220.20 > $70,180.07)
+     📊 SCORES: TOTAL 86/100 | BB 16/30 - Strike at 24.1% from BOTTOM of band | ATR 70/70 - Distance: $40.13 - Max move: $18.04 - Ratio: 2.22
+     [T-1.22min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,220.20 > $70,180.07)
+     📊 SCORES: TOTAL 86/100 | BB 16/30 - Strike at 24.1% from BOTTOM of band | ATR 70/70 - Distance: $40.13 - Max move: $17.70 - Ratio: 2.27
+     [T-1.18min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,220.20 > $70,180.07)
+     📊 SCORES: TOTAL 86/100 | BB 16/30 - Strike at 24.1% from BOTTOM of band | ATR 70/70 - Distance: $40.13 - Max move: $17.36 - Ratio: 2.31
+     [T-1.13min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,220.20 > $70,180.07)
+     📊 SCORES: TOTAL 85/100 | BB 15/30 - Strike at 24.8% from BOTTOM of band | ATR 70/70 - Distance: $40.13 - Max move: $17.91 - Ratio: 2.24
+     [T-1.08min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,200.50 > $70,180.07)
+     📊 SCORES: TOTAL 27/100 | BB 15/30 - Strike at 24.8% from BOTTOM of band | ATR 12/70 - Distance: $20.43 - Max move: $17.52 - Ratio: 1.17
+     [T-1.03min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,200.50 > $70,180.07)
+     📊 SCORES: TOTAL 28/100 | BB 15/30 - Strike at 24.8% from BOTTOM of band | ATR 13/70 - Distance: $20.43 - Max move: $17.13 - Ratio: 1.19
+     [T-0.99min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,200.40 > $70,180.07)
+     📊 SCORES: TOTAL 30/100 | BB 15/30 - Strike at 24.8% from BOTTOM of band | ATR 15/70 - Distance: $20.33 - Max move: $16.73 - Ratio: 1.22
+     [T-0.94min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,200.10 > $70,180.07)
+     📊 SCORES: TOTAL 36/100 | BB 15/30 - Strike at 25.4% from BOTTOM of band | ATR 21/70 - Distance: $20.03 - Max move: $15.35 - Ratio: 1.30
+     [T-0.89min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,200.10 > $70,180.07)
+     📊 SCORES: TOTAL 39/100 | BB 15/30 - Strike at 25.4% from BOTTOM of band | ATR 24/70 - Distance: $20.03 - Max move: $14.94 - Ratio: 1.34
+     [T-0.82min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,200.10 > $70,180.07)
+     📊 SCORES: TOTAL 43/100 | BB 15/30 - Strike at 25.4% from BOTTOM of band | ATR 28/70 - Distance: $20.03 - Max move: $14.38 - Ratio: 1.39
+     [T-0.78min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,200.10 > $70,180.07)
+     📊 SCORES: TOTAL 36/100 | BB 14/30 - Strike at 26.6% from BOTTOM of band | ATR 22/70 - Distance: $20.03 - Max move: $15.18 - Ratio: 1.32
+     [T-0.73min] |  Market Prices - Up: 79.0¢ | Down: 21.0¢
+     📍 Position Status: ⚠️ TARGET HIT - LOSING (BTC $70,175.40 <= $70,180.07)
+     📊 SCORES: TOTAL 14/100 | BB 14/30 - Strike at 26.6% from BOTTOM of band | ATR 0/70 - Distance: $4.67 - Max move: $14.71 - Ratio: 0.32
+   Close Time:    2026-02-08 12:59:18
+   Close BTC Price: $70,175.40
+   Close Price:   $0.440
+   Close Attempts: 1
+================================================================================
+
+================================================================================
+📅 2026-02-08 11:30 | Market: https://polymarket.com/market/btc-updown-15m-1770549300
+🎯 Strike Price: $70,575.73
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (101 evaluations, 0 signals triggered):
+   • Bollinger Bands:    0/30 (max score)
+   • ATR Kinetic:        60/70 (max score)
+   • MAX TOTAL SCORE:    60/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-1.0min
+   Current BTC Price:   $70,660.80
+   Entry Price:        $0.930
+   Final BTC:          $70,641.10
+   Direction:           UP
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +7.53% ($+7.53)
+================================================================================
+
+================================================================================
+📅 2026-02-08 11:45 | Market: https://polymarket.com/market/btc-updown-15m-1770550200
+🎯 Strike Price: $70,653.93
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (112 evaluations, 1 signals triggered):
+   • Bollinger Bands:    6/30 (max score)
+   • ATR Kinetic:        70/70 (max score)
+   • MAX TOTAL SCORE:    76/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-5.8min
+   Current BTC Price:   $70,900.60
+   Entry Price:        $0.910
+   Final BTC:          $70,830.30
+   Direction:           UP
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +9.89% ($+9.89)
+--------------------------------------------------------------------------------
+💼 TRADE EXECUTED:
+   Signal Score:  76/100
+   Direction:     YES
+   Entry Price:   $0.910
+   Final BTC:     $70,830.30
+   Trade Amount:  $100.00
+   Result:        WIN
+   P&L:           +9.89% ($+9.89)
+   Real Trade Open: SUCCESS
+   Open Time:     2026-02-08 13:39:16
+   Open BTC Price: $70,900.60
+   Open Trade Logs:
+     - 🔄 EXECUTING REAL TRADE... [2026-02-08 13:39:15]
+     - Direction: UP
+     - Token ID: 92929766133859798602721108185754308623988633054654756306494772183214681381369
+     - Price: $0.910
+     - Size: 10.0 shares
+     - Total Cost: $9.10
+     - Expected Strategy: BTC > $70,653.93
+     - Current BTC: $70,900.60
+     - ✅ ORDER PLACED SUCCESSFULLY!
+     - Order ID: 0xfdd949c78f3d4528db0765b81fe4ff098901369490ee1ddd211791ccebeefb92
+     - Cost: $9.10
+     - Potential Profit: $0.90
+     - ROI if Win: 9.9%
+   Position Monitoring:
+     [T-5.69min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,900.50 > $70,653.93)
+     📊 SCORES: TOTAL 76/100 | BB 6/30 - Strike at 39.8% from BOTTOM of band | ATR 70/70 - Distance: $246.57 - Max move: $118.16 - Ratio: 2.09
+     [T-5.64min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,900.10 > $70,653.93)
+     📊 SCORES: TOTAL 76/100 | BB 6/30 - Strike at 39.8% from BOTTOM of band | ATR 70/70 - Distance: $246.17 - Max move: $117.65 - Ratio: 2.09
+     [T-5.60min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,900.50 > $70,653.93)
+     📊 SCORES: TOTAL 76/100 | BB 6/30 - Strike at 39.8% from BOTTOM of band | ATR 70/70 - Distance: $246.57 - Max move: $117.15 - Ratio: 2.10
+     [T-5.55min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,900.10 > $70,653.93)
+     📊 SCORES: TOTAL 76/100 | BB 6/30 - Strike at 39.8% from BOTTOM of band | ATR 70/70 - Distance: $246.17 - Max move: $116.66 - Ratio: 2.11
+     [T-5.50min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,900.00 > $70,653.93)
+     📊 SCORES: TOTAL 76/100 | BB 6/30 - Strike at 39.9% from BOTTOM of band | ATR 70/70 - Distance: $246.07 - Max move: $116.16 - Ratio: 2.12
+     [T-5.45min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,886.90 > $70,653.93)
+     📊 SCORES: TOTAL 76/100 | BB 6/30 - Strike at 39.9% from BOTTOM of band | ATR 70/70 - Distance: $232.97 - Max move: $115.65 - Ratio: 2.01
+     [T-5.40min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,845.80 > $70,653.93)
+     📊 SCORES: TOTAL 50/100 | BB 6/30 - Strike at 40.2% from BOTTOM of band | ATR 44/70 - Distance: $191.87 - Max move: $118.17 - Ratio: 1.62
+     [T-5.35min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,819.70 > $70,653.93)
+     📊 SCORES: TOTAL 35/100 | BB 6/30 - Strike at 40.2% from BOTTOM of band | ATR 29/70 - Distance: $165.77 - Max move: $117.63 - Ratio: 1.41
+     [T-5.31min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,819.70 > $70,653.93)
+     📊 SCORES: TOTAL 35/100 | BB 6/30 - Strike at 40.2% from BOTTOM of band | ATR 29/70 - Distance: $165.77 - Max move: $117.11 - Ratio: 1.42
+     [T-5.26min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,819.70 > $70,653.93)
+     📊 SCORES: TOTAL 35/100 | BB 6/30 - Strike at 40.1% from BOTTOM of band | ATR 29/70 - Distance: $165.77 - Max move: $117.03 - Ratio: 1.42
+     [T-5.21min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,838.30 > $70,653.93)
+     📊 SCORES: TOTAL 47/100 | BB 6/30 - Strike at 40.0% from BOTTOM of band | ATR 41/70 - Distance: $184.37 - Max move: $116.48 - Ratio: 1.58
+     [T-5.16min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,850.20 > $70,653.93)
+     📊 SCORES: TOTAL 55/100 | BB 6/30 - Strike at 40.0% from BOTTOM of band | ATR 49/70 - Distance: $196.27 - Max move: $115.93 - Ratio: 1.69
+     [T-5.11min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,845.10 > $70,653.93)
+     📊 SCORES: TOTAL 52/100 | BB 6/30 - Strike at 40.1% from BOTTOM of band | ATR 46/70 - Distance: $191.17 - Max move: $115.39 - Ratio: 1.66
+     [T-5.06min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,838.80 > $70,653.93)
+     📊 SCORES: TOTAL 49/100 | BB 6/30 - Strike at 40.1% from BOTTOM of band | ATR 43/70 - Distance: $184.87 - Max move: $114.84 - Ratio: 1.61
+     [T-5.02min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,838.80 > $70,653.93)
+     📊 SCORES: TOTAL 49/100 | BB 6/30 - Strike at 40.1% from BOTTOM of band | ATR 43/70 - Distance: $184.87 - Max move: $114.31 - Ratio: 1.62
+     [T-4.97min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,838.80 > $70,653.93)
+     📊 SCORES: TOTAL 55/100 | BB 8/30 - Strike at 37.1% from BOTTOM of band | ATR 47/70 - Distance: $184.87 - Max move: $110.61 - Ratio: 1.67
+     [T-4.92min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,838.80 > $70,653.93)
+     📊 SCORES: TOTAL 56/100 | BB 8/30 - Strike at 37.1% from BOTTOM of band | ATR 48/70 - Distance: $184.87 - Max move: $110.08 - Ratio: 1.68
+     [T-4.87min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,838.80 > $70,653.93)
+     📊 SCORES: TOTAL 56/100 | BB 8/30 - Strike at 37.1% from BOTTOM of band | ATR 48/70 - Distance: $184.87 - Max move: $109.53 - Ratio: 1.69
+     [T-4.82min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,806.00 > $70,653.93)
+     📊 SCORES: TOTAL 33/100 | BB 8/30 - Strike at 37.2% from BOTTOM of band | ATR 25/70 - Distance: $152.07 - Max move: $112.44 - Ratio: 1.35
+     [T-4.77min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,806.00 > $70,653.93)
+     📊 SCORES: TOTAL 33/100 | BB 8/30 - Strike at 37.3% from BOTTOM of band | ATR 25/70 - Distance: $152.07 - Max move: $112.03 - Ratio: 1.36
+     [T-4.73min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.40 > $70,653.93)
+     📊 SCORES: TOTAL 30/100 | BB 8/30 - Strike at 37.3% from BOTTOM of band | ATR 22/70 - Distance: $146.47 - Max move: $111.47 - Ratio: 1.31
+     [T-4.68min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.10 > $70,653.93)
+     📊 SCORES: TOTAL 30/100 | BB 8/30 - Strike at 37.3% from BOTTOM of band | ATR 22/70 - Distance: $146.17 - Max move: $110.88 - Ratio: 1.32
+     [T-4.63min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.10 > $70,653.93)
+     📊 SCORES: TOTAL 31/100 | BB 8/30 - Strike at 37.3% from BOTTOM of band | ATR 23/70 - Distance: $146.17 - Max move: $110.29 - Ratio: 1.33
+     [T-4.58min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.10 > $70,653.93)
+     📊 SCORES: TOTAL 31/100 | BB 8/30 - Strike at 37.3% from BOTTOM of band | ATR 23/70 - Distance: $146.17 - Max move: $109.71 - Ratio: 1.33
+     [T-4.53min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.10 > $70,653.93)
+     📊 SCORES: TOTAL 32/100 | BB 8/30 - Strike at 37.3% from BOTTOM of band | ATR 24/70 - Distance: $146.17 - Max move: $109.14 - Ratio: 1.34
+     [T-4.48min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.10 > $70,653.93)
+     📊 SCORES: TOTAL 32/100 | BB 8/30 - Strike at 37.3% from BOTTOM of band | ATR 24/70 - Distance: $146.17 - Max move: $108.56 - Ratio: 1.35
+     [T-4.44min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.10 > $70,653.93)
+     📊 SCORES: TOTAL 33/100 | BB 8/30 - Strike at 37.3% from BOTTOM of band | ATR 25/70 - Distance: $146.17 - Max move: $107.99 - Ratio: 1.35
+     [T-4.39min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.10 > $70,653.93)
+     📊 SCORES: TOTAL 33/100 | BB 8/30 - Strike at 37.3% from BOTTOM of band | ATR 25/70 - Distance: $146.17 - Max move: $107.41 - Ratio: 1.36
+     [T-4.34min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.10 > $70,653.93)
+     📊 SCORES: TOTAL 34/100 | BB 8/30 - Strike at 37.3% from BOTTOM of band | ATR 26/70 - Distance: $146.17 - Max move: $106.80 - Ratio: 1.37
+     [T-4.29min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.10 > $70,653.93)
+     📊 SCORES: TOTAL 34/100 | BB 8/30 - Strike at 37.3% from BOTTOM of band | ATR 26/70 - Distance: $146.17 - Max move: $106.20 - Ratio: 1.38
+     [T-4.24min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.10 > $70,653.93)
+     📊 SCORES: TOTAL 35/100 | BB 8/30 - Strike at 37.3% from BOTTOM of band | ATR 27/70 - Distance: $146.17 - Max move: $105.61 - Ratio: 1.38
+     [T-4.19min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.10 > $70,653.93)
+     📊 SCORES: TOTAL 35/100 | BB 8/30 - Strike at 37.3% from BOTTOM of band | ATR 27/70 - Distance: $146.17 - Max move: $105.01 - Ratio: 1.39
+     [T-4.14min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.10 > $70,653.93)
+     📊 SCORES: TOTAL 36/100 | BB 8/30 - Strike at 37.3% from BOTTOM of band | ATR 28/70 - Distance: $146.17 - Max move: $104.38 - Ratio: 1.40
+     [T-4.09min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.10 > $70,653.93)
+     📊 SCORES: TOTAL 37/100 | BB 8/30 - Strike at 37.3% from BOTTOM of band | ATR 29/70 - Distance: $146.17 - Max move: $103.73 - Ratio: 1.41
+     [T-4.04min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.10 > $70,653.93)
+     📊 SCORES: TOTAL 37/100 | BB 8/30 - Strike at 37.3% from BOTTOM of band | ATR 29/70 - Distance: $146.17 - Max move: $103.09 - Ratio: 1.42
+     [T-3.99min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.00 > $70,653.93)
+     📊 SCORES: TOTAL 45/100 | BB 9/30 - Strike at 35.8% from BOTTOM of band | ATR 36/70 - Distance: $146.07 - Max move: $96.64 - Ratio: 1.51
+     [T-3.95min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.00 > $70,653.93)
+     📊 SCORES: TOTAL 45/100 | BB 9/30 - Strike at 35.8% from BOTTOM of band | ATR 36/70 - Distance: $146.07 - Max move: $96.07 - Ratio: 1.52
+     [T-3.90min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.10 > $70,653.93)
+     📊 SCORES: TOTAL 46/100 | BB 9/30 - Strike at 35.8% from BOTTOM of band | ATR 37/70 - Distance: $146.17 - Max move: $95.46 - Ratio: 1.53
+     [T-3.85min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.10 > $70,653.93)
+     📊 SCORES: TOTAL 47/100 | BB 9/30 - Strike at 35.8% from BOTTOM of band | ATR 38/70 - Distance: $146.17 - Max move: $94.84 - Ratio: 1.54
+     [T-3.80min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.00 > $70,653.93)
+     📊 SCORES: TOTAL 47/100 | BB 9/30 - Strike at 35.8% from BOTTOM of band | ATR 38/70 - Distance: $146.07 - Max move: $94.25 - Ratio: 1.55
+     [T-3.75min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,798.70 > $70,653.93)
+     📊 SCORES: TOTAL 47/100 | BB 9/30 - Strike at 35.8% from BOTTOM of band | ATR 38/70 - Distance: $144.77 - Max move: $94.12 - Ratio: 1.54
+     [T-3.70min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,795.10 > $70,653.93)
+     📊 SCORES: TOTAL 44/100 | BB 8/30 - Strike at 35.8% from BOTTOM of band | ATR 36/70 - Distance: $141.17 - Max move: $93.50 - Ratio: 1.51
+     [T-3.65min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,795.10 > $70,653.93)
+     📊 SCORES: TOTAL 45/100 | BB 9/30 - Strike at 35.8% from BOTTOM of band | ATR 36/70 - Distance: $141.17 - Max move: $92.90 - Ratio: 1.52
+     [T-3.61min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.00 > $70,653.93)
+     📊 SCORES: TOTAL 50/100 | BB 9/30 - Strike at 35.8% from BOTTOM of band | ATR 41/70 - Distance: $146.07 - Max move: $92.29 - Ratio: 1.58
+     [T-3.56min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.10 > $70,653.93)
+     📊 SCORES: TOTAL 51/100 | BB 9/30 - Strike at 35.8% from BOTTOM of band | ATR 42/70 - Distance: $146.17 - Max move: $91.68 - Ratio: 1.59
+     [T-3.51min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.10 > $70,653.93)
+     📊 SCORES: TOTAL 50/100 | BB 8/30 - Strike at 35.8% from BOTTOM of band | ATR 42/70 - Distance: $146.17 - Max move: $91.08 - Ratio: 1.60
+     [T-3.46min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,793.60 > $70,653.93)
+     📊 SCORES: TOTAL 45/100 | BB 8/30 - Strike at 35.9% from BOTTOM of band | ATR 37/70 - Distance: $139.67 - Max move: $91.01 - Ratio: 1.53
+     [T-3.41min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,786.60 > $70,653.93)
+     📊 SCORES: TOTAL 41/100 | BB 8/30 - Strike at 35.9% from BOTTOM of band | ATR 33/70 - Distance: $132.67 - Max move: $90.37 - Ratio: 1.47
+     [T-3.36min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,789.80 > $70,653.93)
+     📊 SCORES: TOTAL 44/100 | BB 8/30 - Strike at 35.9% from BOTTOM of band | ATR 36/70 - Distance: $135.87 - Max move: $89.66 - Ratio: 1.52
+     [T-3.30min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,789.80 > $70,653.93)
+     📊 SCORES: TOTAL 45/100 | BB 8/30 - Strike at 35.9% from BOTTOM of band | ATR 37/70 - Distance: $135.87 - Max move: $88.96 - Ratio: 1.53
+     [T-3.25min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,789.80 > $70,653.93)
+     📊 SCORES: TOTAL 46/100 | BB 8/30 - Strike at 35.9% from BOTTOM of band | ATR 38/70 - Distance: $135.87 - Max move: $88.29 - Ratio: 1.54
+     [T-3.21min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,789.80 > $70,653.93)
+     📊 SCORES: TOTAL 47/100 | BB 8/30 - Strike at 35.9% from BOTTOM of band | ATR 39/70 - Distance: $135.87 - Max move: $87.62 - Ratio: 1.55
+     [T-3.16min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,789.80 > $70,653.93)
+     📊 SCORES: TOTAL 47/100 | BB 8/30 - Strike at 35.9% from BOTTOM of band | ATR 39/70 - Distance: $135.87 - Max move: $86.96 - Ratio: 1.56
+     [T-3.11min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,789.80 > $70,653.93)
+     📊 SCORES: TOTAL 48/100 | BB 8/30 - Strike at 35.9% from BOTTOM of band | ATR 40/70 - Distance: $135.87 - Max move: $86.30 - Ratio: 1.57
+     [T-3.06min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,784.70 > $70,653.93)
+     📊 SCORES: TOTAL 45/100 | BB 8/30 - Strike at 35.9% from BOTTOM of band | ATR 37/70 - Distance: $130.77 - Max move: $85.91 - Ratio: 1.52
+     [T-3.01min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,782.40 > $70,653.93)
+     📊 SCORES: TOTAL 50/100 | BB 9/30 - Strike at 34.3% from BOTTOM of band | ATR 41/70 - Distance: $128.47 - Max move: $80.90 - Ratio: 1.59
+     [T-2.96min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,782.40 > $70,653.93)
+     📊 SCORES: TOTAL 51/100 | BB 9/30 - Strike at 34.3% from BOTTOM of band | ATR 42/70 - Distance: $128.47 - Max move: $80.19 - Ratio: 1.60
+     [T-2.90min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,782.40 > $70,653.93)
+     📊 SCORES: TOTAL 51/100 | BB 9/30 - Strike at 34.3% from BOTTOM of band | ATR 42/70 - Distance: $128.47 - Max move: $80.03 - Ratio: 1.61
+     [T-2.86min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.00 > $70,653.93)
+     📊 SCORES: TOTAL 63/100 | BB 10/30 - Strike at 34.0% from BOTTOM of band | ATR 53/70 - Distance: $146.07 - Max move: $83.24 - Ratio: 1.75
+     [T-2.81min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,843.50 > $70,653.93)
+     📊 SCORES: TOTAL 80/100 | BB 10/30 - Strike at 34.0% from BOTTOM of band | ATR 70/70 - Distance: $189.57 - Max move: $82.53 - Ratio: 2.30
+     [T-2.76min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,843.50 > $70,653.93)
+     📊 SCORES: TOTAL 80/100 | BB 10/30 - Strike at 34.0% from BOTTOM of band | ATR 70/70 - Distance: $189.57 - Max move: $81.81 - Ratio: 2.32
+     [T-2.71min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,843.50 > $70,653.93)
+     📊 SCORES: TOTAL 80/100 | BB 10/30 - Strike at 34.0% from BOTTOM of band | ATR 70/70 - Distance: $189.57 - Max move: $81.09 - Ratio: 2.34
+     [T-2.66min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,840.90 > $70,653.93)
+     📊 SCORES: TOTAL 80/100 | BB 10/30 - Strike at 34.0% from BOTTOM of band | ATR 70/70 - Distance: $186.97 - Max move: $80.37 - Ratio: 2.33
+     [T-2.61min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,831.90 > $70,653.93)
+     📊 SCORES: TOTAL 80/100 | BB 10/30 - Strike at 34.0% from BOTTOM of band | ATR 70/70 - Distance: $177.97 - Max move: $79.63 - Ratio: 2.23
+     [T-2.57min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,867.40 > $70,653.93)
+     📊 SCORES: TOTAL 80/100 | BB 10/30 - Strike at 33.9% from BOTTOM of band | ATR 70/70 - Distance: $213.47 - Max move: $80.55 - Ratio: 2.65
+     [T-2.52min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,867.40 > $70,653.93)
+     📊 SCORES: TOTAL 80/100 | BB 10/30 - Strike at 33.9% from BOTTOM of band | ATR 70/70 - Distance: $213.47 - Max move: $79.79 - Ratio: 2.68
+     [T-2.47min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,867.40 > $70,653.93)
+     📊 SCORES: TOTAL 80/100 | BB 10/30 - Strike at 33.9% from BOTTOM of band | ATR 70/70 - Distance: $213.47 - Max move: $78.99 - Ratio: 2.70
+     [T-2.42min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,864.40 > $70,653.93)
+     📊 SCORES: TOTAL 80/100 | BB 10/30 - Strike at 33.9% from BOTTOM of band | ATR 70/70 - Distance: $210.47 - Max move: $78.23 - Ratio: 2.69
+     [T-2.37min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,864.40 > $70,653.93)
+     📊 SCORES: TOTAL 80/100 | BB 10/30 - Strike at 33.9% from BOTTOM of band | ATR 70/70 - Distance: $210.47 - Max move: $77.42 - Ratio: 2.72
+     [T-2.32min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,847.80 > $70,653.93)
+     📊 SCORES: TOTAL 80/100 | BB 10/30 - Strike at 34.0% from BOTTOM of band | ATR 70/70 - Distance: $193.87 - Max move: $76.59 - Ratio: 2.53
+     [T-2.27min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,847.80 > $70,653.93)
+     📊 SCORES: TOTAL 80/100 | BB 10/30 - Strike at 34.0% from BOTTOM of band | ATR 70/70 - Distance: $193.87 - Max move: $75.80 - Ratio: 2.56
+     [T-2.22min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,847.80 > $70,653.93)
+     📊 SCORES: TOTAL 80/100 | BB 10/30 - Strike at 34.0% from BOTTOM of band | ATR 70/70 - Distance: $193.87 - Max move: $74.95 - Ratio: 2.59
+     [T-2.17min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,847.80 > $70,653.93)
+     📊 SCORES: TOTAL 80/100 | BB 10/30 - Strike at 34.0% from BOTTOM of band | ATR 70/70 - Distance: $193.87 - Max move: $74.13 - Ratio: 2.62
+     [T-2.12min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,847.80 > $70,653.93)
+     📊 SCORES: TOTAL 80/100 | BB 10/30 - Strike at 34.0% from BOTTOM of band | ATR 70/70 - Distance: $193.87 - Max move: $73.26 - Ratio: 2.65
+     [T-2.07min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,847.80 > $70,653.93)
+     📊 SCORES: TOTAL 80/100 | BB 10/30 - Strike at 34.0% from BOTTOM of band | ATR 70/70 - Distance: $193.87 - Max move: $72.28 - Ratio: 2.68
+     [T-2.01min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,847.80 > $70,653.93)
+     📊 SCORES: TOTAL 81/100 | BB 11/30 - Strike at 31.1% from BOTTOM of band | ATR 70/70 - Distance: $193.87 - Max move: $64.57 - Ratio: 3.00
+     [T-1.96min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,847.80 > $70,653.93)
+     📊 SCORES: TOTAL 81/100 | BB 11/30 - Strike at 31.1% from BOTTOM of band | ATR 70/70 - Distance: $193.87 - Max move: $63.69 - Ratio: 3.04
+     [T-1.91min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,847.80 > $70,653.93)
+     📊 SCORES: TOTAL 81/100 | BB 11/30 - Strike at 31.1% from BOTTOM of band | ATR 70/70 - Distance: $193.87 - Max move: $62.83 - Ratio: 3.09
+     [T-1.86min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,847.80 > $70,653.93)
+     📊 SCORES: TOTAL 81/100 | BB 11/30 - Strike at 31.1% from BOTTOM of band | ATR 70/70 - Distance: $193.87 - Max move: $62.03 - Ratio: 3.13
+     [T-1.81min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,847.80 > $70,653.93)
+     📊 SCORES: TOTAL 81/100 | BB 11/30 - Strike at 31.1% from BOTTOM of band | ATR 70/70 - Distance: $193.87 - Max move: $61.23 - Ratio: 3.17
+     [T-1.76min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,847.80 > $70,653.93)
+     📊 SCORES: TOTAL 81/100 | BB 11/30 - Strike at 31.1% from BOTTOM of band | ATR 70/70 - Distance: $193.87 - Max move: $60.42 - Ratio: 3.21
+     [T-1.71min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,847.80 > $70,653.93)
+     📊 SCORES: TOTAL 81/100 | BB 11/30 - Strike at 31.1% from BOTTOM of band | ATR 70/70 - Distance: $193.87 - Max move: $59.58 - Ratio: 3.25
+     [T-1.67min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,847.80 > $70,653.93)
+     📊 SCORES: TOTAL 81/100 | BB 11/30 - Strike at 31.1% from BOTTOM of band | ATR 70/70 - Distance: $193.87 - Max move: $58.76 - Ratio: 3.30
+     [T-1.62min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,838.50 > $70,653.93)
+     📊 SCORES: TOTAL 81/100 | BB 11/30 - Strike at 31.2% from BOTTOM of band | ATR 70/70 - Distance: $184.57 - Max move: $58.29 - Ratio: 3.17
+     [T-1.57min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,830.50 > $70,653.93)
+     📊 SCORES: TOTAL 81/100 | BB 11/30 - Strike at 31.2% from BOTTOM of band | ATR 70/70 - Distance: $176.57 - Max move: $58.00 - Ratio: 3.04
+     [T-1.52min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,830.50 > $70,653.93)
+     📊 SCORES: TOTAL 81/100 | BB 11/30 - Strike at 31.2% from BOTTOM of band | ATR 70/70 - Distance: $176.57 - Max move: $57.10 - Ratio: 3.09
+     [T-1.48min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,830.50 > $70,653.93)
+     📊 SCORES: TOTAL 81/100 | BB 11/30 - Strike at 31.2% from BOTTOM of band | ATR 70/70 - Distance: $176.57 - Max move: $56.18 - Ratio: 3.14
+     [T-1.43min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,830.50 > $70,653.93)
+     📊 SCORES: TOTAL 81/100 | BB 11/30 - Strike at 31.2% from BOTTOM of band | ATR 70/70 - Distance: $176.57 - Max move: $55.28 - Ratio: 3.19
+     [T-1.38min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,830.50 > $70,653.93)
+     📊 SCORES: TOTAL 81/100 | BB 11/30 - Strike at 31.2% from BOTTOM of band | ATR 70/70 - Distance: $176.57 - Max move: $54.35 - Ratio: 3.25
+     [T-1.33min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,830.50 > $70,653.93)
+     📊 SCORES: TOTAL 81/100 | BB 11/30 - Strike at 31.2% from BOTTOM of band | ATR 70/70 - Distance: $176.57 - Max move: $53.34 - Ratio: 3.31
+     [T-1.28min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,830.50 > $70,653.93)
+     📊 SCORES: TOTAL 81/100 | BB 11/30 - Strike at 31.2% from BOTTOM of band | ATR 70/70 - Distance: $176.57 - Max move: $52.39 - Ratio: 3.37
+     [T-1.23min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,830.50 > $70,653.93)
+     📊 SCORES: TOTAL 81/100 | BB 11/30 - Strike at 31.2% from BOTTOM of band | ATR 70/70 - Distance: $176.57 - Max move: $51.37 - Ratio: 3.44
+     [T-1.19min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,830.50 > $70,653.93)
+     📊 SCORES: TOTAL 81/100 | BB 11/30 - Strike at 31.2% from BOTTOM of band | ATR 70/70 - Distance: $176.57 - Max move: $50.36 - Ratio: 3.51
+     [T-1.14min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,830.50 > $70,653.93)
+     📊 SCORES: TOTAL 81/100 | BB 11/30 - Strike at 31.3% from BOTTOM of band | ATR 70/70 - Distance: $176.57 - Max move: $49.81 - Ratio: 3.54
+     [T-1.09min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,819.70 > $70,653.93)
+     📊 SCORES: TOTAL 81/100 | BB 11/30 - Strike at 31.3% from BOTTOM of band | ATR 70/70 - Distance: $165.77 - Max move: $48.75 - Ratio: 3.40
+     [T-1.04min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,819.70 > $70,653.93)
+     📊 SCORES: TOTAL 81/100 | BB 11/30 - Strike at 31.5% from BOTTOM of band | ATR 70/70 - Distance: $165.77 - Max move: $49.21 - Ratio: 3.37
+     [T-0.99min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,784.40 > $70,653.93)
+     📊 SCORES: TOTAL 84/100 | BB 14/30 - Strike at 27.2% from BOTTOM of band | ATR 70/70 - Distance: $130.47 - Max move: $47.04 - Ratio: 2.77
+     [T-0.94min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,773.90 > $70,653.93)
+     📊 SCORES: TOTAL 84/100 | BB 14/30 - Strike at 27.4% from BOTTOM of band | ATR 70/70 - Distance: $119.97 - Max move: $46.56 - Ratio: 2.58
+     [T-0.89min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,764.70 > $70,653.93)
+     📊 SCORES: TOTAL 84/100 | BB 14/30 - Strike at 27.4% from BOTTOM of band | ATR 70/70 - Distance: $110.77 - Max move: $45.30 - Ratio: 2.45
+     [T-0.84min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,764.70 > $70,653.93)
+     📊 SCORES: TOTAL 84/100 | BB 14/30 - Strike at 27.4% from BOTTOM of band | ATR 70/70 - Distance: $110.77 - Max move: $44.16 - Ratio: 2.51
+     [T-0.79min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,760.70 > $70,653.93)
+     📊 SCORES: TOTAL 84/100 | BB 14/30 - Strike at 27.4% from BOTTOM of band | ATR 70/70 - Distance: $106.77 - Max move: $42.86 - Ratio: 2.49
+     [T-0.74min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,760.80 > $70,653.93)
+     📊 SCORES: TOTAL 84/100 | BB 14/30 - Strike at 27.4% from BOTTOM of band | ATR 70/70 - Distance: $106.87 - Max move: $41.50 - Ratio: 2.57
+     [T-0.69min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,760.80 > $70,653.93)
+     📊 SCORES: TOTAL 84/100 | BB 14/30 - Strike at 27.1% from BOTTOM of band | ATR 70/70 - Distance: $106.87 - Max move: $40.55 - Ratio: 2.64
+     [T-0.64min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,797.60 > $70,653.93)
+     📊 SCORES: TOTAL 84/100 | BB 14/30 - Strike at 27.1% from BOTTOM of band | ATR 70/70 - Distance: $143.67 - Max move: $39.10 - Ratio: 3.67
+     [T-0.60min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,797.60 > $70,653.93)
+     📊 SCORES: TOTAL 84/100 | BB 14/30 - Strike at 27.1% from BOTTOM of band | ATR 70/70 - Distance: $143.67 - Max move: $37.65 - Ratio: 3.82
+     [T-0.55min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,797.60 > $70,653.93)
+     📊 SCORES: TOTAL 84/100 | BB 14/30 - Strike at 27.1% from BOTTOM of band | ATR 70/70 - Distance: $143.67 - Max move: $36.11 - Ratio: 3.98
+     [T-0.50min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,797.60 > $70,653.93)
+     📊 SCORES: TOTAL 84/100 | BB 14/30 - Strike at 27.1% from BOTTOM of band | ATR 70/70 - Distance: $143.67 - Max move: $34.48 - Ratio: 4.17
+     [T-0.45min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,797.60 > $70,653.93)
+     📊 SCORES: TOTAL 84/100 | BB 14/30 - Strike at 27.1% from BOTTOM of band | ATR 70/70 - Distance: $143.67 - Max move: $32.82 - Ratio: 4.38
+     [T-0.41min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,797.60 > $70,653.93)
+     📊 SCORES: TOTAL 84/100 | BB 14/30 - Strike at 27.1% from BOTTOM of band | ATR 70/70 - Distance: $143.67 - Max move: $31.05 - Ratio: 4.63
+     [T-0.36min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,812.60 > $70,653.93)
+     📊 SCORES: TOTAL 84/100 | BB 14/30 - Strike at 27.0% from BOTTOM of band | ATR 70/70 - Distance: $158.67 - Max move: $29.53 - Ratio: 5.37
+     [T-0.31min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,812.60 > $70,653.93)
+     📊 SCORES: TOTAL 84/100 | BB 14/30 - Strike at 27.2% from BOTTOM of band | ATR 70/70 - Distance: $158.67 - Max move: $27.50 - Ratio: 5.77
+     [T-0.26min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,792.00 > $70,653.93)
+     📊 SCORES: TOTAL 84/100 | BB 14/30 - Strike at 27.2% from BOTTOM of band | ATR 70/70 - Distance: $138.07 - Max move: $25.34 - Ratio: 5.45
+     [T-0.22min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.70 > $70,653.93)
+     📊 SCORES: TOTAL 84/100 | BB 14/30 - Strike at 27.1% from BOTTOM of band | ATR 70/70 - Distance: $146.77 - Max move: $22.99 - Ratio: 6.38
+     [T-0.17min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,800.70 > $70,653.93)
+     📊 SCORES: TOTAL 84/100 | BB 14/30 - Strike at 27.1% from BOTTOM of band | ATR 70/70 - Distance: $146.77 - Max move: $20.27 - Ratio: 7.24
+     [T-0.12min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,829.30 > $70,653.93)
+     📊 SCORES: TOTAL 84/100 | BB 14/30 - Strike at 26.9% from BOTTOM of band | ATR 70/70 - Distance: $175.37 - Max move: $17.37 - Ratio: 10.10
+     [T-0.07min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,829.30 > $70,653.93)
+     📊 SCORES: TOTAL 84/100 | BB 14/30 - Strike at 26.9% from BOTTOM of band | ATR 70/70 - Distance: $175.37 - Max move: $13.46 - Ratio: 13.03
+     [T-0.02min] |  Market Prices - Up: 91.0¢ | Down: 10.0¢
+     📍 Position Status: ⏳ Winning (BTC $70,829.30 > $70,653.93)
+     📊 SCORES: TOTAL 84/100 | BB 14/30 - Strike at 26.9% from BOTTOM of band | ATR 70/70 - Distance: $175.37 - Max move: $7.73 - Ratio: 22.69
+================================================================================
+
+================================================================================
+📅 2026-02-09 01:15 | Market: https://polymarket.com/market/btc-updown-15m-1770598800
+🎯 Strike Price: $70,452.01
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (195 evaluations, 0 signals triggered):
+   • Bollinger Bands:    10/30 (max score)
+   • ATR Kinetic:        51/70 (max score)
+   • MAX TOTAL SCORE:    61/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-1.5min
+   Current BTC Price:   $70,358.50
+   Entry Price:        $0.920
+   Final BTC:          $70,345.90
+   Direction:           DOWN
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +8.70% ($+8.70)
+================================================================================
+
+================================================================================
+📅 2026-02-09 01:30 | Market: https://polymarket.com/market/btc-updown-15m-1770599700
+🎯 Strike Price: $70,364.12
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (2 evaluations, 1 signals triggered):
+   • Bollinger Bands:    0/30 (max score)
+   • ATR Kinetic:        0/70 (max score)
+   • MAX TOTAL SCORE:    0/100
+--------------------------------------------------------------------------------
+💼 TRADE EXECUTED:
+   Signal Score:  85/100
+   Direction:     UNKNOWN
+
+================================================================================
+📅 2026-02-09 02:00 | Market: https://polymarket.com/market/btc-updown-15m-1770601500
+🎯 Strike Price: $70,204.52
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (142 evaluations, 1 signals triggered):
+   • Bollinger Bands:    9/30 (max score)
+   • ATR Kinetic:        42/70 (max score)
+   • MAX TOTAL SCORE:    51/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-3.5min
+   Current BTC Price:   $70,381.00
+   Entry Price:        $0.950
+   Final BTC:          $70,309.20
+   Direction:           UP
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +5.26% ($+5.26)
+--------------------------------------------------------------------------------
+💼 TRADE EXECUTED:
+   Signal Score:  76/100
+   Direction:     UNKNOWN
+
+================================================================================
+📅 2026-02-09 02:15 | Market: https://polymarket.com/market/btc-updown-15m-1770602400
+🎯 Strike Price: $70,323.39
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (196 evaluations, 0 signals triggered):
+   • Bollinger Bands:    10/30 (max score)
+   • ATR Kinetic:        6/70 (max score)
+   • MAX TOTAL SCORE:    16/100
+================================================================================
+
+================================================================================
+📅 2026-02-09 02:30 | Market: https://polymarket.com/market/btc-updown-15m-1770603300
+🎯 Strike Price: $70,299.06
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (132 evaluations, 1 signals triggered):
+   • Bollinger Bands:    13/30 (max score)
+   • ATR Kinetic:        61/70 (max score)
+   • MAX TOTAL SCORE:    74/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-5.9min
+   Current BTC Price:   $70,410.00
+   Entry Price:        $0.840
+   Final BTC:          $70,410.00
+   Direction:           UP
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +19.05% ($+19.05)
+--------------------------------------------------------------------------------
+💼 TRADE EXECUTED:
+   Signal Score:  74/100
+   Direction:     YES
+   Entry Price:   $0.840
+   Final BTC:     $70,410.00
+   Trade Amount:  $100.00
+   Result:        WIN
+   P&L:           +19.05% ($+19.05)
+   Real Trade Open: SUCCESS
+   Open Time:     2026-02-09 04:24:07
+   Open BTC Price: $70,410.00
+   Open Trade Logs:
+     - 🔄 EXECUTING REAL TRADE... [2026-02-09 04:24:07]
+     - Direction: UP
+     - Token ID: 68424278332025718104157661860086802590110703816328031410407607056671052598965
+     - Price: $0.840
+     - Size: 7.0 shares
+     - Total Cost: $5.88
+     - Expected Strategy: BTC > $70,299.06
+     - Current BTC: $70,410.00
+     - ✅ ORDER PLACED SUCCESSFULLY!
+     - Order ID: 0x87c23dbd0a63993bf1b07e686f866b21c3ccf42b1e3fca0a79ea234ba0b39c98
+     - Cost: $5.88
+     - Potential Profit: $1.12
+     - ROI if Win: 19.0%
+================================================================================
+
+================================================================================
+📅 2026-02-09 02:45 | Market: https://polymarket.com/market/btc-updown-15m-1770604200
+🎯 Strike Price: $70,414.22
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (55 evaluations, 1 signals triggered):
+   • Bollinger Bands:    5/30 (max score)
+   • ATR Kinetic:        70/70 (max score)
+   • MAX TOTAL SCORE:    75/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-6.9min
+   Current BTC Price:   $70,561.70
+   Entry Price:        $0.860
+   Final BTC:          $70,830.10
+   Direction:           UP
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +16.28% ($+16.28)
+--------------------------------------------------------------------------------
+💼 TRADE EXECUTED:
+   Signal Score:  75/100
+   Direction:     YES
+   Entry Price:   $0.860
+   Final BTC:     $70,830.10
+   Trade Amount:  $100.00
+   Result:        WIN
+   P&L:           +16.28% ($+16.28)
+   Real Trade Open: SUCCESS
+   Open Time:     2026-02-09 04:38:10
+   Open BTC Price: $70,561.70
+   Open Trade Logs:
+     - 🔄 EXECUTING REAL TRADE... [2026-02-09 04:38:08]
+     - Direction: UP
+     - Token ID: 11580076403418241320878256550818862849936544582320447892043311745328939171263
+     - Price: $0.860
+     - Size: 7.0 shares
+     - Total Cost: $6.02
+     - Expected Strategy: BTC > $70,414.22
+     - Current BTC: $70,561.70
+     - ✅ ORDER PLACED SUCCESSFULLY!
+     - Order ID: 0xd3db175f745210d38420cb05367fc70ae6c2559a9a2df6d90343d11ea66caf88
+     - Cost: $6.02
+     - Potential Profit: $0.98
+     - ROI if Win: 16.3%
+================================================================================
+
+================================================================================
+📅 2026-02-09 03:00 | Market: https://polymarket.com/market/btc-updown-15m-1770605100
+🎯 Strike Price: $70,823.81
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (76 evaluations, 1 signals triggered):
+   • Bollinger Bands:    17/30 (max score)
+   • ATR Kinetic:        58/70 (max score)
+   • MAX TOTAL SCORE:    75/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-7.2min
+   Current BTC Price:   $70,600.00
+   Entry Price:        $0.930
+   Final BTC:          $70,576.40
+   Direction:           DOWN
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +7.53% ($+7.53)
+--------------------------------------------------------------------------------
+💼 TRADE EXECUTED:
+   Signal Score:  75/100
+   Direction:     NO
+   Entry Price:   $0.930
+   Final BTC:     $70,576.40
+   Trade Amount:  $100.00
+   Result:        WIN
+   P&L:           +7.53% ($+7.53)
+   Real Trade Open: SUCCESS
+   Open Time:     2026-02-09 04:52:51
+   Open BTC Price: $70,600.00
+   Open Trade Logs:
+     - 🔄 EXECUTING REAL TRADE... [2026-02-09 04:52:50]
+     - Direction: DOWN
+     - Token ID: 113281992622503256618461756871585293040787782161737939246657425231187298597845
+     - Price: $0.930
+     - Size: 7.0 shares
+     - Total Cost: $6.51
+     - Expected Strategy: BTC < $70,823.81
+     - Current BTC: $70,600.00
+     - ✅ ORDER PLACED SUCCESSFULLY!
+     - Order ID: 0x0dfe5e1755b8dfb20c3eea775dcb6be0adc9674e8d542dd1869938bafc9bff25
+     - Cost: $6.51
+     - Potential Profit: $0.49
+     - ROI if Win: 7.5%
+================================================================================
+
+================================================================================
+📅 2026-02-09 03:15 | Market: https://polymarket.com/market/btc-updown-15m-1770606000
+🎯 Strike Price: $70,575.95
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (57 evaluations, 1 signals triggered):
+   • Bollinger Bands:    18/30 (max score)
+   • ATR Kinetic:        61/70 (max score)
+   • MAX TOTAL SCORE:    79/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-8.5min
+   Current BTC Price:   $70,725.00
+   Entry Price:        $0.900
+   Final BTC:          $70,683.10
+   Direction:           UP
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +11.11% ($+11.11)
+--------------------------------------------------------------------------------
+💼 TRADE EXECUTED:
+   Signal Score:  79/100
+   Direction:     YES
+   Entry Price:   $0.900
+   Final BTC:     $70,683.10
+   Trade Amount:  $100.00
+   Result:        WIN
+   P&L:           +11.11% ($+11.11)
+   Real Trade Open: SUCCESS
+   Open Time:     2026-02-09 05:06:35
+   Open BTC Price: $70,725.00
+   Open Trade Logs:
+     - 🔄 EXECUTING REAL TRADE... [2026-02-09 05:06:33]
+     - Direction: UP
+     - Token ID: 72566139061990515658379335326898105862072913882273564255899001580232228577893
+     - Price: $0.900
+     - Size: 7.0 shares
+     - Total Cost: $6.30
+     - Expected Strategy: BTC > $70,575.95
+     - Current BTC: $70,725.00
+     - ✅ ORDER PLACED SUCCESSFULLY!
+     - Order ID: 0x4e3728796bbb2f249223523a0a2cb92dfd64ea692d59b33bcc8bb670d31a51b8
+     - Cost: $6.30
+     - Potential Profit: $0.70
+     - ROI if Win: 11.1%
+   Close Time:    2026-02-09 05:13:50
+   Close BTC Price: $70,683.10
+   Close Price:   $0.970
+   Close Attempts: 1
+================================================================================
+
+================================================================================
+📅 2026-02-09 03:30 | Market: https://polymarket.com/market/btc-updown-15m-1770606900
+🎯 Strike Price: $70,705.85
+--------------------------------------------------------------------------------
+📊 SCORING ANALYSIS (178 evaluations, 0 signals triggered):
+   • Bollinger Bands:    0/30 (max score)
+   • ATR Kinetic:        64/70 (max score)
+   • MAX TOTAL SCORE:    64/100
+--------------------------------------------------------------------------------
+📈 AT MAX SCORE MOMENT:
+   Time to Expiration:  T-12.8min
+   Current BTC Price:   $70,896.10
+   Entry Price:        $0.810
+   Final BTC:          $70,770.00
+   Direction:           UP
+   Hypothetical Result: WIN
+   Hypothetical P&L:    +23.46% ($+23.46)
+================================================================================

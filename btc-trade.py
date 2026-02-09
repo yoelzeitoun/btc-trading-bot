@@ -22,7 +22,7 @@ from config import (
     LOOP_SLEEP_SECONDS, NEXT_MARKET_WAIT_SECONDS,
     SCORE_THRESHOLD,
     WEIGHT_BOLLINGER, WEIGHT_ATR,
-    REAL_TRADE, TRADE_AMOUNT, CLOSE_TRADE_ON_TARGET
+    REAL_TRADE, TRADE_AMOUNT, CLOSE_TP_PRICE, CLOSE_SL_SHARE_DROP_PERCENT, CLOSE_ON_STRIKE
 )
 
 # --- 1. API IMPORTS ---
@@ -304,8 +304,36 @@ def execute_real_trade(poly_client, token_id, direction, share_price, strike_pri
             token_id=token_id
         )
         
-        # Place order
-        response = poly_client.create_and_post_order(order_args)
+        # Place order with retry logic for timeouts
+        max_retries = 3
+        retry_delay = 2  # seconds
+        
+        for attempt in range(1, max_retries + 1):
+            try:
+                print(f"   📡 Sending order to Polymarket (Attempt {attempt}/{max_retries})...")
+                response = poly_client.create_and_post_order(order_args)
+                
+                # If we get here, request succeeded - break retry loop
+                break
+                
+            except Exception as e:
+                error_str = str(e)
+                
+                # Check if it's a timeout error
+                if 'timeout' in error_str.lower() or 'timed out' in error_str.lower():
+                    if attempt < max_retries:
+                        print(f"   ⚠️  Timeout on attempt {attempt}/{max_retries}, retrying in {retry_delay}s...")
+                        record_log(f"⚠️  Timeout on attempt {attempt}/{max_retries}, retrying in {retry_delay}s...")
+                        time.sleep(retry_delay)
+                        retry_delay *= 2  # Exponential backoff
+                        continue
+                    else:
+                        print(f"   ❌ All {max_retries} attempts failed due to timeout")
+                        record_log(f"❌ All {max_retries} attempts failed due to timeout")
+                        raise  # Re-raise to be caught by outer except
+                else:
+                    # Non-timeout error, don't retry
+                    raise
         
         if isinstance(response, dict) and response.get("success"):
             order_id = response.get("orderID", "unknown")
@@ -375,179 +403,150 @@ def execute_real_trade(poly_client, token_id, direction, share_price, strike_pri
             'log_lines': log_lines
         }
 
-def get_token_balance(poly_client, token_id):
+def get_max_sellable_size(poly_client, token_id):
     """
-    Get the actual balance of a conditional token from the user's wallet.
-    This is the "MAX" amount available to sell.
+    Récupère le solde exact et le nettoie pour éviter les erreurs d'arrondi.
+    Utilise math.floor pour tronquer sans arrondir au supérieur.
     """
     try:
-        # Try using the BalanceAllowanceParams with CONDITIONAL token type
         from py_clob_client.clob_types import BalanceAllowanceParams, AssetType
         
-        # First try - use the token_id as asset_id
-        try:
-            balance_params = BalanceAllowanceParams(
-                asset_type=AssetType.CONDITIONAL,
-                token_id=token_id
-            )
-            balance_info = poly_client.get_balance_allowance(balance_params)
-            
-            if isinstance(balance_info, dict):
-                balance = balance_info.get("balance", 0)
-            else:
-                balance = getattr(balance_info, "balance", 0)
-            
-            # Convert from smallest unit (10^6) to decimal shares
-            balance_decimal = float(balance) / 1_000_000 if balance else 0.0
-            return balance_decimal if balance_decimal > 0 else None
-        except Exception:
-            pass
+        balance_params = BalanceAllowanceParams(
+            asset_type=AssetType.CONDITIONAL,
+            token_id=token_id
+        )
+        balance_info = poly_client.get_balance_allowance(balance_params)
         
-        # Second try - query the open orders to infer balance
-        try:
-            # Get all open orders for this token
-            orders = poly_client.get_orders()
-            # This might not give us balance directly, so skip
-            pass
-        except Exception:
-            pass
+        # Gestion des différentes structures de réponse possibles
+        raw_balance = 0
+        if isinstance(balance_info, dict):
+            raw_balance = float(balance_info.get("balance", 0))
+        else:
+            raw_balance = float(getattr(balance_info, "balance", 0))
         
-        return None
+        if raw_balance <= 0:
+            return 0.0
+        
+        # Conversion : Polymarket stocke souvent en unités de 10^6 (micro)
+        # Si raw_balance est déjà en décimal (ex: 7.5), cette étape n'est pas grave.
+        # Si raw_balance est en entier (ex: 7500000), on divise.
+        real_size = raw_balance / 1_000_000 if raw_balance > 1000 else raw_balance
+        
+        # TRONQUER à 4 décimales (Safe zone) - Floor sans arrondir au supérieur
+        # Ex: 7.9999999 -> 7.9999
+        safe_size = math.floor(real_size * 10000) / 10000
+        
+        return safe_size if safe_size > 0 else 0.0
+    
     except Exception as e:
-        print(f"   ⚠️  Could not query token balance: {e}")
-        return None
+        print(f"   ❌ Erreur lecture solde MAX: {e}")
+        return 0.0
 
 def execute_close_trade(poly_client, token_id, size, current_btc_price=None):
     """
-    Close an open position by placing a SELL order at best bid.
-    First tries to get actual wallet balance (MAX), then falls back to progressive retry.
+    Close an open position en utilisant le solde exact, tronqué à 4 décimales.
+    Une seule tentative avec le montant optimal, sans boucle de fallback.
     """
     import requests
     from datetime import datetime
     from py_clob_client.clob_types import OrderArgs
     
-    # Try to get actual balance first (MAX functionality)
-    actual_balance = get_token_balance(poly_client, token_id)
+    # 1. On demande le MAX exact et nettoyé
+    max_size = get_max_sellable_size(poly_client, token_id)
     
-    if actual_balance and actual_balance > 0:
-        print(f"   💰 Wallet MAX balance: {actual_balance:.6f} shares")
-        # Try closing the actual balance first
-        percentages = [1.0, 0.99, 0.98, 0.95]  # Try actual balance, then 99%, 98%, 95%
-        base_size = actual_balance
+    if max_size > 0:
+        print(f"   💰 Solde exact détecté : {max_size:.4f} parts")
+        trade_size = max_size
     else:
-        print(f"   ⚠️  Could not fetch wallet balance, using order size: {size}")
-        # Fall back to using the size we think we have
-        percentages = [1.0, 0.99, 0.98, 0.95, 0.93, 0.90]
-        base_size = float(size)
+        # Fallback si l'API de solde échoue : on utilise la taille en mémoire
+        print(f"   ⚠️  Impossible de lire le solde, utilisation de la taille mémoire : {size}")
+        trade_size = float(size)
     
-    for pct in percentages:
-        trade_size = base_size * pct
-        if actual_balance:
-            print(f"   ℹ️  Attempting to close {trade_size:.6f} shares ({pct*100:.0f}% of MAX)...")
-        else:
-            print(f"   ℹ️  Attempting to close {trade_size:.6f} shares ({pct*100:.0f}% of {size})...")
+    # 2. On lance l'ordre UNE SEULE FOIS (plus besoin de boucle)
+    try:
+        # Get best bid
+        book_url = f"https://clob.polymarket.com/book?token_id={token_id}"
+        book_response = requests.get(book_url, timeout=10)
+        book_response.raise_for_status()
+        book_data = book_response.json()
+
+        bids = book_data.get("bids", [])
+        if not bids:
+            print("   ❌ No bids available to close position")
+            return None
+
+        # Get best bid and cap at 0.99 (Polymarket max price)
+        best_bid_price = max(float(b['price']) for b in bids)
+        # Ensure price doesn't exceed 0.99 (Polymarket's max price)
+        best_bid_price = min(best_bid_price, 0.99)
+
+        print(f"   📉 Vente de {trade_size:.4f} parts @ ${best_bid_price:.3f}...")
+
+        order_args = OrderArgs(
+            price=best_bid_price,
+            size=trade_size,
+            side="SELL",
+            token_id=token_id
+        )
+
+        # Place order with retry logic for timeouts
+        max_retries = 3
+        retry_delay = 2
         
-        try:
-            # Get best bid
-            book_url = f"https://clob.polymarket.com/book?token_id={token_id}"
-            book_response = requests.get(book_url, timeout=10)
-            book_response.raise_for_status()
-            book_data = book_response.json()
-
-            bids = book_data.get("bids", [])
-            if not bids:
-                print("   ❌ No bids available to close position")
-                if pct == percentages[-1]:  # Last attempt
-                    return None
-                continue  # Try next percentage
-
-            # Get best bid
-            best_bid_price = max(float(b['price']) for b in bids)
-
-            print(f"   📉 Placing sell order: {trade_size:.4f} shares @ ${best_bid_price:.3f}...")
-
-            order_args = OrderArgs(
-                price=best_bid_price,
-                size=trade_size,
-                side="SELL",
-                token_id=token_id
-            )
-
-            response = poly_client.create_and_post_order(order_args)
-            
-            if isinstance(response, dict) and response.get("success"):
-                order_id = response.get("orderID", "unknown")
-                print(f"   ✅ CLOSE ORDER PLACED: {order_id} @ ${best_bid_price:.3f}")
-                close_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                return {
-                    'success': True,
-                    'order_id': order_id,
-                    'price': best_bid_price,
-                    'size': trade_size,
-                    'token_id': token_id,
-                    'close_time': close_time,
-                    'close_btc_price': current_btc_price
-                }
-            else:
-                error_msg = response.get("error", response) if isinstance(response, dict) else str(response)
-                # Check if it's a balance error
-                if 'balance' in str(error_msg).lower() or 'allowance' in str(error_msg).lower():
-                    print(f"   ⚠️  Balance error at {pct*100:.0f}%, trying lower amount...")
-                    continue  # Try next percentage
+        for attempt in range(1, max_retries + 1):
+            try:
+                print(f"   📡 Sending close order (Attempt {attempt}/{max_retries})...")
+                response = poly_client.create_and_post_order(order_args)
+                break  # Success, exit retry loop
+                
+            except Exception as e:
+                error_str = str(e)
+                if 'timeout' in error_str.lower() or 'timed out' in error_str.lower():
+                    if attempt < max_retries:
+                        print(f"   ⚠️  Timeout on attempt {attempt}/{max_retries}, retrying in {retry_delay}s...")
+                        time.sleep(retry_delay)
+                        retry_delay *= 2
+                        continue
+                    else:
+                        print(f"   ❌ All {max_retries} attempts failed due to timeout")
+                        raise
                 else:
-                    print(f"   ❌ CLOSE ORDER FAILED: {error_msg}")
-                    return {
-                        'success': False,
-                        'error': error_msg,
-                        'price': best_bid_price,
-                        'size': trade_size,
-                        'token_id': token_id,
-                        'close_btc_price': current_btc_price
-                    }
-        except Exception as e:
-            error_str = str(e)
-            # Check if it's a balance/allowance error
-            if 'balance' in error_str.lower() or 'allowance' in error_str.lower():
-                print(f"   ⚠️  Balance error at {pct*100:.0f}%: {error_str}")
-                if pct == percentages[-1]:  # Last attempt
-                    print(f"   ❌ Failed to close even at {pct*100:.0f}%")
-                    return {
-                        'success': False,
-                        'error': error_str,
-                        'size': size,
-                        'token_id': token_id,
-                        'close_btc_price': current_btc_price
-                    }
-                continue  # Try next percentage
-            elif 'lower than the minimum' in error_str.lower():
-                # Order size is below market minimum, skip closing
-                print(f"   ⚠️  Order size below market minimum, skipping close")
-                return {
-                    'success': False,
-                    'error': 'Order size below market minimum',
-                    'size': size,
-                    'token_id': token_id,
-                    'close_btc_price': current_btc_price
-                }
-            else:
-                # Non-balance error, return immediately
-                print(f"   ❌ Error closing trade: {error_str}")
-                return {
-                    'success': False,
-                    'error': error_str,
-                    'size': size,
-                    'token_id': token_id,
-                    'close_btc_price': current_btc_price
-                }
-    
-    # If we get here, all attempts failed
-    return {
-        'success': False,
-        'error': 'All close attempts failed',
-        'size': size,
-        'token_id': token_id,
-        'close_btc_price': current_btc_price
-    }
+                    raise
+        
+        if isinstance(response, dict) and response.get("success"):
+            order_id = response.get("orderID", "unknown")
+            print(f"   ✅ CLOSE ORDER PLACED: {order_id} @ ${best_bid_price:.3f}")
+            close_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            return {
+                'success': True,
+                'order_id': order_id,
+                'price': best_bid_price,
+                'size': trade_size,
+                'token_id': token_id,
+                'close_time': close_time,
+                'close_btc_price': current_btc_price
+            }
+        else:
+            error_msg = response.get("error", response) if isinstance(response, dict) else str(response)
+            print(f"   ❌ CLOSE ORDER FAILED: {error_msg}")
+            return {
+                'success': False,
+                'error': error_msg,
+                'price': best_bid_price,
+                'size': trade_size,
+                'token_id': token_id,
+                'close_btc_price': current_btc_price
+            }
+    except Exception as e:
+        error_str = str(e)
+        print(f"   ❌ Erreur fermeture : {error_str}")
+        return {
+            'success': False,
+            'error': error_str,
+            'size': trade_size,
+            'token_id': token_id,
+            'close_btc_price': current_btc_price
+        }
 
 # --- 4. FETCH CURRENT BTC 15M MARKET AUTOMATICALLY ---
 def find_current_btc_15m_market():
@@ -997,13 +996,6 @@ def write_window_statistics(stats, trade_result=None):
                         for line in log_lines:
                             f.write(f"     - {line}\n")
                     
-                    # Write monitoring logs
-                    monitoring_logs = real_trade_info.get('monitoring_logs', [])
-                    if monitoring_logs:
-                        f.write("   Position Monitoring:\n")
-                        for line in monitoring_logs:
-                            f.write(f"     {line}\n")
-                    
                     # Check for close result
                     close_result = real_trade_info.get('close_result')
                     if close_result:
@@ -1273,9 +1265,6 @@ def run_advisor():
                                 result_data['real_trade']['close_result'] = open_position['close_result']
                             if open_position.get('close_attempts'):
                                 result_data['real_trade']['close_attempts'] = open_position['close_attempts']
-                            # Add monitoring logs
-                            if open_position.get('monitoring_logs'):
-                                result_data['real_trade']['monitoring_logs'] = open_position['monitoring_logs']
                         if window_stats.get('max_score_trade_taken'):
                             window_stats['max_score_trade_result'] = result_status
                     else:
@@ -1308,6 +1297,31 @@ def run_advisor():
                         time.sleep(LOOP_SLEEP_SECONDS)
                         continue
                     
+                    # ==============================================================================
+                    # 🔧 MISE A JOUR DES PRIX DES PARTS (CLOB) - DÉPLACÉ ICI (EN PRIORITÉ)
+                    # ==============================================================================
+                    # Initialisation par défaut pour éviter les crashes si l'API échoue
+                    current_share = 0.0
+                    up_price = 0.0
+                    down_price = 0.0
+                    
+                    clob_token_ids = market_data.get('clob_token_ids')
+                    if clob_token_ids and clob_token_ids.get('yes') and clob_token_ids.get('no'):
+                        # Force la mise à jour des prix MAINTENANT (pas à la fin de la boucle)
+                        clob_prices = fetch_clob_outcome_prices(clob_token_ids['yes'], clob_token_ids['no'])
+                        if clob_prices:
+                            market_data['outcome_prices'] = {
+                                'up': clob_prices.get('up', 0),
+                                'down': clob_prices.get('down', 0)
+                            }
+                            up_price = market_data['outcome_prices']['up']
+                            down_price = market_data['outcome_prices']['down']
+                            
+                            # Définit current_share si une position est ouverte
+                            if open_position:
+                                current_share = up_price if open_position['direction'] == 'UP' else down_price
+                    # ==============================================================================
+                    
                     # 2. Get Historical Candles from Kraken (OHLC data)
                     try:
                         kraken_url = "https://api.kraken.com/0/public/OHLC?pair=XXBTZUSD&interval=1"
@@ -1330,153 +1344,185 @@ def run_advisor():
                         time.sleep(LOOP_SLEEP_SECONDS)
                         continue
                     
-                    # 3. Monitor position and auto-close on target (if enabled)
-                    if CLOSE_TRADE_ON_TARGET and open_position and not open_position.get('closed'):
-                        # Show price relative to target
+                    # 3. Monitor position and auto-close on TP / SL / STRIKE
+                    if open_position and not open_position.get('closed'):
                         direction = open_position['direction']
-                        target_status = ""
+                        entry_price = open_position['entry_price']
+                        share_price = open_position['share_price']
+                        open_btc_price = open_position.get('open_btc_price', entry_price)
+                        
+                        # Initialize tracking variables if needed
+                        if 'close_trigger' not in open_position:
+                            open_position['close_trigger'] = None
+                        
+                        # === FULL MONITORING LOGS ===
+                        print(f"\n{'='*70}")
+                        print(f"📊 POSITION MONITORING [T-{minutes_left:.2f}min]")
+                        print(f"{'='*70}")
+                        
+                        # Get current market prices
+                        outcome_prices = market_data.get('outcome_prices', {})
+                        up_price = outcome_prices.get('up', 0)
+                        down_price = outcome_prices.get('down', 0)
+                        
+                        # Position Info
+                        print(f"🎯 POSITION INFO:")
+                        print(f"   Direction: {direction}")
+                        print(f"   Token ID: {open_position['token_id']}")
+                        print(f"   Size: {open_position['size']} shares")
+                        print(f"   Entry Share Price: ${share_price:.4f}")
+                        print(f"   Entry BTC Price: ${open_btc_price:,.2f}")
+                        print(f"   Strike Price: ${strike_price:,.2f}")
+                        
+                        # Current Market Status
+                        print(f"\n💹 CURRENT MARKET:")
+                        print(f"   BTC Price: ${real_price:,.2f}")
+                        print(f"   BTC Change: ${real_price - open_btc_price:+,.2f} ({((real_price/open_btc_price - 1) * 100):+.2f}%)")
+                        if up_price is not None and down_price is not None and up_price > 0 and down_price > 0:
+                            # current_share est déjà défini en début de boucle
+                            print(f"   Current Share Price: ${current_share:.4f} ({(current_share*100):.1f}¢)")
+                            print(f"   Share Change: ${current_share - share_price:+.4f} ({((current_share/share_price - 1) * 100):+.2f}%)")
+                            print(f"   Market Prices - UP: {up_price*100:.1f}¢ | DOWN: {down_price*100:.1f}¢")
+                        else:
+                            print(f"   ⚠️  Market prices unavailable")
+                        
+                        # Position Status
                         if direction == 'UP':
-                            if real_price <= strike_price:
-                                target_status = f"⚠️ TARGET HIT - LOSING (BTC ${real_price:,.2f} <= ${strike_price:,.2f})"
+                            if real_price > strike_price:
+                                position_status = f"✅ WINNING - BTC ${real_price:,.2f} > Strike ${strike_price:,.2f} (${real_price - strike_price:+,.2f})"
                             else:
-                                target_status = f"⏳ Winning (BTC ${real_price:,.2f} > ${strike_price:,.2f})"
+                                position_status = f"❌ LOSING - BTC ${real_price:,.2f} <= Strike ${strike_price:,.2f} (${real_price - strike_price:,.2f})"
                         else:  # DOWN
-                            if real_price >= strike_price:
-                                target_status = f"⚠️ TARGET HIT - LOSING (BTC ${real_price:,.2f} >= ${strike_price:,.2f})"
+                            if real_price < strike_price:
+                                position_status = f"✅ WINNING - BTC ${real_price:,.2f} < Strike ${strike_price:,.2f} (${real_price - strike_price:,.2f})"
                             else:
-                                target_status = f"⏳ Winning (BTC ${real_price:,.2f} < ${strike_price:,.2f})"
+                                position_status = f"❌ LOSING - BTC ${real_price:,.2f} >= Strike ${strike_price:,.2f} (${real_price - strike_price:+,.2f})"
                         
-                        # Only print target status every few checks to avoid spam
-                        if not open_position.get('last_target_print'):
-                            open_position['last_target_print'] = time.time()
-                            
-                            # Get market prices
-                            outcome_prices = market_data.get('outcome_prices', {})
-                            up_price = outcome_prices.get('up', 0)
-                            down_price = outcome_prices.get('down', 0)
-                            prices_str = f"Market Prices - Up: {up_price*100:.1f}¢ | Down: {down_price*100:.1f}¢" if up_price and down_price else ""
-                            
-                            timestamp_line = f"[T-{minutes_left:.2f}min] |  {prices_str}"
-                            print(timestamp_line)
-                            open_position.setdefault('monitoring_logs', []).append(timestamp_line)
-                            
-                            status_line = f"📍 Position Status: {target_status}"
-                            print(status_line)
-                            open_position['monitoring_logs'].append(status_line)
-            
-                            # Calculate and display scores during position monitoring
-                            upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=BOLLINGER_PERIOD, std_dev=2.0)
-                            atr = calculate_atr(highs, lows, closes, period=ATR_PERIOD)
-            
-                            score_a = 0
-                            bb_explain = "BB unavailable"
-                            if upper_bb and lower_bb and middle_bb:
-                                bb_range = upper_bb - lower_bb
-                                target_position = (strike_price - lower_bb) / bb_range
-                                target_position = max(0, min(1, target_position))
-                
-                                if direction == 'UP':
-                                    bb_explain = f"Strike at {target_position:.1%} from BOTTOM of band"
-                                    if target_position < 0.5:
-                                        score_a = int(round(WEIGHT_BOLLINGER * (1 - target_position / 0.5)))
-                                        score_a = min(score_a, WEIGHT_BOLLINGER)
-                                else:
-                                    distance_from_top = 1 - target_position
-                                    bb_explain = f"Strike at {distance_from_top:.1%} from TOP of band"
-                                    if target_position > 0.5:
-                                        score_a = int(round(WEIGHT_BOLLINGER * ((target_position - 0.5) / 0.5)))
-                                        score_a = min(score_a, WEIGHT_BOLLINGER)
-            
-                            score_b = 0
-                            atr_explain = "ATR unavailable"
-                            if atr:
-                                max_move = atr * math.sqrt(minutes_left) * ATR_MULTIPLIER
-                                dist = abs(real_price - strike_price)
-                                ratio_value = (dist / max_move) if max_move else 0
-                                atr_explain = f"Distance: ${dist:.2f} - Max move: ${max_move:.2f} - Ratio: {ratio_value:.2f}"
-                
-                                if dist < max_move:
-                                    score_b = 0
-                                    distance_ratio = 0.0
-                                else:
-                                    if max_move > 0:
-                                        distance_ratio = min((dist - max_move) / max_move, 1.0)
-                                        score_b = int(round(WEIGHT_ATR * distance_ratio))
-            
-                            total_score = score_a + score_b
-                            scores_line = f"📊 SCORES: TOTAL {total_score}/100 | BB {score_a}/{WEIGHT_BOLLINGER} - {bb_explain} | ATR {score_b}/{WEIGHT_ATR} - {atr_explain}"
-                            print(scores_line)
-                            open_position['monitoring_logs'].append(scores_line)
-                        elif time.time() - open_position['last_target_print'] > LOOP_SLEEP_SECONDS:  # Print every loop
-                            # Get market prices
-                            outcome_prices = market_data.get('outcome_prices', {})
-                            up_price = outcome_prices.get('up', 0)
-                            down_price = outcome_prices.get('down', 0)
-                            prices_str = f"Market Prices - Up: {up_price*100:.1f}¢ | Down: {down_price*100:.1f}¢" if up_price and down_price else ""
-                            
-                            timestamp_line = f"[T-{minutes_left:.2f}min] |  {prices_str}"
-                            print(timestamp_line)
-                            open_position.setdefault('monitoring_logs', []).append(timestamp_line)
-                            
-                            status_line = f"📍 Position Status: {target_status}"
-                            print(status_line)
-                            open_position['monitoring_logs'].append(status_line)
-            
-                            # Calculate and display scores during position monitoring
-                            upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=BOLLINGER_PERIOD, std_dev=2.0)
-                            atr = calculate_atr(highs, lows, closes, period=ATR_PERIOD)
-            
-                            score_a = 0
-                            bb_explain = "BB unavailable"
-                            if upper_bb and lower_bb and middle_bb:
-                                bb_range = upper_bb - lower_bb
-                                target_position = (strike_price - lower_bb) / bb_range
-                                target_position = max(0, min(1, target_position))
-                
-                                if direction == 'UP':
-                                    bb_explain = f"Strike at {target_position:.1%} from BOTTOM of band"
-                                    if target_position < 0.5:
-                                        score_a = int(round(WEIGHT_BOLLINGER * (1 - target_position / 0.5)))
-                                        score_a = min(score_a, WEIGHT_BOLLINGER)
-                                else:
-                                    distance_from_top = 1 - target_position
-                                    bb_explain = f"Strike at {distance_from_top:.1%} from TOP of band"
-                                    if target_position > 0.5:
-                                        score_a = int(round(WEIGHT_BOLLINGER * ((target_position - 0.5) / 0.5)))
-                                        score_a = min(score_a, WEIGHT_BOLLINGER)
-            
-                            score_b = 0
-                            atr_explain = "ATR unavailable"
-                            if atr:
-                                max_move = atr * math.sqrt(minutes_left) * ATR_MULTIPLIER
-                                dist = abs(real_price - strike_price)
-                                ratio_value = (dist / max_move) if max_move else 0
-                                atr_explain = f"Distance: ${dist:.2f} - Max move: ${max_move:.2f} - Ratio: {ratio_value:.2f}"
-                
-                                if dist < max_move:
-                                    score_b = 0
-                                    distance_ratio = 0.0
-                                else:
-                                    if max_move > 0:
-                                        distance_ratio = min((dist - max_move) / max_move, 1.0)
-                                        score_b = int(round(WEIGHT_ATR * distance_ratio))
-            
-                            total_score = score_a + score_b
-                            scores_line = f"📊 SCORES: TOTAL {total_score}/100 | BB {score_a}/{WEIGHT_BOLLINGER} - {bb_explain} | ATR {score_b}/{WEIGHT_ATR} - {atr_explain}"
-                            print(scores_line)
-                            open_position['monitoring_logs'].append(scores_line)
-                            open_position['last_target_print'] = time.time()
+                        print(f"\n📍 POSITION STATUS: {position_status}")
                         
-                        # Attempt close if target hit (position is losing)
-                        if (direction == 'UP' and real_price <= strike_price) or (direction == 'DOWN' and real_price >= strike_price):
+                        # === CHECK CLOSE CONDITIONS ===
+                        print(f"\n🔍 CHECKING CLOSE CONDITIONS:")
+                        close_reason = None
+                        
+                        # 1️⃣ TAKE PROFIT CHECK (Utilise current_share calculé en début de boucle)
+                        print(f"\n   1️⃣ TAKE PROFIT (Share >= ${CLOSE_TP_PRICE}):")
+                        if current_share is not None and current_share > 0:
+                            print(f"      Current Share: ${current_share:.4f}")
+                            print(f"      Target: ${CLOSE_TP_PRICE:.4f}")
+                            print(f"      Gap: ${CLOSE_TP_PRICE - current_share:+.4f}")
+                            if current_share >= CLOSE_TP_PRICE:
+                                close_reason = f"📈 TAKE PROFIT: Share price hit ${CLOSE_TP_PRICE} (Current: ${current_share:.4f})"
+                                print(f"      ✅ CONDITION MET! {close_reason}")
+                            else:
+                                print(f"      ⏳ Not yet (need ${(CLOSE_TP_PRICE - current_share):.4f} more)")
+                        else:
+                            print(f"      ⚠️ Market prices unavailable")
+                        
+                        # 2️⃣ STOP LOSS CHECK - SHARE PRICE DROP
+                        if not close_reason:
+                            print(f"\n   2️⃣ STOP LOSS - SHARE PRICE DROP (>= {CLOSE_SL_SHARE_DROP_PERCENT}%):")
+                            if current_share is not None and current_share > 0 and share_price > 0:
+                                share_drop_pct = ((share_price - current_share) / share_price) * 100
+                                sl_threshold_price = share_price * (1 - CLOSE_SL_SHARE_DROP_PERCENT / 100)
+                                print(f"      Entry Share: ${share_price:.4f}")
+                                print(f"      Current Share: ${current_share:.4f}")
+                                print(f"      Drop: ${share_price - current_share:+.4f} ({share_drop_pct:+.2f}%)")
+                                print(f"      SL Threshold: {CLOSE_SL_SHARE_DROP_PERCENT}% = ${sl_threshold_price:.4f}")
+                                if share_drop_pct >= CLOSE_SL_SHARE_DROP_PERCENT:
+                                    close_reason = f"📉 STOP LOSS: Share dropped {share_drop_pct:.1f}% (${share_price:.4f} → ${current_share:.4f})"
+                                    print(f"      ✅ CONDITION MET! {close_reason}")
+                                else:
+                                    print(f"      ⏳ Not yet (can drop {CLOSE_SL_SHARE_DROP_PERCENT - share_drop_pct:.2f}% more)")
+                            else:
+                                print(f"      ⚠️ Share price unavailable")
+                        
+                        # 3️⃣ STRIKE PRICE CHECK
+                        if not close_reason and CLOSE_ON_STRIKE:
+                            print(f"\n   3️⃣ STOP LOSS - STRIKE PRICE HIT:")
+                            print(f"      Direction: {direction}")
+                            print(f"      Strike: ${strike_price:,.2f}")
+                            print(f"      Current BTC: ${real_price:,.2f}")
+                            print(f"      Difference: ${real_price - strike_price:+,.2f}")
+                            
+                            if direction == 'UP':
+                                print(f"      Condition: BTC <= Strike (losing)")
+                                if real_price <= strike_price:
+                                    close_reason = f"⚠️ STOP LOSS - STRIKE HIT: BTC ${real_price:,.2f} <= ${strike_price:,.2f}"
+                                    print(f"      ✅ CONDITION MET! {close_reason}")
+                                else:
+                                    print(f"      ⏳ Not yet (still above by ${real_price - strike_price:,.2f})")
+                            else:  # DOWN
+                                print(f"      Condition: BTC >= Strike (losing)")
+                                if real_price >= strike_price:
+                                    close_reason = f"⚠️ STOP LOSS - STRIKE HIT: BTC ${real_price:,.2f} >= ${strike_price:,.2f}"
+                                    print(f"      ✅ CONDITION MET! {close_reason}")
+                                else:
+                                    print(f"      ⏳ Not yet (still below by ${strike_price - real_price:,.2f})")
+                        
+                        if not close_reason:
+                            print(f"\n   ✅ NO CLOSE CONDITIONS MET - Position remains open")
+                        
+                        # Calculate and display scores during position monitoring
+                        upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=BOLLINGER_PERIOD, std_dev=2.0)
+                        atr = calculate_atr(highs, lows, closes, period=ATR_PERIOD)
+        
+                        score_a = 0
+                        bb_explain = "BB unavailable"
+                        if upper_bb and lower_bb and middle_bb:
+                            bb_range = upper_bb - lower_bb
+                            target_position = (strike_price - lower_bb) / bb_range
+                            target_position = max(0, min(1, target_position))
+            
+                            if direction == 'UP':
+                                # Pour UP: plus le strike est haut dans la bande, mieux c'est
+                                score_a = int(round(WEIGHT_BOLLINGER * ((target_position - 0.5) / 0.5)))
+                                score_a = max(0, min(score_a, WEIGHT_BOLLINGER))  # Entre 0 et 30
+                                bb_explain = f"Strike at {target_position:.1%} in BB range"
+                            else:  # DOWN
+                                # Pour DOWN: plus le strike est bas dans la bande, mieux c'est
+                                score_a = int(round(WEIGHT_BOLLINGER * ((0.5 - target_position) / 0.5)))
+                                score_a = max(0, min(score_a, WEIGHT_BOLLINGER))  # Entre 0 et 30
+                                bb_explain = f"Strike at {target_position:.1%} in BB range"
+        
+                        score_b = 0
+                        atr_explain = "ATR unavailable"
+                        if atr:
+                            max_move = atr * math.sqrt(minutes_left) * ATR_MULTIPLIER
+                            dist = abs(real_price - strike_price)
+                            ratio_value = (dist / max_move) if max_move else 0
+                            atr_explain = f"Distance: ${dist:.2f} - Max move: ${max_move:.2f} - Ratio: {ratio_value:.2f}"
+            
+                            if dist < max_move:
+                                score_b = 0
+                                distance_ratio = 0.0
+                            else:
+                                if max_move > 0:
+                                    distance_ratio = min((dist - max_move) / max_move, 1.0)
+                                    score_b = int(round(WEIGHT_ATR * distance_ratio))
+        
+                        total_score = score_a + score_b
+                        print(f"\n📊 SCORES: TOTAL {total_score}/100 | BB {score_a}/{WEIGHT_BOLLINGER} | ATR {score_b}/{WEIGHT_ATR}")
+                        print(f"{'='*70}\n")
+                        
+                        # === EXECUTE CLOSE IF CONDITION MET ===
+                        if close_reason:
                             if not open_position.get('close_attempts'):
                                 open_position['close_attempts'] = 0
                             
                             open_position['close_attempts'] += 1
                             attempt_num = open_position['close_attempts']
                             
-                            print(f"\n🎯 TARGET HIT - Closing {direction} position (Attempt #{attempt_num})...")
-                            print(f"   Price: BTC ${real_price:,.2f}")
+                            print(f"\n{'='*70}")
+                            print(f"🚨 CLOSING POSITION - ATTEMPT #{attempt_num}")
+                            print(f"{'='*70}")
+                            print(f"🎯 TRIGGER: {close_reason}")
+                            print(f"\n📋 CLOSE ORDER DETAILS:")
+                            print(f"   Direction: {direction}")
+                            print(f"   Token ID: {open_position['token_id']}")
+                            print(f"   Size: {open_position['size']} shares")
+                            print(f"   Current BTC: ${real_price:,.2f}")
+                            print(f"   Strike: ${strike_price:,.2f}")
+                            print(f"\n⏳ Executing close order...")
                             
                             close_result = execute_close_trade(
                                 poly_client,
@@ -1485,13 +1531,25 @@ def run_advisor():
                                 real_price
                             )
                             
+                            print(f"\n📊 CLOSE RESULT:")
                             if close_result and close_result.get('success'):
-                                print(f"   ✅ Position closed successfully on attempt #{attempt_num}")
+                                print(f"   ✅ SUCCESS!")
+                                print(f"   Order ID: {close_result.get('order_id')}")
+                                print(f"   Size Closed: {close_result.get('size')} shares")
+                                print(f"   Price: ${close_result.get('price'):.4f}")
+                                print(f"   Time: {close_result.get('close_time')}")
+                                print(f"   Attempts: {attempt_num}")
                                 open_position['closed'] = True
                                 open_position['close_result'] = close_result
+                                open_position['close_trigger'] = close_reason
+                                print(f"{'='*70}\n")
                             else:
-                                print(f"   ⚠️  Close attempt #{attempt_num} failed. Will retry when target remains hit.")
-                                # Don't update 'closed' - keep trying
+                                error = close_result.get('error') if close_result else 'Unknown error'
+                                print(f"   ❌ FAILED!")
+                                print(f"   Error: {error}")
+                                print(f"   Attempt: #{attempt_num}")
+                                print(f"   ⚠️  Will retry on next check...")
+                                print(f"{'='*70}\n")
 
                     # 4. Time Window Announcements
                     window_midpoint = (TRADE_WINDOW_MIN + TRADE_WINDOW_MAX) / 2
@@ -1746,10 +1804,11 @@ def run_advisor():
                                                         'size': trade_result.get('size'),
                                                         'direction': trade_direction,
                                                         'strike_price': strike_price,
+                                                        'entry_price': share_price,
+                                                        'share_price': share_price,
                                                         'closed': False,
                                                         'open_time': trade_result.get('open_time'),
-                                                        'open_btc_price': trade_result.get('open_btc_price'),
-                                                        'monitoring_logs': []  # Store all monitoring logs
+                                                        'open_btc_price': trade_result.get('open_btc_price')
                                                     }
                                                 else:
                                                     print(f"   ⚠️  Real trade execution failed, continuing in simulation mode")

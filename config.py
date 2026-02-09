@@ -1,8 +1,12 @@
 # Trading Bot Configuration
 # === REAL TRADING ===
 REAL_TRADE = True  # Set to True to execute real trades, False for simulation only
-TRADE_AMOUNT = 10  # Trade amount in Shares (increased to 7 to avoid "min 5" errors on partial fills)
-CLOSE_TRADE_ON_TARGET = True  # Whether to automatically close the trade when target price is hit
+TRADE_AMOUNT = 7  # Trade amount in Shares (increased to 7 to avoid "min 5" errors on partial fills)
+
+# === CLOSE CONDITIONS ===
+CLOSE_TP_PRICE = 0.99  # Take Profit: Close position when share price reaches this level
+CLOSE_SL_SHARE_DROP_PERCENT = 50  # Stop Loss: Close if share price drops by this % from entry
+CLOSE_ON_STRIKE = True  # Stop Loss: Close on strike price hit
 # === SCORING & TRADE EXECUTION ===
 SCORE_THRESHOLD = 71  # Minimum total score required to execute a trade (0-100)
 
