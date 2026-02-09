@@ -23,7 +23,7 @@ from config import (
     LOOP_SLEEP_SECONDS, NEXT_MARKET_WAIT_SECONDS,
     SCORE_THRESHOLD,
     WEIGHT_BOLLINGER, WEIGHT_ATR,
-    REAL_TRADE, TRADE_AMOUNT, CLOSE_TP_PRICE, CLOSE_SL_SHARE_DROP_PERCENT, CLOSE_ON_STRIKE
+    REAL_TRADE, TRADE_AMOUNT, CLOSE_ON_TP, CLOSE_TP_PRICE, CLOSE_SL_SHARE_DROP_PERCENT, CLOSE_ON_STRIKE
 )
 
 # --- 1. API IMPORTS ---
@@ -47,6 +47,115 @@ API_PASSPHRASE = os.getenv("API_PASSPHRASE")
 MY_ADDRESS = os.getenv("MY_ADDRESS")
 PRIVATE_KEY = os.getenv("PRIVATE_KEY")
 PROXY_ADDRESS = os.getenv("PROXY_ADDRESS")
+
+# ==============================================================================
+# 🧱 MODULE DE CLAIM AUTOMATIQUE (WEB3)
+# ==============================================================================
+from web3 import Web3
+
+# Configuration Polygon
+POLYGON_RPC = "https://polygon-rpc.com"
+CTF_ADDRESS = "0x4D97DCd97eC945f40cF65F87097ACe5EA0476045" # Gnosis CTF
+USDC_ADDRESS = "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"
+CLAIMS_FILE = "pending_claims.json"
+
+# ABI Minimal pour le Claim
+CTF_ABI = '[{"constant":false,"inputs":[{"name":"collateralToken","type":"address"},{"name":"parentCollectionId","type":"bytes32"},{"name":"conditionId","type":"bytes32"},{"name":"indexSets","type":"uint256[]"}],"name":"redeemPositions","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}]'
+
+def save_pending_claim(condition_id):
+    """Enregistre un ID de marché pour le clamer plus tard"""
+    if not condition_id: return
+    try:
+        claims = []
+        if os.path.exists(CLAIMS_FILE):
+            with open(CLAIMS_FILE, 'r') as f:
+                claims = json.load(f)
+        
+        if condition_id not in claims:
+            claims.append(condition_id)
+            with open(CLAIMS_FILE, 'w') as f:
+                json.dump(claims, f)
+            print(f"📝 Market enregistré pour claim futur: {condition_id}")
+    except Exception as e:
+        print(f"⚠️ Erreur sauvegarde claim: {e}")
+
+def process_pending_claims():
+    """Tente de clamer tous les marchés en attente"""
+    if not os.path.exists(CLAIMS_FILE): return
+
+    print("\n💰 VÉRIFICATION DES CLAIMS EN ATTENTE...")
+    
+    try:
+        with open(CLAIMS_FILE, 'r') as f:
+            claims = json.load(f)
+        
+        if not claims: 
+            print("   Aucun claim en attente.")
+            return
+
+        # Connexion Web3
+        w3 = Web3(Web3.HTTPProvider(POLYGON_RPC))
+        if not w3.is_connected():
+            print("   ❌ Erreur connexion Polygon RPC")
+            return
+
+        # Ensure PRIVATE_KEY is loaded
+        if not PRIVATE_KEY:
+            print("   ❌ Private Key manquante, impossible de claim")
+            return
+        
+        account = w3.eth.account.from_key(PRIVATE_KEY)
+        contract = w3.eth.contract(address=CTF_ADDRESS, abi=json.loads(CTF_ABI))
+        
+        remaining_claims = []
+        
+        for condition_id in claims:
+            try:
+                print(f"   🔎 Vérification {condition_id}...")
+                
+                # Préparation des paramètres
+                index_sets = [1, 2] # On demande YES et NO
+                parent_collection_id = "0x0000000000000000000000000000000000000000000000000000000000000000"
+
+                # Simulation (Call) pour voir si ça passerait
+                # Si le marché n'est pas résolu ou si on a 0 gain, ceci va lever une erreur
+                contract.functions.redeemPositions(
+                    USDC_ADDRESS, parent_collection_id, condition_id, index_sets
+                ).call({'from': account.address})
+                
+                # Si on arrive ici, c'est que le claim est valide ! On envoie la tx.
+                print("   ✅ Gains détectés ! Envoi de la transaction...")
+                
+                txn = contract.functions.redeemPositions(
+                    USDC_ADDRESS, parent_collection_id, condition_id, index_sets
+                ).build_transaction({
+                    'chainId': 137,
+                    'gas': 200000,
+                    'gasPrice': w3.eth.gas_price,
+                    'nonce': w3.eth.get_transaction_count(account.address),
+                })
+                
+                signed_txn = w3.eth.account.sign_transaction(txn, private_key=PRIVATE_KEY)
+                tx_hash = w3.eth.send_raw_transaction(signed_txn.raw_transaction)
+                print(f"   🚀 Claim envoyé ! Hash: {w3.to_hex(tx_hash)}")
+                
+                # On ne le remet pas dans la liste (considéré traité)
+                # Note: S'il échoue on-chain, il sera perdu de la liste. 
+                # Pour être ultra-safe, on pourrait attendre la receipt, mais ça bloque le bot.
+                
+            except Exception as e:
+                # Si erreur (souvent "execution reverted" car pas résolu), on garde pour plus tard
+                # print(f"   ⏳ Pas encore prêt ou pas de gains ({e})")
+                remaining_claims.append(condition_id)
+        
+        # Sauvegarde de ce qui reste à traiter
+        with open(CLAIMS_FILE, 'w') as f:
+            json.dump(remaining_claims, f)
+            
+        print(f"   🏁 Fin des claims. Restants: {len(remaining_claims)}")
+
+    except Exception as e:
+        print(f"❌ Erreur générale process claims: {e}")
 
 # --- 2B. CHAINLINK BTC/USD STREAM CONFIG ---
 CHAINLINK_STREAM_URLS = [
@@ -682,6 +791,11 @@ def find_current_btc_15m_market():
 
                         clob_token_ids = extract_clob_token_ids(event.get('markets', []))
                         clob_token_ids = clob_token_ids or page_clob_token_ids
+                        
+                        condition_id = None
+                        if event.get('markets') and len(event['markets']) > 0:
+                            condition_id = event['markets'][0].get('conditionId')
+
                         market_data = {
                             'slug': live_slug,
                             'title': event.get('title', '').upper(),
@@ -692,7 +806,8 @@ def find_current_btc_15m_market():
                             'end_timestamp': market_end_timestamp,
                             'strike_price': strike_price,
                             'outcome_prices': outcome_prices,
-                            'clob_token_ids': clob_token_ids
+                            'clob_token_ids': clob_token_ids,
+                            'condition_id': condition_id
                         }
                         print(f"   🎯 Selected LIVE market: {live_slug}")
                         print(f"      Time remaining: {time_remaining:.1f} minutes")
@@ -1255,6 +1370,10 @@ def run_advisor():
                         print(f"   W/L: {wins}/{losses} | Win Rate: {(wins/total_signals)*100:.1f}%")
                     
                     print("="*60)
+                    
+                    # Tenter de récupérer l'argent des marchés précédents
+                    process_pending_claims()
+
                     print(f"⏭️  Moving to next market in {NEXT_MARKET_WAIT_SECONDS} seconds...\n")
                     time.sleep(NEXT_MARKET_WAIT_SECONDS)
                     break
@@ -1293,8 +1412,20 @@ def run_advisor():
                         }
 
                     # Définit current_share si une position est ouverte
-                    if open_position and up_price and down_price:
-                        current_share = up_price if open_position['direction'] == 'UP' else down_price
+                    if open_position:
+                        # Fallback to existing if network fetch fails (returns 0 or None)
+                        new_share_price = 0.0
+                        if up_price and down_price:
+                             new_share_price = up_price if open_position['direction'] == 'UP' else down_price
+                        
+                        if new_share_price > 0:
+                            current_share = new_share_price
+                        elif 'current_share' not in locals() or current_share == 0:
+                             # Initialize if logic hasn't run yet
+                             current_share = open_position.get('share_price', 0)
+                        else:
+                             # Keep previous known value if new one is 0/invalid
+                             pass
                     
                     # 2. Get Historical Candles from Kraken (OHLC data)
                     try:
@@ -1384,22 +1515,30 @@ def run_advisor():
                         
                         # 1️⃣ TAKE PROFIT CHECK
                         tp_status = f"Need ${(CLOSE_TP_PRICE - current_share):.4f} more" if current_share < CLOSE_TP_PRICE else f"{Colors.GREEN}HIT!{Colors.ENDC}"
+                        
+                        if not CLOSE_ON_TP:
+                            tp_status += " (IGNORED)"
+
                         lines.append(f"   1️⃣ TP (Share >= ${CLOSE_TP_PRICE}): Current ${current_share:.4f} -> {tp_status}")
-                        if current_share >= CLOSE_TP_PRICE:
+                        if CLOSE_ON_TP and current_share >= CLOSE_TP_PRICE:
                             close_reason = f"📈 TAKE PROFIT: Share price hit ${CLOSE_TP_PRICE} (Current: ${current_share:.4f})"
 
                         
                         # 2️⃣ STOP LOSS CHECK - SHARE PRICE DROP
                         if not close_reason:
-                            share_drop_pct = ((share_price - current_share) / share_price) * 100 if share_price > 0 else 0
-                            sl_threshold_price = share_price * (1 - CLOSE_SL_SHARE_DROP_PERCENT / 100)
-                            sl_status = f"Drop {share_drop_pct:.1f}% (Limit {CLOSE_SL_SHARE_DROP_PERCENT}%)"
-                            sl_color = Colors.FAIL if share_drop_pct >= CLOSE_SL_SHARE_DROP_PERCENT else Colors.ENDC
-                            
-                            lines.append(f"   2️⃣ SL (Drop >= {CLOSE_SL_SHARE_DROP_PERCENT}%): {sl_color}{sl_status}{Colors.ENDC}")
+                            # Avoid closing if price is 0 (likely API error)
+                            if current_share <= 0:
+                                lines.append(f"   2️⃣ SL: {Colors.WARNING}Pricing unavailable, skipping check{Colors.ENDC}")
+                            else:
+                                share_drop_pct = ((share_price - current_share) / share_price) * 100 if share_price > 0 else 0
+                                sl_threshold_price = share_price * (1 - CLOSE_SL_SHARE_DROP_PERCENT / 100)
+                                sl_status = f"Drop {share_drop_pct:.1f}% (Limit {CLOSE_SL_SHARE_DROP_PERCENT}%)"
+                                sl_color = Colors.FAIL if share_drop_pct >= CLOSE_SL_SHARE_DROP_PERCENT else Colors.ENDC
+                                
+                                lines.append(f"   2️⃣ SL (Drop >= {CLOSE_SL_SHARE_DROP_PERCENT}%): {sl_color}{sl_status}{Colors.ENDC}")
 
-                            if share_drop_pct >= CLOSE_SL_SHARE_DROP_PERCENT:
-                                close_reason = f"📉 STOP LOSS: Share dropped {share_drop_pct:.1f}% (${share_price:.4f} → ${current_share:.4f})"
+                                if share_drop_pct >= CLOSE_SL_SHARE_DROP_PERCENT:
+                                    close_reason = f"📉 STOP LOSS: Share dropped {share_drop_pct:.1f}% (${share_price:.4f} → ${current_share:.4f})"
 
                         
                         # 3️⃣ STRIKE PRICE CHECK
@@ -1712,6 +1851,10 @@ def run_advisor():
                                                     })
                                                     print(f"   🎉 SUCCESS! Size: {trade_result.get('size')}")
                                                     
+                                                    cond_id = market_data.get('condition_id')
+                                                    if cond_id:
+                                                        save_pending_claim(cond_id)
+
                                                     signal_details = {
                                                         'direction': share_type,
                                                         'price': share_price,
