@@ -52,15 +52,21 @@ PROXY_ADDRESS = os.getenv("PROXY_ADDRESS")
 # 🧱 MODULE DE CLAIM AUTOMATIQUE (WEB3)
 # ==============================================================================
 from web3 import Web3
+from eth_account.messages import encode_defunct # Required for Gnosis Safe Signing
+try:
+    from web3.middleware import ExtraDataToPOAMiddleware
+except ImportError:
+    ExtraDataToPOAMiddleware = None
 
 # Configuration Polygon
-POLYGON_RPC = "https://polygon-rpc.com"
+POLYGON_RPC = "https://polygon.drpc.org"
 CTF_ADDRESS = "0x4D97DCd97eC945f40cF65F87097ACe5EA0476045" # Gnosis CTF
 USDC_ADDRESS = "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"
 CLAIMS_FILE = "pending_claims.json"
 
 # ABI Minimal pour le Claim
 CTF_ABI = '[{"constant":false,"inputs":[{"name":"collateralToken","type":"address"},{"name":"parentCollectionId","type":"bytes32"},{"name":"conditionId","type":"bytes32"},{"name":"indexSets","type":"uint256[]"}],"name":"redeemPositions","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}]'
+SAFE_ABI = '[{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"},{"internalType":"enum Enum.Operation","name":"operation","type":"uint8"},{"internalType":"uint256","name":"safeTxGas","type":"uint256"},{"internalType":"uint256","name":"baseGas","type":"uint256"},{"internalType":"uint256","name":"gasPrice","type":"uint256"},{"internalType":"address","name":"gasToken","type":"address"},{"internalType":"address payable","name":"refundReceiver","type":"address"},{"internalType":"bytes","name":"signatures","type":"bytes"}],"name":"execTransaction","outputs":[{"internalType":"bool","name":"success","type":"bool"}],"stateMutability":"payable","type":"function"}, {"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"},{"internalType":"enum Enum.Operation","name":"operation","type":"uint8"},{"internalType":"uint256","name":"safeTxGas","type":"uint256"},{"internalType":"uint256","name":"baseGas","type":"uint256"},{"internalType":"uint256","name":"gasPrice","type":"uint256"},{"internalType":"address","name":"gasToken","type":"address"},{"internalType":"address payable","name":"refundReceiver","type":"address"},{"internalType":"uint256","name":"_nonce","type":"uint256"}],"name":"getTransactionHash","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"}, {"inputs":[],"name":"nonce","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]'
 
 def save_pending_claim(condition_id):
     """Enregistre un ID de marché pour le clamer plus tard"""
@@ -80,7 +86,7 @@ def save_pending_claim(condition_id):
         print(f"⚠️ Erreur sauvegarde claim: {e}")
 
 def process_pending_claims():
-    """Tente de clamer tous les marchés en attente"""
+    """Tente de clamer tous les marchés en attente (Supporte EOA et Proxy Gnosis Safe)"""
     if not os.path.exists(CLAIMS_FILE): return
 
     print("\n💰 VÉRIFICATION DES CLAIMS EN ATTENTE...")
@@ -95,64 +101,132 @@ def process_pending_claims():
 
         # Connexion Web3
         w3 = Web3(Web3.HTTPProvider(POLYGON_RPC))
+        
+        # Inject PoA middleware if available
+        if ExtraDataToPOAMiddleware:
+            w3.middleware_onion.inject(ExtraDataToPOAMiddleware, layer=0)
+
         if not w3.is_connected():
             print("   ❌ Erreur connexion Polygon RPC")
             return
 
-        # Ensure PRIVATE_KEY is loaded
         if not PRIVATE_KEY:
             print("   ❌ Private Key manquante, impossible de claim")
             return
         
         account = w3.eth.account.from_key(PRIVATE_KEY)
+        
+        # Setup Proxy if available
+        safe_contract = None
+        if PROXY_ADDRESS:
+            print(f"   🛡️  Proxy detected: {PROXY_ADDRESS}")
+            safe_contract = w3.eth.contract(address=PROXY_ADDRESS, abi=json.loads(SAFE_ABI))
+        
         contract = w3.eth.contract(address=CTF_ADDRESS, abi=json.loads(CTF_ABI))
         
         remaining_claims = []
         
-        for condition_id in claims:
+        # Nonce setup
+        current_nonce = w3.eth.get_transaction_count(account.address, 'latest')
+        
+        for i, condition_id in enumerate(claims):
             try:
-                print(f"   🔎 Vérification {condition_id}...")
+                print(f"   🔎 Vérification {condition_id[:10]}...")
                 
-                # Préparation des paramètres
-                index_sets = [1, 2] # On demande YES et NO
-                parent_collection_id = "0x0000000000000000000000000000000000000000000000000000000000000000"
+                index_sets = [1, 2]
+                parent_collection_id = "0x" + "0"*64
+                
+                # Prepare Data
+                inner_tx = contract.functions.redeemPositions(
+                     USDC_ADDRESS, parent_collection_id, condition_id, index_sets
+                ).build_transaction({'gas': 0, 'gasPrice': 0})
+                inner_data = inner_tx['data']
+                
+                txn_call = None
+                
+                # --- PROXY PATH ---
+                if safe_contract:
+                    # Check Safe Nonce
+                    safe_nonce = safe_contract.functions.nonce().call()
+                    
+                    # Build Safe Hash
+                    safe_tx_hash_bytes = safe_contract.functions.getTransactionHash(
+                        CTF_ADDRESS, 0, inner_data, 0, 0, 0, 0,
+                        "0x0000000000000000000000000000000000000000",
+                        "0x0000000000000000000000000000000000000000",
+                        safe_nonce
+                    ).call()
+                    
+                    # Sign (EIP-191 + Gnosis V-adjustment)
+                    message = encode_defunct(primitive=safe_tx_hash_bytes)
+                    signed_message = w3.eth.account.sign_message(message, private_key=PRIVATE_KEY)
+                    sig_bytes = signed_message.signature
+                    v = sig_bytes[-1]
+                    if v < 30: v += 4
+                    signature = sig_bytes[:-1] + bytes([v])
+                    
+                    txn_call = safe_contract.functions.execTransaction(
+                        CTF_ADDRESS, 0, inner_data, 0, 0, 0, 0,
+                        "0x0000000000000000000000000000000000000000",
+                        "0x0000000000000000000000000000000000000000",
+                        signature
+                    )
+                else:
+                    # --- DIRECT PATH ---
+                    txn_call = contract.functions.redeemPositions(
+                        USDC_ADDRESS, parent_collection_id, condition_id, index_sets
+                    )
 
-                # Simulation (Call) pour voir si ça passerait
-                # Si le marché n'est pas résolu ou si on a 0 gain, ceci va lever une erreur
-                contract.functions.redeemPositions(
-                    USDC_ADDRESS, parent_collection_id, condition_id, index_sets
-                ).call({'from': account.address})
+                # Gas & Send
+                base_fee = w3.eth.get_block('latest')['baseFeePerGas']
+                max_priority = w3.to_wei(40, 'gwei')
+                max_fee = base_fee + max_priority
                 
-                # Si on arrive ici, c'est que le claim est valide ! On envoie la tx.
-                print("   ✅ Gains détectés ! Envoi de la transaction...")
-                
-                txn = contract.functions.redeemPositions(
-                    USDC_ADDRESS, parent_collection_id, condition_id, index_sets
-                ).build_transaction({
+                try:
+                    gas_est = txn_call.estimate_gas({'from': account.address})
+                    gas_limit = int(gas_est * 1.5)
+                except Exception as e:
+                    if "insufficient funds" in str(e):
+                        print("      ❌ PAS ASSEZ DE MATIC pour le gas.")
+                        remaining_claims.append(condition_id)
+                        continue
+                    # If simulation fails (e.g. nothing to redeem), we skip sending
+                    # But we assume the list is valid from find_claims.py usually.
+                    # If it's "execution reverted", it likely means 0 balance to redeem.
+                    print(f"      ⚠️  Gas Est. Failed (Claim invalid/Already claimed?): {e}")
+                    # Don't keep in list if it's strictly a revert (likely already done)
+                    if "execution reverted" in str(e) or "GS026" in str(e):
+                         continue
+                    
+                    # For other errors, keep it pending
+                    remaining_claims.append(condition_id)
+                    continue
+
+                txn_nonce = current_nonce + i
+                txn = txn_call.build_transaction({
                     'chainId': 137,
-                    'gas': 200000,
-                    'gasPrice': w3.eth.gas_price,
-                    'nonce': w3.eth.get_transaction_count(account.address),
+                    'gas': gas_limit,
+                    'maxFeePerGas': max_fee,
+                    'maxPriorityFeePerGas': max_priority,
+                    'nonce': txn_nonce,
+                    'type': 2
                 })
                 
                 signed_txn = w3.eth.account.sign_transaction(txn, private_key=PRIVATE_KEY)
                 tx_hash = w3.eth.send_raw_transaction(signed_txn.raw_transaction)
                 print(f"   🚀 Claim envoyé ! Hash: {w3.to_hex(tx_hash)}")
                 
-                # On ne le remet pas dans la liste (considéré traité)
-                # Note: S'il échoue on-chain, il sera perdu de la liste. 
-                # Pour être ultra-safe, on pourrait attendre la receipt, mais ça bloque le bot.
-                
             except Exception as e:
-                # Si erreur (souvent "execution reverted" car pas résolu), on garde pour plus tard
-                # print(f"   ⏳ Pas encore prêt ou pas de gains ({e})")
+                print(f"   ❌ Erreur claim loop: {e}")
                 remaining_claims.append(condition_id)
         
         # Sauvegarde de ce qui reste à traiter
-        with open(CLAIMS_FILE, 'w') as f:
-            json.dump(remaining_claims, f)
-            
-        print(f"   🏁 Fin des claims. Restants: {len(remaining_claims)}")
+        if len(remaining_claims) != len(claims):
+            with open(CLAIMS_FILE, 'w') as f:
+                json.dump(remaining_claims, f)
+            print(f"   💾 Liste mise à jour. Restants: {len(remaining_claims)}")
+        else:
+             print("   ⚠️  Aucun claim n'a abouti (Gas ou Déjà fait).")
 
     except Exception as e:
         print(f"❌ Erreur générale process claims: {e}")
