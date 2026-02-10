@@ -431,3 +431,23 @@
 [2026-02-10 13:45:01] | TRADE_RESULT    | status=LOSS | pnl=$-3.51 (-59.0%) | entry_summary=SCORE: 71 | BB: 12/30 | ATR: 59/70 (x1.8) | closed_early=True | counterfactual=LOST | max_loss_signal_score=N/A
 [2026-02-10 13:45:01] | SESSION_END     | market=btc-updown-15m-1770723000 | max_total_score=71
 [2026-02-10 14:00:03] | SESSION_END     | market=btc-updown-15m-1770723900 | max_total_score=23
+[2026-02-10 14:30:00] | SESSION_END     | market=btc-updown-15m-1770725700 | max_total_score=28
+[2026-02-10 15:15:01] | SESSION_END     | market=btc-updown-15m-1770728400 | max_total_score=24
+[2026-02-10 15:30:01] | SESSION_END     | market=btc-updown-15m-1770729300 | max_total_score=20
+[2026-02-10 15:45:01] | SESSION_END     | market=btc-updown-15m-1770730200 | max_total_score=22
+[2026-02-10 16:00:02] | SESSION_END     | market=btc-updown-15m-1770731100 | max_total_score=32
+[2026-02-10 16:15:00] | SESSION_END     | market=btc-updown-15m-1770732000 | max_total_score=15
+[2026-02-10 16:30:02] | SESSION_END     | market=btc-updown-15m-1770732900 | max_total_score=35
+[2026-02-10 16:45:04] | SESSION_END     | market=btc-updown-15m-1770733800 | max_total_score=36
+[2026-02-10 17:00:01] | SESSION_END     | market=btc-updown-15m-1770734700 | max_total_score=25
+[2026-02-10 17:15:00] | SESSION_END     | market=btc-updown-15m-1770735600 | max_total_score=52
+[2026-02-10 17:30:02] | SESSION_END     | market=btc-updown-15m-1770736500 | max_total_score=62
+[2026-02-10 17:45:01] | SESSION_END     | market=btc-updown-15m-1770737400 | max_total_score=38
+[2026-02-10 18:00:01] | SESSION_END     | market=btc-updown-15m-1770738300 | max_total_score=32
+[2026-02-10 18:15:01] | SESSION_END     | market=btc-updown-15m-1770739200 | max_total_score=56
+[2026-02-10 18:30:01] | SESSION_END     | market=btc-updown-15m-1770740100 | max_total_score=59
+[2026-02-10 18:45:02] | SESSION_END     | market=btc-updown-15m-1770741000 | max_total_score=45
+[2026-02-10 19:00:01] | SESSION_END     | market=btc-updown-15m-1770741900 | max_total_score=46
+[2026-02-10 19:15:00] | SESSION_END     | market=btc-updown-15m-1770742800 | max_total_score=57
+[2026-02-10 19:30:01] | SESSION_END     | market=btc-updown-15m-1770743700 | max_total_score=56
+[2026-02-10 19:45:01] | SESSION_END     | market=btc-updown-15m-1770744600 | max_total_score=58

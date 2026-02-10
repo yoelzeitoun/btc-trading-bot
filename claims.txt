@@ -88,3 +88,5 @@
 [2026-02-10 14:15:16] Checking condition_id: 0xca778e507c5b74b451c10d13730f6a855d3f1c4f2c0b6da12377aaaff89ddb7f
 [2026-02-10 14:15:19] CRITICAL ERROR in loop: {'message': 'replacement transaction underpriced', 'code': -32000}
 [2026-02-10 14:15:19] No changes. Claims pending for next cycle: 1
+[2026-02-10 14:30:00] Starting claim check process...
+[2026-02-10 14:30:00] No pending claims found.
