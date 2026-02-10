@@ -955,301 +955,201 @@ def execute_close_trade(poly_client, token_id, size, current_btc_price=None):
 # --- 4. FETCH CURRENT BTC 15M MARKET AUTOMATICALLY ---
 def find_current_btc_15m_market(verbose=True):
     """
-    Finds the current LIVE BTC 15m market by scraping the Polymarket crypto/15M page.
-    This gets the actual live market shown on the website.
+    Finds the current LIVE BTC 15m market.
+    Uses direct slug prediction and API verification to avoid parsing issues.
+    Falls back to listing scraping if prediction fails.
+    Fecthes Strike Price from Kraken historical data (Open price at start time).
     """
     if verbose:
         print("🔍 Searching for current LIVE BTC 15m market on Polymarket...")
     
     try:
-        # First, try to scrape the live market from the crypto/15M page
-        if verbose:
-            print("   Fetching live market from Polymarket website...")
-        crypto_page_url = "https://polymarket.com/crypto/15M"
-        
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
-        }
-        
-        page_response = requests.get(crypto_page_url, headers=headers, timeout=10)
-        page_response.raise_for_status()
-        
-        # Look for the market slug in the HTML (e.g., /event/btc-updown-15m-1769900400)
+        import time
+        from datetime import datetime, timezone
+        import requests
+        import json
         import re
-        market_links = re.findall(r'/event/(btc-updown-15m-\d{10})', page_response.text)
+
+        # 1. Predict Slug based on current time (Markets start every 15 mins: :00, :15, :30, :45)
+        now_ts = int(time.time())
+        window_size = 900
+        current_window_start = (now_ts // window_size) * window_size
         
-        if market_links:
-            # Get the first one (should be the live market)
-            live_slug = market_links[0]
-            if verbose:
-                print(f"   ✅ Found LIVE market on website: {live_slug}")
-            
-            # Fetch the individual market page to get strike price and outcome prices
-            strike_price = None
-            outcome_prices = {'up': None, 'down': None}
-            page_clob_token_ids = None
+        # Check current, previous (if just started), and next (if eager)
+        candidates = [
+            current_window_start,
+            current_window_start - window_size,
+            current_window_start + window_size
+        ]
+        
+        target_market_data = None
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        api_base = "https://gamma-api.polymarket.com/events?slug="
 
-            market_url = f"https://polymarket.com/event/{live_slug}"
-            timestamp_match = re.search(r'-(\d{10})$', live_slug)
-            target_end_time = None
-            if timestamp_match:
-                market_start_timestamp = int(timestamp_match.group(1))
-                from datetime import datetime, timezone
-                dt = datetime.fromtimestamp(market_start_timestamp, tz=timezone.utc)
-                target_end_time = dt.strftime('%Y-%m-%dT%H:%M:%S')
+        for start_ts in candidates:
+            slug = f"btc-updown-15m-{start_ts}"
+            # Basic client-side check: Is it expired?
+            if now_ts > (start_ts + 900 + 300): # Allow 5m overdue before skipping
+                continue
 
-            for attempt in range(1, 6):
-                try:
-                    market_page_response = requests.get(market_url, headers=headers, timeout=10)
-                    market_page_response.raise_for_status()
-
-                    # Find all historical closePrice entries with their endTimes
-                    pattern = r'\{"startTime":"([^"]+)","endTime":"([^"]+)","openPrice":([\d.]+),"closePrice":([\d.]+),"outcome":"([^"]+)","percentChange":([^}]+)\}'
-                    matches = re.findall(pattern, market_page_response.text)
-
-                    # Find the closePrice for the window that ENDS at market start time
-                    if target_end_time:
-                        for start_time, end_time, open_price, close_price, outcome, pct in matches:
-                            if target_end_time in end_time:
-                                strike_price = float(close_price)
-                                if verbose:
-                                    print(f"   💰 Strike Price (Price to Beat): ${strike_price:,.2f}")
-                                break
-
-                    # Also extract outcome prices from the page (Up/Down market prices)
-                    outcome_prices_match = re.search(r'"outcomePrices"\s*:\s*\[([^\]]+)\]', market_page_response.text)
-                    if outcome_prices_match:
-                        prices_str = outcome_prices_match.group(1)
-                        price_values = re.findall(r'"([0-9.]+)"', prices_str)
-                        if len(price_values) >= 2:
-                            outcome_prices['up'] = float(price_values[0])
-                            outcome_prices['down'] = float(price_values[1])
-
-                    # Extract clobTokenIds from page as fallback
-                    clob_ids_match = re.search(r'"clobTokenIds"\s*:\s*\[([^\]]+)\]', market_page_response.text)
-                    if clob_ids_match:
-                        ids_str = clob_ids_match.group(1)
-                        id_values = re.findall(r'"([0-9a-fx]+)"', ids_str, re.IGNORECASE)
-                        if len(id_values) >= 2:
-                            page_clob_token_ids = {'yes': id_values[0], 'no': id_values[1]}
-
-                    if strike_price is not None:
-                        break
-                except Exception as e:
-                    if verbose:
-                        print(f"   ⚠️  Could not extract data from page (attempt {attempt}/5): {e}")
-
-                time.sleep(2)
-
-            if strike_price is None:
-                if verbose:
-                    print("   ❌ Price to Beat not found. Retrying market discovery...")
-                return None
-            
-            # Now fetch details from Gamma API
-            api_url = "https://gamma-api.polymarket.com"
-            if verbose:
-                print(f"   Fetching market details from API...")
-
-            # Try direct slug lookup first (more reliable for active markets)
             try:
-                slug_response = requests.get(
-                    f"{api_url}/events",
-                    params={"slug": live_slug},
-                    timeout=10
-                )
-                slug_response.raise_for_status()
-                slug_data = slug_response.json()
-                if slug_data:
-                    event = slug_data[0] if isinstance(slug_data, list) else slug_data
-                    now = time.time()
-                    timestamp_match = re.search(r'-(\d{10})$', live_slug)
-                    if timestamp_match:
-                        market_start_timestamp = int(timestamp_match.group(1))
-                        market_end_timestamp = market_start_timestamp + 900
-                        time_remaining = (market_end_timestamp - now) / 60
-
-                        clob_token_ids = extract_clob_token_ids(event.get('markets', []))
-                        clob_token_ids = clob_token_ids or page_clob_token_ids
+                if verbose: print(f"   Checking candidate: {slug}...")
+                resp = requests.get(f"{api_base}{slug}", headers=headers, timeout=5)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    if data and len(data) > 0:
+                        event = data[0]
                         
-                        condition_id = None
-                        if event.get('markets') and len(event['markets']) > 0:
-                            condition_id = event['markets'][0].get('conditionId')
-
-                        market_data = {
-                            'slug': live_slug,
-                            'title': event.get('title', '').upper(),
-                            'event': event,
-                            'markets': event.get('markets', []),
-                            'end_date': event.get('end_date_iso', ''),
-                            'time_remaining': time_remaining,
-                            'end_timestamp': market_end_timestamp,
-                            'strike_price': strike_price,
-                            'outcome_prices': outcome_prices,
-                            'clob_token_ids': clob_token_ids,
-                            'condition_id': condition_id
-                        }
-                        print(f"   🎯 Selected LIVE market: {live_slug}")
-                        print(f"      Time remaining: {time_remaining:.1f} minutes")
-                        return market_data
-            except Exception:
-                pass
-            
-            # Search for this specific market
-            events_response = requests.get(
-                f"{api_url}/events",
-                params={
-                    "order": "id",
-                    "ascending": "false",
-                    "limit": 200  # Increase limit to find it
-                },
-                timeout=10
-            )
-            events_response.raise_for_status()
-            events_data = events_response.json()
-            
-            # Find the matching event
-            for event in events_data:
-                if live_slug in event.get('slug', ''):
-                    now = time.time()
-                    timestamp_match = re.search(r'-(\d{10})$', live_slug)
-                    if timestamp_match:
-                        market_start_timestamp = int(timestamp_match.group(1))
-                        # Add 15 minutes (900 seconds) since slug timestamp is START time, not END time
-                        market_end_timestamp = market_start_timestamp + 900
-                        time_remaining = (market_end_timestamp - now) / 60
-                        
-                        clob_token_ids = extract_clob_token_ids(event.get('markets', []))
-                        clob_token_ids = clob_token_ids or page_clob_token_ids
-
-                        condition_id = None
-                        if event.get('markets') and len(event['markets']) > 0:
-                            condition_id = event['markets'][0].get('conditionId')
-
-                        market_data = {
-                            'slug': live_slug,
-                            'title': event.get('title', '').upper(),
-                            'event': event,
-                            'markets': event.get('markets', []),
-                            'end_date': event.get('end_date_iso', ''),
-                            'time_remaining': time_remaining,
-                            'end_timestamp': market_end_timestamp,
-                            'strike_price': strike_price,  # Include scraped strike price
-                            'outcome_prices': outcome_prices,  # Include outcome prices
-                            'clob_token_ids': clob_token_ids,
-                            'condition_id': condition_id
-                        }
-                        
-                        print(f"   🎯 Selected LIVE market: {live_slug}")
-                        print(f"      Time remaining: {time_remaining:.1f} minutes")
-                        return market_data
-            
-            print(f"   ⚠️  Market found on website but not in API, using website data...")
-            # Use what we have from the website
-            now = time.time()
-            timestamp_match = re.search(r'-(\d{10})$', live_slug)
-            if timestamp_match:
-                market_start_timestamp = int(timestamp_match.group(1))
-                # Add 15 minutes (900 seconds) since slug timestamp is START time, not END time
-                market_end_timestamp = market_start_timestamp + 900
-                time_remaining = (market_end_timestamp - now) / 60
-                
-                return {
-                    'slug': live_slug,
-                    'title': f'BITCOIN UP OR DOWN - 15 MINUTE',
-                    'event': {},
-                    'markets': [{}],
-                    'end_date': '',
-                    'time_remaining': time_remaining,
-                    'end_timestamp': market_end_timestamp,
-                    'strike_price': strike_price,  # Include scraped strike price
-                    'outcome_prices': outcome_prices,  # Include outcome prices
-                    'clob_token_ids': page_clob_token_ids,
-                    'condition_id': None  # Unknown when website data only
-                }
-        
-        print("   ⚠️  Could not find live market on website, trying API...")
-        
-        # Fallback to API search
-        api_url = "https://gamma-api.polymarket.com"
-        
-        # Get recent events (including those about to close)
-        print("   Fetching markets from Gamma API...")
-        
-        all_btc_markets = []
-        now = time.time()
-        
-        # Check both active (closed=false) and recently closed markets
-        for closed_status in ['false', 'true']:
-            events_response = requests.get(
-                f"{api_url}/events",
-                params={
-                    "order": "id",
-                    "ascending": "false",
-                    "closed": closed_status,
-                    "limit": 50
-                },
-                timeout=10
-            )
-            events_response.raise_for_status()
-            events_data = events_response.json()
-            
-            # Look for BTC 15m updown markets
-            for event in events_data:
-                slug = event.get('slug', '').lower()
-                title = event.get('title', '').upper()
-                
-                # Check if this is a BTC 15m market
-                if 'btc' in slug and '15m' in slug and 'updown' in slug:
-                    markets = event.get('markets', [])
-                    if markets:
-                        # Extract timestamp from slug to calculate time remaining
-                        timestamp_match = re.search(r'-(\d{10})$', slug)
-                        if timestamp_match:
-                            market_start_timestamp = int(timestamp_match.group(1))
-                            # Add 15 minutes (900 seconds) since slug timestamp is START time, not END time
-                            market_end_timestamp = market_start_timestamp + 900
-                            time_remaining = (market_end_timestamp - now) / 60  # minutes
+                        # Use closing status and end time to determine validity
+                        if event.get('closed'):
+                            if verbose: print("      -> Closed.")
+                            continue
                             
-                            # Include markets that haven't expired yet (even if slightly negative due to timing)
-                            if time_remaining > -5:  # Allow 5 min grace period for recently closed
-                                condition_id = markets[0].get('conditionId') if markets else None
-                                all_btc_markets.append({
-                                    'slug': slug,
-                                    'title': title,
-                                    'event': event,
-                                    'markets': markets,
-                                    'end_date': event.get('end_date_iso', ''),
-                                    'time_remaining': time_remaining,
-                                    'end_timestamp': market_end_timestamp,
-                                    'condition_id': condition_id
-                                })
+                        end_ts_api = start_ts + 900
+                        # Accept if we are before end time + buffer
+                        if now_ts < (end_ts_api + 60):
+                            if verbose: print(f"   ✅ Found Valid Market API: {slug}")
+                            target_market_data = event
+                            break
+                        else:
+                            if verbose: print(f"      -> Ended (End: {end_ts_api})")
+            except Exception as e:
+                print(f"      API Error: {e}")
+                continue
         
-        print(f"   Found {len(all_btc_markets)} BTC 15m markets")
-        
-        if all_btc_markets:
-            # Sort by time remaining (closest to expiration first)
-            all_btc_markets.sort(key=lambda x: x['time_remaining'])
-            
-            # Show top 5
-            for i, m in enumerate(all_btc_markets[:5], 1):
-                status = "🟢 ACTIVE" if m['time_remaining'] > 0 else "🔴 EXPIRED"
-                print(f"   {i}. {status} {m['slug']} (expires in {m['time_remaining']:.1f}min)")
-            
-            # Select the one closest to expiration that's still active
-            market_data = all_btc_markets[0]
-            print(f"\n   🎯 Selected CLOSEST market: {market_data['slug']}")
-            print(f"      Time remaining: {market_data['time_remaining']:.1f} minutes")
-            return market_data
-        else:
-            print("   ⚠️  No BTC 15m markets found")
-            return None
-            
-    except Exception as e:
-        print(f"   ❌ API Error: {e}")
-        return None
+        # Fallback: Listing page scraping (modernized)
+        if not target_market_data:
+            if verbose: print("   ⚠️  Direct prediction failed. Trying listing page fallback...")
+            try:
+                crypto_page_url = "https://polymarket.com/crypto/15M"
+                page_response = requests.get(crypto_page_url, headers=headers, timeout=10)
+                page_response.raise_for_status()
+                
+                market_links = re.findall(r'/event/(btc-updown-15m-\d{10})', page_response.text)
+                valid_links = []
+                for link in set(market_links):
+                     ts_match = re.search(r'-(\d{10})$', link)
+                     if ts_match:
+                         m_ts = int(ts_match.group(1))
+                         # Check if active
+                         if now_ts < (m_ts + 900 + 60):
+                             valid_links.append((m_ts, link))
+                
+                if valid_links:
+                    valid_links.sort()
+                    # Filter for the one strictly active NOW (closest to now but not future)
+                    # Actually, valid_links contains future too.
+                    # We want the one where start <= now
+                    active_now = [x for x in valid_links if x[0] <= now_ts]
+                    if active_now:
+                        best_slug = active_now[-1][1] # The latest one that has started
+                    elif valid_links:
+                        best_slug = valid_links[0][1] # Nearest future if no active
+                    else:
+                        best_slug = None
+                        
+                    if best_slug:
+                        if verbose: print(f"   ✅ Found market via listing: {best_slug}")
+                        resp = requests.get(f"{api_base}{best_slug}", headers=headers, timeout=5)
+                        if resp.status_code == 200 and resp.json():
+                            target_market_data = resp.json()[0]
+            except Exception as e:
+                print(f"   ❌ Listing scraping failed: {e}")
 
-# --- 5. EXTRACT STRIKE PRICE FROM QUESTION ---
+        if not target_market_data:
+            if verbose: print("   ❌ No active market found.")
+            return None
+
+        # Extract Details
+        live_slug = target_market_data.get('slug')
+        
+        # Get Start Time from slug (reliable)
+        market_start_timestamp = 0
+        timestamp_match = re.search(r'-(\d{10})$', live_slug)
+        if timestamp_match:
+            market_start_timestamp = int(timestamp_match.group(1))
+        
+        market_end_timestamp = market_start_timestamp + 900
+        time_remaining = (market_end_timestamp - now_ts) / 60
+        
+        # Token IDs
+        clob_ids = None
+        markets_list = target_market_data.get('markets', [])
+        condition_id = None
+        if markets_list:
+            m_item = markets_list[0]
+            condition_id = m_item.get('conditionId')
+            clob_token_ids = m_item.get('clobTokenIds')
+            if clob_token_ids:
+                 if isinstance(clob_token_ids, str):
+                     try:
+                         clob_token_ids = json.loads(clob_token_ids)
+                     except: pass
+                 if isinstance(clob_token_ids, list) and len(clob_token_ids) >= 2:
+                     clob_ids = {'yes': clob_token_ids[0], 'no': clob_token_ids[1]}
+        
+        # Outcome Prices (Midpoints)
+        outcome_prices = {'up': None, 'down': None}
+        out_prices_raw = target_market_data.get('outcomePrices')
+        if out_prices_raw:
+            try:
+                if isinstance(out_prices_raw, str):
+                    out_prices_raw = json.loads(out_prices_raw)
+                if isinstance(out_prices_raw, list) and len(out_prices_raw) >= 2:
+                    outcome_prices['up'] = float(out_prices_raw[0])
+                    outcome_prices['down'] = float(out_prices_raw[1])
+            except: pass
+
+        # STRIKE PRICE (Critical)
+        # Fetch from Kraken OHLC at market_start_timestamp
+        strike_price = None
+        if market_start_timestamp > 0:
+            if verbose: print(f"   📊 Fetching Strike Price (BTC @ {market_start_timestamp})...")
+            try:
+                # 2-minute buffer lookback to ensure we catch the candle
+                k_url = f"https://api.kraken.com/0/public/OHLC?pair=XBTUSD&interval=1&since={market_start_timestamp - 120}"
+                k_resp = requests.get(k_url, headers=headers, timeout=5)
+                if k_resp.status_code == 200:
+                    k_data = k_resp.json()
+                    if not k_data.get('error'):
+                        candles = k_data['result']['XXBTZUSD']
+                        # Find the candle that starts at market_start_timestamp
+                        target_candle = next((c for c in candles if int(c[0]) == market_start_timestamp), None)
+                        
+                        if target_candle:
+                            strike_price = float(target_candle[1]) # Open price
+                            if verbose: print(f"   💰 Strike Price (Kraken Open): ${strike_price:,.2f}")
+                        else:
+                            # Fallback: Closest candle
+                            if candles:
+                                closest = min(candles, key=lambda c: abs(int(c[0]) - market_start_timestamp))
+                                if abs(int(closest[0]) - market_start_timestamp) <= 60:
+                                    strike_price = float(closest[1])
+                                    if verbose: print(f"   💰 Strike Price (Kraken Prox): ${strike_price:,.2f}")
+            except Exception as e:
+                if verbose: print(f"   ⚠️  Strike fetch error: {e}")
+
+        # If strike price not found, it is fatal for logic? 
+        # The bot needs strike price to calculate logic.
+        # If None, we return None to force retry or we need a hard fallback
+        if strike_price is None:
+             if verbose: print("   ❌ Strike price could not be determined.")
+             return None
+
+        return {
+            'slug': live_slug,
+            'title': target_market_data.get('title', 'BITCOIN UP OR DOWN'),
+            'time_remaining': time_remaining,
+            'end_timestamp': market_end_timestamp,
+            'strike_price': strike_price,
+            'outcome_prices': outcome_prices,
+            'clob_token_ids': clob_ids,
+            'condition_id': condition_id
+        }
+    
+    except Exception as e:
+        print(f"   ❌ Error: {e}")
+        return None
 def extract_strike_from_question(question):
     """Extract strike price from question"""
     import re
