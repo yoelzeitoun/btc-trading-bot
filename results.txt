@@ -1,1186 +1,381 @@
-[2026-02-09 06:35:06] | TRADE_OPEN_OK   | token=54415556765446591301794307399840691496483362252874921126217096002119503724282 | direction=DOWN | price=0.87 | order_id=0x922fb40d8435d0a616f1849b78df9adda98efb66f7716f15674ada67ca270418 | size=7.0 | btc=71040.4
-[2026-02-09 06:39:42] | TRIGGER_CLOSE   | reason=📈 TAKE PROFIT: Share price hit $0.99 (Current: $0.9900) | btc_price=70914.5 | share_price=0.99 | strike=71195.44476957517 | token=54415556765446591301794307399840691496483362252874921126217096002119503724282
+[2026-02-09 06:35:06] | TRADE_OPEN   | token=54415556765446591301794307399840691496483362252874921126217096002119503724282 | direction=DOWN | price=0.87 | order_id=0x922fb40d8435d0a616f1849b78df9adda98efb66f7716f15674ada67ca270418 | size=7.0
+[2026-02-09 06:39:42] | TRIGGER_CLOSE   | 📈 TAKE PROFIT: Share price hit $0.99 (Current: $0.9900) share_price=0.99 | token=54415556765446591301794307399840691496483362252874921126217096002119503724282
 [2026-02-09 06:39:43] | TRADE_CLOSE_OK  | token=54415556765446591301794307399840691496483362252874921126217096002119503724282 | size=6.9716 | price=0.98 | order_id=0x1b7d0c198e41af90c980d08c6dd5d5fa4ca0d812b7c30b07f8bd50ec285a0ed6
-[2026-02-09 06:56:44] | TRADE_OPEN_OK   | direction=DOWN | price=0.91 | size=7.0 | btc=70908.4
-[2026-02-09 06:57:40] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 50.5% ($0.9100 → $0.4500) | btc_price=70965.0 | share_price=0.45 | strike=70979.14548724389
+[2026-02-09 06:56:44] | TRADE_OPEN   | direction=DOWN | price=0.91 | size=7.0
+[2026-02-09 06:57:40] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 50.5% ($0.9100 → $0.4500) share_price=0.45
 [2026-02-09 06:57:42] | TRADE_CLOSE_OK  | size=7.0 | price=0.39
-[2026-02-09 07:00:02] | SESSION_END     | market=btc-updown-15m-1770612300 | strike=70979.14548724389 | evaluations=29 | signals=1 | max_total_score=72 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 07:05:06] | TRADE_OPEN_OK   | direction=DOWN | price=0.86 | size=7.0 | btc=70830.1
-[2026-02-09 07:13:12] | TRIGGER_CLOSE   | reason=📈 TAKE PROFIT: Share price hit $0.99 (Current: $0.9900) | btc_price=70845.0 | share_price=0.99 | strike=70950.90918178992
+[2026-02-09 07:00:02] | SESSION_END     | market=btc-updown-15m-1770612300| max_total_score=72
+[2026-02-09 07:05:06] | TRADE_OPEN   | direction=DOWN | price=0.86 | size=7.0
+[2026-02-09 07:13:12] | TRIGGER_CLOSE   | 📈 TAKE PROFIT: Share price hit $0.99 (Current: $0.9900) share_price=0.99
 [2026-02-09 07:13:13] | TRADE_CLOSE_OK  | size=6.9684 | price=0.98
-[2026-02-09 07:15:01] | SESSION_END     | market=btc-updown-15m-1770613200 | strike=70950.90918178992 | evaluations=72 | signals=1 | max_total_score=73 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 07:24:45] | TRADE_OPEN_OK   | direction=UP | price=0.94 | size=7.0 | btc=70905.1
-[2026-02-09 07:27:31] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 100.0% ($0.9400 → $0.0000) | btc_price=70948.1 | share_price=0.0 | strike=70767.62655523611
+[2026-02-09 07:15:01] | SESSION_END     | market=btc-updown-15m-1770613200| max_total_score=73
+[2026-02-09 07:24:45] | TRADE_OPEN   | direction=UP | price=0.94 | size=7.0
+[2026-02-09 07:27:31] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 100.0% ($0.9400 → $0.0000) share_price=0.0
 [2026-02-09 07:27:32] | TRADE_CLOSE_OK  | size=6.9945 | price=0.99
-[2026-02-09 07:45:02] | SESSION_END     | market=btc-updown-15m-1770615000 | strike=70970.36341030095 | evaluations=238 | signals=0 | max_total_score=52
-[2026-02-09 08:00:01] | SESSION_END     | market=btc-updown-15m-1770615900 | strike=70919.46210825471 | evaluations=222 | signals=0 | max_total_score=70
-[2026-02-09 08:01:38] | TRADE_OPEN_OK   | direction=DOWN | price=0.88 | size=7.0 | btc=70751.8
-[2026-02-09 08:15:01] | SESSION_END     | market=btc-updown-15m-1770616800 | strike=70992.55161529756 | evaluations=3 | signals=3 | max_total_score=98 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 08:18:12] | TRADE_OPEN_OK   | direction=DOWN | price=0.89 | size=7.0 | btc=70650.0
-[2026-02-09 08:30:01] | SESSION_END     | market=btc-updown-15m-1770617700 | strike=70840.87641821452 | evaluations=32 | signals=1 | max_total_score=82 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 08:39:15] | TRADE_OPEN_OK   | direction=UP | price=0.93 | size=7.0 | btc=70485.0
-[2026-02-09 08:45:02] | SESSION_END     | market=btc-updown-15m-1770618600 | strike=70365.30854972942 | evaluations=140 | signals=1 | max_total_score=83 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 08:55:10] | TRADE_OPEN_OK   | direction=UP | price=0.87 | size=7.0 | btc=70590.0
-[2026-02-09 09:00:01] | SESSION_END     | market=btc-updown-15m-1770619500 | strike=70496.2523647401 | evaluations=154 | signals=1 | max_total_score=72 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 09:15:01] | SESSION_END     | market=btc-updown-15m-1770620400 | strike=70608.7086453139 | evaluations=242 | signals=3 | max_total_score=86
-[2026-02-09 09:26:18] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=89 | btc=70604.9
-[2026-02-09 09:26:21] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=89 | btc=70604.9
-[2026-02-09 09:26:24] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=89 | btc=70604.9
-[2026-02-09 09:26:27] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=89 | btc=70604.9
-[2026-02-09 09:26:31] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=89 | btc=70604.9
-[2026-02-09 09:26:34] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=89 | btc=70604.9
-[2026-02-09 09:26:54] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=89 | btc=70605.0
-[2026-02-09 09:27:40] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=72 | btc=70650.1
-[2026-02-09 09:27:43] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=74 | btc=70650.1
-[2026-02-09 09:27:47] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=75 | btc=70650.1
-[2026-02-09 09:27:50] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=77 | btc=70650.1
-[2026-02-09 09:27:53] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=79 | btc=70650.1
-[2026-02-09 09:28:01] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=90 | btc=70650.1
-[2026-02-09 09:28:04] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=90 | btc=70650.0
-[2026-02-09 09:28:07] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=88 | btc=70656.0
-[2026-02-09 09:28:10] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=88 | btc=70657.1
-[2026-02-09 09:28:51] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=73 | btc=70680.0
-[2026-02-09 09:30:01] | SESSION_END     | market=btc-updown-15m-1770621300 | strike=70741.8677539214 | evaluations=224 | signals=14 | max_total_score=90
-[2026-02-09 09:39:01] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=77 | btc=70389.1
-[2026-02-09 09:39:04] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=77 | btc=70389.1
-[2026-02-09 09:39:07] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=77 | btc=70375.7
-[2026-02-09 09:39:10] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=77 | btc=70394.9
-[2026-02-09 09:39:14] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=77 | btc=70394.9
-[2026-02-09 09:39:17] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=77 | btc=70395.0
-[2026-02-09 09:39:20] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=77 | btc=70410.0
-[2026-02-09 09:39:23] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=77 | btc=70410.0
-[2026-02-09 09:39:25] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=77 | btc=70410.0
-[2026-02-09 09:39:29] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=77 | btc=70410.0
-[2026-02-09 09:39:32] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=77 | btc=70409.9
-[2026-02-09 09:39:36] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=77 | btc=70409.9
-[2026-02-09 09:39:39] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=77 | btc=70410.0
-[2026-02-09 09:39:43] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=77 | btc=70425.0
-[2026-02-09 09:39:45] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=77 | btc=70433.1
-[2026-02-09 09:39:48] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=77 | btc=70433.1
-[2026-02-09 09:39:52] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=77 | btc=70433.1
-[2026-02-09 09:39:55] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=77 | btc=70433.1
-[2026-02-09 09:39:58] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=77 | btc=70433.1
-[2026-02-09 09:40:01] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=77 | btc=70433.1
-[2026-02-09 09:40:05] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=80 | btc=70427.7
-[2026-02-09 09:40:08] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=80 | btc=70427.7
-[2026-02-09 09:40:11] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=80 | btc=70427.6
-[2026-02-09 09:40:15] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=80 | btc=70419.1
-[2026-02-09 09:40:18] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=80 | btc=70419.1
-[2026-02-09 09:40:21] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=80 | btc=70419.1
-[2026-02-09 09:40:25] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=80 | btc=70399.8
-[2026-02-09 09:40:28] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=80 | btc=70399.8
-[2026-02-09 09:40:31] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=80 | btc=70399.8
-[2026-02-09 09:40:34] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=80 | btc=70401.5
-[2026-02-09 09:40:37] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=80 | btc=70401.5
-[2026-02-09 09:40:41] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=80 | btc=70395.0
-[2026-02-09 09:40:45] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=80 | btc=70395.0
-[2026-02-09 09:40:48] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=80 | btc=70405.1
-[2026-02-09 09:40:51] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=80 | btc=70405.1
-[2026-02-09 09:40:54] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=80 | btc=70405.1
-[2026-02-09 09:40:57] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=80 | btc=70410.0
-[2026-02-09 09:41:01] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=80 | btc=70410.0
-[2026-02-09 09:41:04] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=83 | btc=70395.0
-[2026-02-09 09:41:07] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=83 | btc=70395.0
-[2026-02-09 09:41:10] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=83 | btc=70431.7
-[2026-02-09 09:41:13] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=83 | btc=70431.7
-[2026-02-09 09:41:16] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=70376.0
-[2026-02-09 09:41:19] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=70365.3
-[2026-02-09 09:41:22] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=70365.3
-[2026-02-09 09:41:48] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=70392.9
-[2026-02-09 09:41:51] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=70379.5
-[2026-02-09 09:41:54] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=70379.5
-[2026-02-09 09:41:57] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=83 | btc=70379.5
-[2026-02-09 09:42:22] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=70395.0
-[2026-02-09 09:42:26] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=70410.0
-[2026-02-09 09:42:28] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70409.9
-[2026-02-09 09:42:32] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=70409.9
-[2026-02-09 09:42:35] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=70409.9
-[2026-02-09 09:42:38] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=70404.5
-[2026-02-09 09:42:41] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=70404.5
-[2026-02-09 09:42:44] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=70395.0
-[2026-02-09 09:42:48] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=70395.0
-[2026-02-09 09:42:51] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=70395.0
-[2026-02-09 09:42:54] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=70395.0
-[2026-02-09 09:43:00] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=70380.0
-[2026-02-09 09:43:19] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=85 | btc=70392.6
-[2026-02-09 09:43:22] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=85 | btc=70393.6
-[2026-02-09 09:43:25] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=85 | btc=70393.6
-[2026-02-09 09:43:28] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=85 | btc=70393.6
-[2026-02-09 09:45:01] | SESSION_END     | market=btc-updown-15m-1770622200 | strike=70658.15054418863 | evaluations=191 | signals=9 | max_total_score=75
-[2026-02-09 10:00:01] | SESSION_END     | market=btc-updown-15m-1770623100 | strike=70376.61822069704 | evaluations=227 | signals=0 | max_total_score=31
-[2026-02-09 10:11:42] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=78 | btc=70484.9
-[2026-02-09 10:11:44] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=79 | btc=70484.9
-[2026-02-09 10:11:48] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=80 | btc=70484.9
-[2026-02-09 10:11:51] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=81 | btc=70484.9
-[2026-02-09 10:11:54] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=83 | btc=70485.0
-[2026-02-09 10:11:57] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=83 | btc=70484.9
-[2026-02-09 10:12:00] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=83 | btc=70495.4
-[2026-02-09 10:12:03] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=83 | btc=70500.0
-[2026-02-09 10:12:06] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=83 | btc=70520.6
-[2026-02-09 10:12:09] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=83 | btc=70520.6
-[2026-02-09 10:12:13] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=83 | btc=70520.6
-[2026-02-09 10:12:15] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=83 | btc=70520.6
-[2026-02-09 10:12:19] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=83 | btc=70520.6
-[2026-02-09 10:12:22] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=83 | btc=70520.6
-[2026-02-09 10:12:25] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=83 | btc=70529.9
-[2026-02-09 10:12:28] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=83 | btc=70529.9
-[2026-02-09 10:12:31] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=83 | btc=70529.9
-[2026-02-09 10:12:35] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=83 | btc=70529.9
-[2026-02-09 10:12:38] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=83 | btc=70529.9
-[2026-02-09 10:12:42] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=83 | btc=70485.0
-[2026-02-09 10:12:45] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=83 | btc=70485.0
-[2026-02-09 10:12:48] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=83 | btc=70485.1
-[2026-02-09 10:12:51] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=83 | btc=70485.1
-[2026-02-09 10:12:54] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=83 | btc=70485.1
-[2026-02-09 10:12:57] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=83 | btc=70485.1
-[2026-02-09 10:13:00] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=83 | btc=70485.1
-[2026-02-09 10:13:03] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=83 | btc=70485.1
-[2026-02-09 10:13:07] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=83 | btc=70485.1
-[2026-02-09 10:13:10] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=83 | btc=70485.1
-[2026-02-09 10:13:13] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=83 | btc=70485.1
-[2026-02-09 10:13:16] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=83 | btc=70485.1
-[2026-02-09 10:13:19] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=83 | btc=70485.1
-[2026-02-09 10:13:22] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=83 | btc=70485.1
-[2026-02-09 10:13:25] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=70485.1
-[2026-02-09 10:13:28] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=70485.1
-[2026-02-09 10:13:31] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=70485.1
-[2026-02-09 10:13:34] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=70485.1
-[2026-02-09 10:13:37] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=70485.1
-[2026-02-09 10:13:40] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=70485.1
-[2026-02-09 10:13:43] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=70499.9
-[2026-02-09 10:13:46] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=70502.3
-[2026-02-09 10:13:49] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=70514.9
-[2026-02-09 10:13:52] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=70514.9
-[2026-02-09 10:13:55] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=70514.9
-[2026-02-09 10:13:58] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=70498.9
-[2026-02-09 10:15:00] | SESSION_END     | market=btc-updown-15m-1770624000 | strike=70360.28705971858 | evaluations=221 | signals=0 | max_total_score=67
-[2026-02-09 10:21:35] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=85 | btc=70266.0
-[2026-02-09 10:21:37] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=84 | btc=70181.8
-[2026-02-09 10:21:40] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=84 | btc=70179.9
-[2026-02-09 10:21:44] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=84 | btc=70190.2
-[2026-02-09 10:21:47] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=84 | btc=70190.3
-[2026-02-09 10:21:50] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=84 | btc=70190.3
-[2026-02-09 10:21:53] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=84 | btc=70190.2
-[2026-02-09 10:21:56] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=84 | btc=70184.8
-[2026-02-09 10:22:03] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=83 | btc=70182.4
-[2026-02-09 10:22:14] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=83 | btc=70172.7
-[2026-02-09 10:22:17] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=83 | btc=70172.7
-[2026-02-09 10:22:20] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=83 | btc=70172.8
-[2026-02-09 10:22:23] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=83 | btc=70165.5
-[2026-02-09 10:22:26] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=83 | btc=70160.5
-[2026-02-09 10:22:29] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=83 | btc=70156.5
-[2026-02-09 10:22:32] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=83 | btc=70140.8
-[2026-02-09 10:22:35] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=83 | btc=70140.9
-[2026-02-09 10:22:38] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=83 | btc=70170.0
-[2026-02-09 10:22:42] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=83 | btc=70170.0
-[2026-02-09 10:22:46] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=83 | btc=70170.0
-[2026-02-09 10:22:50] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=83 | btc=70185.8
-[2026-02-09 10:23:07] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=84 | btc=70214.9
-[2026-02-09 10:23:10] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=84 | btc=70215.0
-[2026-02-09 10:23:13] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=84 | btc=70214.9
-[2026-02-09 10:23:16] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=84 | btc=70215.0
-[2026-02-09 10:23:24] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=84 | btc=70214.9
-[2026-02-09 10:23:27] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=84 | btc=70224.5
-[2026-02-09 10:23:30] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=84 | btc=70200.0
-[2026-02-09 10:23:33] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=84 | btc=70200.0
-[2026-02-09 10:23:37] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=84 | btc=70200.0
-[2026-02-09 10:23:40] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=84 | btc=70203.0
-[2026-02-09 10:23:43] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=84 | btc=70203.0
-[2026-02-09 10:23:46] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=84 | btc=70203.0
-[2026-02-09 10:23:49] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=84 | btc=70203.0
-[2026-02-09 10:23:53] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=84 | btc=70203.0
-[2026-02-09 10:23:57] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=84 | btc=70209.8
-[2026-02-09 10:24:00] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=70209.8
-[2026-02-09 10:24:04] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=70201.7
-[2026-02-09 10:24:07] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=70201.7
-[2026-02-09 10:24:10] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=70201.7
-[2026-02-09 10:24:13] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=70185.0
-[2026-02-09 10:24:16] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=70189.1
-[2026-02-09 10:24:19] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=70188.9
-[2026-02-09 10:24:23] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=70188.9
-[2026-02-09 10:24:26] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=70188.9
-[2026-02-09 10:24:29] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=70188.9
-[2026-02-09 10:24:32] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=70188.9
-[2026-02-09 10:24:36] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=70188.9
-[2026-02-09 10:24:39] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=70189.0
-[2026-02-09 10:24:42] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=70189.0
-[2026-02-09 10:24:45] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=70189.0
-[2026-02-09 10:24:48] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=70170.0
-[2026-02-09 10:24:51] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70135.0
-[2026-02-09 10:24:55] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70135.0
-[2026-02-09 10:24:58] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70135.0
-[2026-02-09 10:25:01] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=85 | btc=70161.3
-[2026-02-09 10:25:04] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=85 | btc=70161.4
-[2026-02-09 10:25:07] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70161.4
-[2026-02-09 10:25:10] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70140.1
-[2026-02-09 10:25:14] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70140.1
-[2026-02-09 10:25:17] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70135.0
-[2026-02-09 10:25:20] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70135.0
-[2026-02-09 10:25:23] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70135.0
-[2026-02-09 10:25:27] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70100.0
-[2026-02-09 10:25:30] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70100.0
-[2026-02-09 10:25:33] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70100.0
-[2026-02-09 10:25:36] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70100.1
-[2026-02-09 10:25:39] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70122.4
-[2026-02-09 10:25:43] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70122.4
-[2026-02-09 10:25:46] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=70121.6
-[2026-02-09 10:25:50] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70121.6
-[2026-02-09 10:25:53] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70121.6
-[2026-02-09 10:25:56] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=70121.6
-[2026-02-09 10:25:59] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=70140.0
-[2026-02-09 10:26:02] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=70140.0
-[2026-02-09 10:26:06] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70128.0
-[2026-02-09 10:26:09] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70128.8
-[2026-02-09 10:26:12] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70128.8
-[2026-02-09 10:26:15] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70128.8
-[2026-02-09 10:26:19] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70128.8
-[2026-02-09 10:26:21] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70128.8
-[2026-02-09 10:26:25] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70125.1
-[2026-02-09 10:26:28] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70125.0
-[2026-02-09 10:26:31] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70125.0
-[2026-02-09 10:26:34] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70125.0
-[2026-02-09 10:26:37] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70125.0
-[2026-02-09 10:26:40] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=70125.0
-[2026-02-09 10:26:43] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=85 | btc=70140.1
-[2026-02-09 10:26:47] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=85 | btc=70140.1
-[2026-02-09 10:26:50] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=85 | btc=70171.1
-[2026-02-09 10:26:53] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=85 | btc=70161.3
-[2026-02-09 10:26:56] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=85 | btc=70155.1
-[2026-02-09 10:27:00] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=85 | btc=70155.1
-[2026-02-09 10:27:04] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=85 | btc=70155.1
-[2026-02-09 10:27:07] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=85 | btc=70155.0
-[2026-02-09 10:27:10] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=85 | btc=70155.0
-[2026-02-09 10:27:14] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=85 | btc=70140.0
-[2026-02-09 10:27:17] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=85 | btc=70140.0
-[2026-02-09 10:27:19] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=85 | btc=70110.1
-[2026-02-09 10:27:23] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=85 | btc=70110.1
-[2026-02-09 10:27:26] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=85 | btc=70110.1
-[2026-02-09 10:27:28] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=85 | btc=70100.1
-[2026-02-09 10:27:32] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=85 | btc=70100.1
-[2026-02-09 10:27:35] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=85 | btc=70100.0
-[2026-02-09 10:27:38] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=85 | btc=70100.0
-[2026-02-09 10:27:41] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=85 | btc=70100.0
-[2026-02-09 10:27:44] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=85 | btc=70081.1
-[2026-02-09 10:27:47] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=85 | btc=70080.0
-[2026-02-09 10:27:50] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=85 | btc=70065.1
-[2026-02-09 10:27:53] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=85 | btc=70065.1
-[2026-02-09 10:27:56] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=85 | btc=70065.0
-[2026-02-09 10:30:01] | SESSION_END     | market=btc-updown-15m-1770624900 | strike=70473.19285092037 | evaluations=188 | signals=16 | max_total_score=85
-[2026-02-09 10:36:15] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=72 | btc=69647.9
-[2026-02-09 10:36:18] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=71 | btc=69647.9
-[2026-02-09 10:36:21] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=72 | btc=69630.0
-[2026-02-09 10:36:24] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=72 | btc=69630.0
-[2026-02-09 10:37:02] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=72 | btc=69645.0
-[2026-02-09 10:37:06] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=74 | btc=69630.1
-[2026-02-09 10:37:09] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=74 | btc=69630.1
-[2026-02-09 10:37:12] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=74 | btc=69630.1
-[2026-02-09 10:37:33] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=74 | btc=69660.2
-[2026-02-09 10:37:45] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=74 | btc=69662.3
-[2026-02-09 10:37:54] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=71 | btc=69674.9
-[2026-02-09 10:40:45] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=74 | btc=69755.0
-[2026-02-09 10:40:48] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=75 | btc=69755.0
-[2026-02-09 10:41:01] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=78 | btc=69774.3
-[2026-02-09 10:41:04] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=79 | btc=69774.2
-[2026-02-09 10:41:07] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=79 | btc=69774.6
-[2026-02-09 10:41:10] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=80 | btc=69774.6
-[2026-02-09 10:41:13] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=79 | btc=69774.6
-[2026-02-09 10:41:16] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=80 | btc=69750.1
-[2026-02-09 10:41:19] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=80 | btc=69750.1
-[2026-02-09 10:41:23] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=80 | btc=69771.6
-[2026-02-09 10:41:25] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=81 | btc=69771.6
-[2026-02-09 10:41:29] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=81 | btc=69720.0
-[2026-02-09 10:41:32] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=81 | btc=69720.0
-[2026-02-09 10:41:35] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=81 | btc=69720.0
-[2026-02-09 10:41:39] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=81 | btc=69720.0
-[2026-02-09 10:41:42] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=81 | btc=69720.3
-[2026-02-09 10:41:45] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=81 | btc=69720.2
-[2026-02-09 10:41:48] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=81 | btc=69719.1
-[2026-02-09 10:41:52] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=81 | btc=69719.1
-[2026-02-09 10:41:54] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=80 | btc=69750.0
-[2026-02-09 10:41:58] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=80 | btc=69750.0
-[2026-02-09 10:42:01] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=80 | btc=69765.0
-[2026-02-09 10:42:04] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=80 | btc=69787.0
-[2026-02-09 10:42:07] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=71 | btc=69813.7
-[2026-02-09 10:42:10] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=82 | btc=69795.0
-[2026-02-09 10:42:13] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=81 | btc=69801.2
-[2026-02-09 10:42:16] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=78 | btc=69807.5
-[2026-02-09 10:42:20] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=80 | btc=69807.2
-[2026-02-09 10:42:23] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=81 | btc=69807.2
-[2026-02-09 10:42:26] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69765.0
-[2026-02-09 10:42:29] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69750.1
-[2026-02-09 10:42:32] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69750.1
-[2026-02-09 10:42:36] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69750.1
-[2026-02-09 10:42:39] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69763.7
-[2026-02-09 10:42:42] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69763.7
-[2026-02-09 10:42:45] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69763.7
-[2026-02-09 10:42:48] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69763.7
-[2026-02-09 10:42:51] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69778.0
-[2026-02-09 10:42:54] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69778.0
-[2026-02-09 10:42:57] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69778.0
-[2026-02-09 10:43:00] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69778.0
-[2026-02-09 10:43:03] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=85 | btc=69778.0
-[2026-02-09 10:43:06] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=85 | btc=69778.0
-[2026-02-09 10:43:09] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=85 | btc=69778.0
-[2026-02-09 10:45:01] | SESSION_END     | market=btc-updown-15m-1770625800 | strike=70031.725675 | evaluations=221 | signals=15 | max_total_score=74
-[2026-02-09 10:56:12] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=79 | btc=69915.0
-[2026-02-09 10:56:15] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=79 | btc=69915.0
-[2026-02-09 10:56:18] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=79 | btc=69922.4
-[2026-02-09 10:56:21] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=79 | btc=69930.0
-[2026-02-09 10:56:25] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=79 | btc=69930.0
-[2026-02-09 10:56:28] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=79 | btc=69930.0
-[2026-02-09 10:56:31] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=79 | btc=69937.9
-[2026-02-09 10:56:34] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=79 | btc=69937.9
-[2026-02-09 10:56:37] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=79 | btc=69936.6
-[2026-02-09 10:56:40] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=79 | btc=69936.6
-[2026-02-09 10:56:43] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=79 | btc=69936.6
-[2026-02-09 10:56:47] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=79 | btc=69930.7
-[2026-02-09 10:56:54] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=79 | btc=69925.9
-[2026-02-09 10:56:58] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=79 | btc=69915.1
-[2026-02-09 10:57:01] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=79 | btc=69915.1
-[2026-02-09 10:57:04] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=82 | btc=69915.1
-[2026-02-09 10:57:07] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69915.1
-[2026-02-09 10:57:10] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69915.1
-[2026-02-09 10:57:13] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=82 | btc=69937.9
-[2026-02-09 10:57:16] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=82 | btc=69928.1
-[2026-02-09 10:57:19] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=82 | btc=69928.1
-[2026-02-09 10:57:23] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69928.1
-[2026-02-09 10:57:26] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69928.1
-[2026-02-09 10:57:29] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69916.7
-[2026-02-09 10:57:33] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69916.7
-[2026-02-09 10:57:36] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69932.2
-[2026-02-09 10:57:40] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69932.2
-[2026-02-09 10:57:43] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69932.2
-[2026-02-09 10:57:46] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69932.2
-[2026-02-09 10:57:50] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69932.2
-[2026-02-09 10:57:53] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69932.2
-[2026-02-09 10:57:56] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69932.2
-[2026-02-09 10:58:00] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69932.2
-[2026-02-09 10:58:03] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=69930.0
-[2026-02-09 10:58:06] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=84 | btc=69930.1
-[2026-02-09 10:58:09] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=69915.6
-[2026-02-09 10:58:12] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=69900.0
-[2026-02-09 10:58:15] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=69900.0
-[2026-02-09 10:58:18] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=69885.1
-[2026-02-09 10:58:21] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=69885.1
-[2026-02-09 10:58:24] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=69885.1
-[2026-02-09 10:58:27] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=69885.1
-[2026-02-09 10:58:30] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=69885.1
-[2026-02-09 10:58:50] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=84 | btc=69840.1
-[2026-02-09 10:58:53] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=69840.1
-[2026-02-09 10:58:56] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=69855.0
-[2026-02-09 10:59:00] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=84 | btc=69855.0
-[2026-02-09 11:00:02] | SESSION_END     | market=btc-updown-15m-1770626700 | strike=69748.48165559549 | evaluations=220 | signals=12 | max_total_score=84
-[2026-02-09 11:12:33] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=89 | btc=69944.9
-[2026-02-09 11:12:36] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=89 | btc=69945.0
-[2026-02-09 11:12:39] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=89 | btc=69945.0
-[2026-02-09 11:12:42] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=89 | btc=69945.0
-[2026-02-09 11:12:45] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=89 | btc=69945.0
-[2026-02-09 11:12:48] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=89 | btc=69945.0
-[2026-02-09 11:12:51] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=89 | btc=69945.0
-[2026-02-09 11:12:54] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=89 | btc=69945.0
-[2026-02-09 11:12:57] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=89 | btc=69945.0
-[2026-02-09 11:13:00] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=89 | btc=69960.0
-[2026-02-09 11:13:03] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=93 | btc=69960.0
-[2026-02-09 11:13:06] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=93 | btc=69959.6
-[2026-02-09 11:13:09] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=93 | btc=69959.6
-[2026-02-09 11:13:52] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=93 | btc=69900.0
-[2026-02-09 11:13:55] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=93 | btc=69897.4
-[2026-02-09 11:13:59] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=93 | btc=69897.4
-[2026-02-09 11:15:02] | SESSION_END     | market=btc-updown-15m-1770627600 | strike=69823.18791710722 | evaluations=227 | signals=36 | max_total_score=93
-[2026-02-09 11:30:02] | SESSION_END     | market=btc-updown-15m-1770628500 | strike=69820.10205902588 | evaluations=223 | signals=0 | max_total_score=11
-[2026-02-09 11:39:40] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=81 | btc=69606.1
-[2026-02-09 11:39:43] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=81 | btc=69561.3
-[2026-02-09 11:39:47] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=81 | btc=69561.3
-[2026-02-09 11:39:49] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=81 | btc=69563.9
-[2026-02-09 11:39:52] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=81 | btc=69578.8
-[2026-02-09 11:39:56] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=81 | btc=69578.8
-[2026-02-09 11:39:59] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=81 | btc=69584.9
-[2026-02-09 11:40:06] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=82 | btc=69584.4
-[2026-02-09 11:40:09] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=82 | btc=69580.9
-[2026-02-09 11:40:13] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=82 | btc=69583.1
-[2026-02-09 11:40:16] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=82 | btc=69583.1
-[2026-02-09 11:40:19] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=82 | btc=69583.2
-[2026-02-09 11:40:22] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=82 | btc=69583.2
-[2026-02-09 11:40:25] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=82 | btc=69595.2
-[2026-02-09 11:40:29] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=82 | btc=69595.2
-[2026-02-09 11:40:32] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=82 | btc=69598.3
-[2026-02-09 11:40:35] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=82 | btc=69600.0
-[2026-02-09 11:40:38] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=82 | btc=69600.0
-[2026-02-09 11:40:41] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=82 | btc=69600.0
-[2026-02-09 11:40:45] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=82 | btc=69609.7
-[2026-02-09 11:40:47] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=82 | btc=69609.7
-[2026-02-09 11:40:50] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69609.7
-[2026-02-09 11:40:54] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69600.0
-[2026-02-09 11:40:57] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69588.3
-[2026-02-09 11:41:00] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=81 | btc=69570.0
-[2026-02-09 11:41:03] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69570.0
-[2026-02-09 11:41:07] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69561.4
-[2026-02-09 11:41:10] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=82 | btc=69561.4
-[2026-02-09 11:41:13] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69561.4
-[2026-02-09 11:41:16] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69560.1
-[2026-02-09 11:41:19] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69560.1
-[2026-02-09 11:41:22] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69560.1
-[2026-02-09 11:41:25] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69553.1
-[2026-02-09 11:41:28] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69561.4
-[2026-02-09 11:41:31] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69561.4
-[2026-02-09 11:41:34] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69564.1
-[2026-02-09 11:41:37] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69557.1
-[2026-02-09 11:41:41] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69557.1
-[2026-02-09 11:41:44] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69564.1
-[2026-02-09 11:41:48] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69556.2
-[2026-02-09 11:41:51] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69556.2
-[2026-02-09 11:41:54] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69558.2
-[2026-02-09 11:41:57] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69558.2
-[2026-02-09 11:42:00] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69519.6
-[2026-02-09 11:42:04] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69521.9
-[2026-02-09 11:42:07] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69521.9
-[2026-02-09 11:42:10] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69540.0
-[2026-02-09 11:42:13] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69555.0
-[2026-02-09 11:42:16] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69555.0
-[2026-02-09 11:42:19] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69555.0
-[2026-02-09 11:42:22] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69569.9
-[2026-02-09 11:42:25] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69570.0
-[2026-02-09 11:42:29] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69570.0
-[2026-02-09 11:42:32] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69585.0
-[2026-02-09 11:42:35] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69600.0
-[2026-02-09 11:42:38] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69600.0
-[2026-02-09 11:42:41] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69600.0
-[2026-02-09 11:42:44] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69593.8
-[2026-02-09 11:42:47] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69593.8
-[2026-02-09 11:42:50] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69593.8
-[2026-02-09 11:42:53] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69593.8
-[2026-02-09 11:42:56] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69593.8
-[2026-02-09 11:42:59] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69593.8
-[2026-02-09 11:43:02] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69593.8
-[2026-02-09 11:43:05] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69598.7
-[2026-02-09 11:43:08] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69600.1
-[2026-02-09 11:43:11] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69609.8
-[2026-02-09 11:43:14] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69609.8
-[2026-02-09 11:43:17] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69609.8
-[2026-02-09 11:43:20] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69615.0
-[2026-02-09 11:43:23] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69615.0
-[2026-02-09 11:43:26] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69615.0
-[2026-02-09 11:43:29] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69598.8
-[2026-02-09 11:43:32] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69585.1
-[2026-02-09 11:43:35] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69585.1
-[2026-02-09 11:43:38] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69585.1
-[2026-02-09 11:43:41] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69585.0
-[2026-02-09 11:43:44] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69573.1
-[2026-02-09 11:43:47] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69573.1
-[2026-02-09 11:43:51] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69573.1
-[2026-02-09 11:43:59] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69540.1
-[2026-02-09 11:45:00] | SESSION_END     | market=btc-updown-15m-1770629400 | strike=69838.17135393417 | evaluations=234 | signals=13 | max_total_score=82
-[2026-02-09 11:57:00] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=76 | btc=69495.0
-[2026-02-09 11:58:51] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=80 | btc=69540.0
-[2026-02-09 11:58:54] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=80 | btc=69518.7
-[2026-02-09 11:58:58] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=80 | btc=69518.7
-[2026-02-09 12:00:01] | SESSION_END     | market=btc-updown-15m-1770630300 | strike=69629.59226642027 | evaluations=224 | signals=39 | max_total_score=80
-[2026-02-09 12:15:02] | SESSION_END     | market=btc-updown-15m-1770631200 | strike=69564.57262564698 | evaluations=225 | signals=5 | max_total_score=74
-[2026-02-09 12:22:33] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=78 | btc=69147.8
-[2026-02-09 12:22:36] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=78 | btc=69147.8
-[2026-02-09 12:22:39] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=78 | btc=69100.0
-[2026-02-09 12:22:42] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=78 | btc=69100.0
-[2026-02-09 12:22:45] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=78 | btc=69100.2
-[2026-02-09 12:22:48] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=78 | btc=69100.2
-[2026-02-09 12:22:51] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=78 | btc=69100.2
-[2026-02-09 12:22:54] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=78 | btc=69088.8
-[2026-02-09 12:22:57] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=78 | btc=69078.4
-[2026-02-09 12:23:00] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=78 | btc=69060.7
-[2026-02-09 12:23:03] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=79 | btc=69060.7
-[2026-02-09 12:23:08] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=79 | btc=69079.4
-[2026-02-09 12:23:11] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=79 | btc=69100.2
-[2026-02-09 12:23:14] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=79 | btc=69105.0
-[2026-02-09 12:23:17] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=79 | btc=69089.1
-[2026-02-09 12:23:20] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=79 | btc=69080.4
-[2026-02-09 12:23:23] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=79 | btc=69080.4
-[2026-02-09 12:23:26] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=79 | btc=69080.3
-[2026-02-09 12:23:29] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=79 | btc=69080.4
-[2026-02-09 12:23:32] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=79 | btc=69080.4
-[2026-02-09 12:23:36] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=79 | btc=69080.4
-[2026-02-09 12:23:38] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=79 | btc=69037.4
-[2026-02-09 12:23:42] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=79 | btc=69045.1
-[2026-02-09 12:23:45] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=79 | btc=69045.1
-[2026-02-09 12:23:48] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=79 | btc=69045.1
-[2026-02-09 12:23:52] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=79 | btc=69026.4
-[2026-02-09 12:23:55] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=79 | btc=69031.2
-[2026-02-09 12:23:58] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=79 | btc=69031.3
-[2026-02-09 12:24:01] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=80 | btc=69034.3
-[2026-02-09 12:24:04] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=80 | btc=69034.3
-[2026-02-09 12:24:07] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=80 | btc=69034.3
-[2026-02-09 12:24:10] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=80 | btc=69045.0
-[2026-02-09 12:24:13] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=80 | btc=69060.0
-[2026-02-09 12:24:16] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=80 | btc=69045.0
-[2026-02-09 12:24:19] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=80 | btc=69045.0
-[2026-02-09 12:24:23] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=80 | btc=69045.0
-[2026-02-09 12:24:28] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=80 | btc=69003.5
-[2026-02-09 12:24:31] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=80 | btc=69002.7
-[2026-02-09 12:24:34] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=80 | btc=69000.0
-[2026-02-09 12:24:37] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=80 | btc=69000.0
-[2026-02-09 12:24:40] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=80 | btc=69000.0
-[2026-02-09 12:24:43] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=80 | btc=69000.1
-[2026-02-09 12:24:46] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=80 | btc=69000.0
-[2026-02-09 12:24:49] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=80 | btc=69000.1
-[2026-02-09 12:24:52] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=80 | btc=69000.1
-[2026-02-09 12:24:55] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=80 | btc=69000.1
-[2026-02-09 12:25:50] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=80 | btc=69000.1
-[2026-02-09 12:25:53] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=80 | btc=69000.1
-[2026-02-09 12:25:56] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=80 | btc=69000.1
-[2026-02-09 12:25:59] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=80 | btc=69000.1
-[2026-02-09 12:26:02] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=81 | btc=69000.0
-[2026-02-09 12:26:05] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=81 | btc=69000.0
-[2026-02-09 12:26:08] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=81 | btc=69000.0
-[2026-02-09 12:26:11] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=81 | btc=69000.0
-[2026-02-09 12:26:14] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=81 | btc=69000.0
-[2026-02-09 12:26:17] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=81 | btc=69000.0
-[2026-02-09 12:26:20] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=81 | btc=68962.9
-[2026-02-09 12:26:23] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=81 | btc=68946.4
-[2026-02-09 12:26:26] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=81 | btc=68944.2
-[2026-02-09 12:26:29] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=81 | btc=68931.1
-[2026-02-09 12:26:34] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=81 | btc=68925.0
-[2026-02-09 12:26:37] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=81 | btc=68925.1
-[2026-02-09 12:26:41] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=81 | btc=68940.0
-[2026-02-09 12:26:44] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=81 | btc=68939.9
-[2026-02-09 12:26:47] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=81 | btc=68999.8
-[2026-02-09 12:26:50] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=81 | btc=68970.0
-[2026-02-09 12:26:53] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=81 | btc=68970.0
-[2026-02-09 12:26:55] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=81 | btc=68955.1
-[2026-02-09 12:26:58] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=81 | btc=68955.1
-[2026-02-09 12:27:02] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=68971.6
-[2026-02-09 12:27:06] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=68985.0
-[2026-02-09 12:27:10] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=68972.4
-[2026-02-09 12:27:13] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=68972.4
-[2026-02-09 12:27:16] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=68998.6
-[2026-02-09 12:27:19] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=69000.1
-[2026-02-09 12:27:21] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=69000.1
-[2026-02-09 12:27:24] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=69015.0
-[2026-02-09 12:27:28] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=69015.0
-[2026-02-09 12:27:31] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=69014.9
-[2026-02-09 12:27:34] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=69014.9
-[2026-02-09 12:27:37] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=68994.0
-[2026-02-09 12:27:40] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=69015.0
-[2026-02-09 12:27:43] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=83 | btc=69015.0
-[2026-02-09 12:27:47] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=83 | btc=69044.9
-[2026-02-09 12:27:50] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=69044.9
-[2026-02-09 12:27:53] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=69030.0
-[2026-02-09 12:27:56] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=83 | btc=69032.9
-[2026-02-09 12:28:00] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=83 | btc=69000.0
-[2026-02-09 12:28:03] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=69000.0
-[2026-02-09 12:28:06] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=69000.0
-[2026-02-09 12:28:09] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=69000.0
-[2026-02-09 12:28:12] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=69030.0
-[2026-02-09 12:28:15] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=69045.0
-[2026-02-09 12:28:18] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=69045.0
-[2026-02-09 12:28:22] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=69045.0
-[2026-02-09 12:28:25] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=69044.9
-[2026-02-09 12:28:29] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=69044.9
-[2026-02-09 12:28:32] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=69045.0
-[2026-02-09 12:28:35] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=69045.0
-[2026-02-09 12:28:38] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=69045.0
-[2026-02-09 12:28:41] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=84 | btc=69045.0
-[2026-02-09 12:30:02] | SESSION_END     | market=btc-updown-15m-1770632100 | strike=69468.95062945684 | evaluations=205 | signals=29 | max_total_score=78
-[2026-02-09 12:35:06] | TRADE_OPEN_OK   | direction=DOWN | price=0.88 | size=7.0 | btc=68619.4
-[2026-02-09 12:45:02] | SESSION_END     | market=btc-updown-15m-1770633000 | strike=68971.65728326757 | evaluations=54 | signals=1 | max_total_score=71 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 12:57:33] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=73 | btc=68746.8
-[2026-02-09 12:57:36] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=73 | btc=68746.9
-[2026-02-09 12:57:40] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=73 | btc=68746.9
-[2026-02-09 12:57:43] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=73 | btc=68746.9
-[2026-02-09 12:57:46] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=73 | btc=68746.9
-[2026-02-09 12:57:49] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=73 | btc=68746.9
-[2026-02-09 12:57:52] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=73 | btc=68750.0
-[2026-02-09 12:57:56] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68750.0
-[2026-02-09 12:57:59] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68750.0
-[2026-02-09 12:58:02] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68750.0
-[2026-02-09 12:58:05] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=74 | btc=68750.0
-[2026-02-09 12:58:10] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=74 | btc=68738.1
-[2026-02-09 12:58:13] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=74 | btc=68720.7
-[2026-02-09 12:58:16] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=74 | btc=68720.7
-[2026-02-09 12:58:21] | TRADE_OPEN_OK   | direction=UP | price=0.93 | size=7.0 | btc=68713.7
-[2026-02-09 13:00:01] | SESSION_END     | market=btc-updown-15m-1770633900 | strike=68556.1226215 | evaluations=212 | signals=4 | max_total_score=74 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 13:15:01] | SESSION_END     | market=btc-updown-15m-1770634800 | strike=68663.37329133043 | evaluations=212 | signals=0 | max_total_score=56
-[2026-02-09 13:22:03] | TRADE_OPEN_OK   | direction=UP | price=0.9 | size=7.0 | btc=68767.1
-[2026-02-09 13:30:01] | SESSION_END     | market=btc-updown-15m-1770635700 | strike=68543.83819178739 | evaluations=96 | signals=1 | max_total_score=89 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 13:45:02] | SESSION_END     | market=btc-updown-15m-1770636600 | strike=68805.70670804233 | evaluations=237 | signals=0 | max_total_score=63
-[2026-02-09 13:52:56] | TRADE_OPEN_OK   | direction=DOWN | price=0.91 | size=7.0 | btc=68651.2
-[2026-02-09 13:59:48] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 65.9% ($0.9100 → $0.3100) | btc_price=68789.1 | share_price=0.31 | strike=68849.56726165119
+[2026-02-09 07:45:02] | SESSION_END     | market=btc-updown-15m-1770615000| max_total_score=52
+[2026-02-09 08:00:01] | SESSION_END     | market=btc-updown-15m-1770615900| max_total_score=70
+[2026-02-09 08:01:38] | TRADE_OPEN   | direction=DOWN | price=0.88 | size=7.0
+[2026-02-09 08:15:01] | SESSION_END     | market=btc-updown-15m-1770616800| max_total_score=98
+[2026-02-09 08:18:12] | TRADE_OPEN   | direction=DOWN | price=0.89 | size=7.0
+[2026-02-09 08:30:01] | SESSION_END     | market=btc-updown-15m-1770617700| max_total_score=82
+[2026-02-09 08:39:15] | TRADE_OPEN   | direction=UP | price=0.93 | size=7.0
+[2026-02-09 08:45:02] | SESSION_END     | market=btc-updown-15m-1770618600| max_total_score=83
+[2026-02-09 08:55:10] | TRADE_OPEN   | direction=UP | price=0.87 | size=7.0
+[2026-02-09 09:00:01] | SESSION_END     | market=btc-updown-15m-1770619500| max_total_score=72
+[2026-02-09 09:15:01] | SESSION_END     | market=btc-updown-15m-1770620400| max_total_score=86
+[2026-02-09 09:30:01] | SESSION_END     | market=btc-updown-15m-1770621300| max_total_score=90
+[2026-02-09 09:45:01] | SESSION_END     | market=btc-updown-15m-1770622200| max_total_score=75
+[2026-02-09 10:00:01] | SESSION_END     | market=btc-updown-15m-1770623100| max_total_score=31
+[2026-02-09 10:15:00] | SESSION_END     | market=btc-updown-15m-1770624000| max_total_score=67
+[2026-02-09 10:30:01] | SESSION_END     | market=btc-updown-15m-1770624900| max_total_score=85
+[2026-02-09 10:45:01] | SESSION_END     | market=btc-updown-15m-1770625800| max_total_score=74
+[2026-02-09 11:00:02] | SESSION_END     | market=btc-updown-15m-1770626700| max_total_score=84
+[2026-02-09 11:15:02] | SESSION_END     | market=btc-updown-15m-1770627600| max_total_score=93
+[2026-02-09 11:30:02] | SESSION_END     | market=btc-updown-15m-1770628500| max_total_score=11
+[2026-02-09 11:45:00] | SESSION_END     | market=btc-updown-15m-1770629400| max_total_score=82
+[2026-02-09 12:00:01] | SESSION_END     | market=btc-updown-15m-1770630300| max_total_score=80
+[2026-02-09 12:15:02] | SESSION_END     | market=btc-updown-15m-1770631200| max_total_score=74
+[2026-02-09 12:30:02] | SESSION_END     | market=btc-updown-15m-1770632100| max_total_score=78
+[2026-02-09 12:35:06] | TRADE_OPEN   | direction=DOWN | price=0.88 | size=7.0
+[2026-02-09 12:45:02] | SESSION_END     | market=btc-updown-15m-1770633000| max_total_score=71
+[2026-02-09 12:58:21] | TRADE_OPEN   | direction=UP | price=0.93 | size=7.0
+[2026-02-09 13:00:01] | SESSION_END     | market=btc-updown-15m-1770633900| max_total_score=74
+[2026-02-09 13:15:01] | SESSION_END     | market=btc-updown-15m-1770634800| max_total_score=56
+[2026-02-09 13:22:03] | TRADE_OPEN   | direction=UP | price=0.9 | size=7.0
+[2026-02-09 13:30:01] | SESSION_END     | market=btc-updown-15m-1770635700| max_total_score=89
+[2026-02-09 13:45:02] | SESSION_END     | market=btc-updown-15m-1770636600| max_total_score=63
+[2026-02-09 13:52:56] | TRADE_OPEN   | direction=DOWN | price=0.91 | size=7.0
+[2026-02-09 13:59:48] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 65.9% ($0.9100 → $0.3100) share_price=0.31
 [2026-02-09 13:59:50] | TRADE_CLOSE_OK  | size=6.9906 | price=0.83
-[2026-02-09 14:00:03] | SESSION_END     | market=btc-updown-15m-1770637500 | strike=68849.56726165119 | evaluations=112 | signals=1 | max_total_score=79 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 14:08:05] | TRADE_OPEN_OK   | direction=UP | price=0.91 | size=7.0 | btc=69087.2
-[2026-02-09 14:11:33] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69067.6
-[2026-02-09 14:11:37] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69089.3
-[2026-02-09 14:11:41] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69089.2
-[2026-02-09 14:11:44] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69089.2
-[2026-02-09 14:11:48] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69089.2
-[2026-02-09 14:11:52] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69089.3
-[2026-02-09 14:11:55] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69089.3
-[2026-02-09 14:11:59] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69119.1
-[2026-02-09 14:12:02] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=79 | btc=69120.6
-[2026-02-09 14:12:06] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=79 | btc=69146.0
-[2026-02-09 14:12:10] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=79 | btc=69130.7
-[2026-02-09 14:12:13] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=79 | btc=69130.7
-[2026-02-09 14:12:17] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=79 | btc=69130.7
-[2026-02-09 14:12:20] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=79 | btc=69130.7
-[2026-02-09 14:12:24] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=79 | btc=69130.7
-[2026-02-09 14:12:27] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=79 | btc=69137.4
-[2026-02-09 14:12:31] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=79 | btc=69137.4
-[2026-02-09 14:12:34] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=79 | btc=69126.0
-[2026-02-09 14:12:38] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=79 | btc=69126.0
-[2026-02-09 14:12:41] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=79 | btc=69126.0
-[2026-02-09 14:12:45] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=79 | btc=69126.1
-[2026-02-09 14:12:48] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=79 | btc=69145.9
-[2026-02-09 14:12:52] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=79 | btc=69146.0
-[2026-02-09 14:12:55] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=79 | btc=69165.0
-[2026-02-09 14:12:58] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=79 | btc=69165.0
-[2026-02-09 14:13:02] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69165.6
-[2026-02-09 14:13:05] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69165.6
-[2026-02-09 14:13:09] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69165.6
-[2026-02-09 14:13:12] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69165.6
-[2026-02-09 14:13:16] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69165.6
-[2026-02-09 14:13:19] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69120.2
-[2026-02-09 14:13:22] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69120.2
-[2026-02-09 14:13:26] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69144.8
-[2026-02-09 14:13:29] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69144.8
-[2026-02-09 14:13:33] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69144.8
-[2026-02-09 14:13:36] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69144.8
-[2026-02-09 14:13:40] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=82 | btc=69157.1
-[2026-02-09 14:13:43] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69157.1
-[2026-02-09 14:13:47] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69149.9
-[2026-02-09 14:13:50] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69149.9
-[2026-02-09 14:13:54] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69149.9
-[2026-02-09 14:13:57] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69122.8
-[2026-02-09 14:14:00] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=69122.8
-[2026-02-09 14:15:00] | SESSION_END     | market=btc-updown-15m-1770638400 | strike=68851.21658875681 | evaluations=43 | signals=0 | max_total_score=0
-[2026-02-09 14:23:31] | TRADE_OPEN_OK   | direction=DOWN | price=0.77 | size=7.0 | btc=69030.9
-[2026-02-09 14:30:01] | SESSION_END     | market=btc-updown-15m-1770639300 | strike=69129.88628663469 | evaluations=112 | signals=1 | max_total_score=71 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 14:41:18] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=75 | btc=69116.5
-[2026-02-09 14:41:22] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=75 | btc=69155.9
-[2026-02-09 14:41:25] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=75 | btc=69147.0
-[2026-02-09 14:41:28] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=75 | btc=69147.0
-[2026-02-09 14:41:32] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=75 | btc=69147.0
-[2026-02-09 14:41:35] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=75 | btc=69147.0
-[2026-02-09 14:41:39] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=75 | btc=69148.6
-[2026-02-09 14:41:42] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=75 | btc=69148.6
-[2026-02-09 14:41:46] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=75 | btc=69148.2
-[2026-02-09 14:41:50] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=75 | btc=69148.2
-[2026-02-09 14:41:53] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=75 | btc=69120.7
-[2026-02-09 14:41:57] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=75 | btc=69120.7
-[2026-02-09 14:42:01] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69120.7
-[2026-02-09 14:42:04] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69138.5
-[2026-02-09 14:42:08] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69138.5
-[2026-02-09 14:42:11] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69138.5
-[2026-02-09 14:42:15] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69148.0
-[2026-02-09 14:42:18] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69148.0
-[2026-02-09 14:42:22] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69148.0
-[2026-02-09 14:42:25] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69128.2
-[2026-02-09 14:42:29] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69128.2
-[2026-02-09 14:42:32] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69128.2
-[2026-02-09 14:42:35] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69123.5
-[2026-02-09 14:42:39] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69123.5
-[2026-02-09 14:42:43] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69134.6
-[2026-02-09 14:42:46] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69134.6
-[2026-02-09 14:42:49] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69134.2
-[2026-02-09 14:42:53] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69125.3
-[2026-02-09 14:42:56] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69115.4
-[2026-02-09 14:43:00] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69115.4
-[2026-02-09 14:43:04] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69115.4
-[2026-02-09 14:43:07] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69108.3
-[2026-02-09 14:43:11] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=69108.3
-[2026-02-09 14:43:14] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69108.3
-[2026-02-09 14:43:18] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69108.3
-[2026-02-09 14:43:21] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69108.3
-[2026-02-09 14:43:24] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69108.3
-[2026-02-09 14:43:28] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69108.3
-[2026-02-09 14:43:31] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69108.3
-[2026-02-09 14:43:35] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=69108.3
-[2026-02-09 14:43:38] | TRADE_BLOCKED   | reason=Share price unavailable | btc=69108.3
-[2026-02-09 14:43:42] | TRADE_BLOCKED   | reason=Share price unavailable | btc=69119.7
-[2026-02-09 14:43:46] | TRADE_BLOCKED   | reason=Share price unavailable | btc=69119.7
-[2026-02-09 14:43:50] | TRADE_BLOCKED   | reason=Share price unavailable | btc=69119.7
-[2026-02-09 14:43:53] | TRADE_BLOCKED   | reason=Share price unavailable | btc=69119.7
-[2026-02-09 14:43:57] | TRADE_BLOCKED   | reason=Share price unavailable | btc=69122.4
-[2026-02-09 14:44:00] | TRADE_BLOCKED   | reason=Share price unavailable | btc=69122.4
-[2026-02-09 14:45:01] | SESSION_END     | market=btc-updown-15m-1770640200 | strike=68977.97439884266 | evaluations=219 | signals=7 | max_total_score=67
-[2026-02-09 14:52:06] | TRADE_OPEN_OK   | direction=DOWN | price=0.84 | size=7.0 | btc=68991.7
-[2026-02-09 14:59:18] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 51.2% ($0.8400 → $0.4100) | btc_price=69079.8 | share_price=0.41 | strike=69084.26750278038
+[2026-02-09 14:00:03] | SESSION_END     | market=btc-updown-15m-1770637500| max_total_score=79
+[2026-02-09 14:08:05] | TRADE_OPEN   | direction=UP | price=0.91 | size=7.0
+[2026-02-09 14:15:00] | SESSION_END     | market=btc-updown-15m-1770638400| max_total_score=0
+[2026-02-09 14:23:31] | TRADE_OPEN   | direction=DOWN | price=0.77 | size=7.0
+[2026-02-09 14:30:01] | SESSION_END     | market=btc-updown-15m-1770639300| max_total_score=71
+[2026-02-09 14:45:01] | SESSION_END     | market=btc-updown-15m-1770640200| max_total_score=67
+[2026-02-09 14:52:06] | TRADE_OPEN   | direction=DOWN | price=0.84 | size=7.0
+[2026-02-09 14:59:18] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 51.2% ($0.8400 → $0.4100) share_price=0.41
 [2026-02-09 14:59:20] | TRADE_CLOSE_OK  | size=6.9684 | price=0.45
-[2026-02-09 15:00:02] | SESSION_END     | market=btc-updown-15m-1770641100 | strike=69084.26750278038 | evaluations=98 | signals=1 | max_total_score=71 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 15:04:52] | TRADE_OPEN_OK   | direction=DOWN | price=0.82 | size=7.0 | btc=68938.2
-[2026-02-09 15:11:13] | TRIGGER_CLOSE   | reason=⚠️ STOP LOSS - STRIKE HIT: BTC $69,148.20 >= $69,082.39 | btc_price=69148.2 | share_price=0.45 | strike=69082.39026009759
+[2026-02-09 15:00:02] | SESSION_END     | market=btc-updown-15m-1770641100| max_total_score=71
+[2026-02-09 15:04:52] | TRADE_OPEN   | direction=DOWN | price=0.82 | size=7.0
+[2026-02-09 15:11:13] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,148.20 >= $69,082.39 share_price=0.45
 [2026-02-09 15:11:19] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=None, error_message=Request exception!] | attempt=1
-[2026-02-09 15:11:21] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 50.0% ($0.8200 → $0.4100) | btc_price=69142.6 | share_price=0.41 | strike=69082.39026009759
+[2026-02-09 15:11:21] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 50.0% ($0.8200 → $0.4100) share_price=0.41
 [2026-02-09 15:11:27] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=None, error_message=Request exception!] | attempt=2
-[2026-02-09 15:11:30] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 67.1% ($0.8200 → $0.2700) | btc_price=69153.8 | share_price=0.27 | strike=69082.39026009759
+[2026-02-09 15:11:30] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 67.1% ($0.8200 → $0.2700) share_price=0.27
 [2026-02-09 15:11:36] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=None, error_message=Request exception!] | attempt=3
-[2026-02-09 15:11:38] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 72.0% ($0.8200 → $0.2300) | btc_price=69170.0 | share_price=0.23 | strike=69082.39026009759
+[2026-02-09 15:11:38] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 72.0% ($0.8200 → $0.2300) share_price=0.23
 [2026-02-09 15:11:44] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=None, error_message=Request exception!] | attempt=4
-[2026-02-09 15:11:47] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 73.2% ($0.8200 → $0.2200) | btc_price=69169.6 | share_price=0.22 | strike=69082.39026009759
+[2026-02-09 15:11:47] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 73.2% ($0.8200 → $0.2200) share_price=0.22
 [2026-02-09 15:11:49] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=5
-[2026-02-09 15:11:51] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 68.3% ($0.8200 → $0.2600) | btc_price=69169.6 | share_price=0.26 | strike=69082.39026009759
+[2026-02-09 15:11:51] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 68.3% ($0.8200 → $0.2600) share_price=0.26
 [2026-02-09 15:11:52] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=6
-[2026-02-09 15:11:55] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 75.6% ($0.8200 → $0.2000) | btc_price=69169.6 | share_price=0.2 | strike=69082.39026009759
+[2026-02-09 15:11:55] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 75.6% ($0.8200 → $0.2000) share_price=0.2
 [2026-02-09 15:11:55] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=7
-[2026-02-09 15:11:58] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 76.8% ($0.8200 → $0.1900) | btc_price=69170.0 | share_price=0.19 | strike=69082.39026009759
+[2026-02-09 15:11:58] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 76.8% ($0.8200 → $0.1900) share_price=0.19
 [2026-02-09 15:11:59] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=8
-[2026-02-09 15:12:01] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 76.8% ($0.8200 → $0.1900) | btc_price=69170.1 | share_price=0.19 | strike=69082.39026009759
+[2026-02-09 15:12:01] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 76.8% ($0.8200 → $0.1900) share_price=0.19
 [2026-02-09 15:12:02] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=9
-[2026-02-09 15:12:05] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 76.8% ($0.8200 → $0.1900) | btc_price=69170.0 | share_price=0.19 | strike=69082.39026009759
+[2026-02-09 15:12:05] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 76.8% ($0.8200 → $0.1900) share_price=0.19
 [2026-02-09 15:12:06] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=10
-[2026-02-09 15:12:08] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 65.9% ($0.8200 → $0.2800) | btc_price=69167.4 | share_price=0.28 | strike=69082.39026009759
+[2026-02-09 15:12:08] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 65.9% ($0.8200 → $0.2800) share_price=0.28
 [2026-02-09 15:12:09] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=11
-[2026-02-09 15:12:11] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 58.5% ($0.8200 → $0.3400) | btc_price=69162.0 | share_price=0.34 | strike=69082.39026009759
+[2026-02-09 15:12:11] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 58.5% ($0.8200 → $0.3400) share_price=0.34
 [2026-02-09 15:12:12] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=12
-[2026-02-09 15:12:15] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 61.0% ($0.8200 → $0.3200) | btc_price=69127.0 | share_price=0.32 | strike=69082.39026009759
+[2026-02-09 15:12:15] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 61.0% ($0.8200 → $0.3200) share_price=0.32
 [2026-02-09 15:12:15] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=13
-[2026-02-09 15:12:18] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 62.2% ($0.8200 → $0.3100) | btc_price=69127.0 | share_price=0.31 | strike=69082.39026009759
+[2026-02-09 15:12:18] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 62.2% ($0.8200 → $0.3100) share_price=0.31
 [2026-02-09 15:12:19] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=14
-[2026-02-09 15:12:21] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 74.4% ($0.8200 → $0.2100) | btc_price=69129.4 | share_price=0.21 | strike=69082.39026009759
+[2026-02-09 15:12:21] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 74.4% ($0.8200 → $0.2100) share_price=0.21
 [2026-02-09 15:12:22] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=15
-[2026-02-09 15:12:25] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 78.0% ($0.8200 → $0.1800) | btc_price=69143.2 | share_price=0.18 | strike=69082.39026009759
+[2026-02-09 15:12:25] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 78.0% ($0.8200 → $0.1800) share_price=0.18
 [2026-02-09 15:12:25] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=16
-[2026-02-09 15:12:28] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 79.3% ($0.8200 → $0.1700) | btc_price=69143.2 | share_price=0.17 | strike=69082.39026009759
+[2026-02-09 15:12:28] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 79.3% ($0.8200 → $0.1700) share_price=0.17
 [2026-02-09 15:12:29] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=17
-[2026-02-09 15:12:31] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 79.3% ($0.8200 → $0.1700) | btc_price=69143.2 | share_price=0.17 | strike=69082.39026009759
+[2026-02-09 15:12:31] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 79.3% ($0.8200 → $0.1700) share_price=0.17
 [2026-02-09 15:12:32] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=18
-[2026-02-09 15:12:35] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 73.2% ($0.8200 → $0.2200) | btc_price=69162.5 | share_price=0.22 | strike=69082.39026009759
+[2026-02-09 15:12:35] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 73.2% ($0.8200 → $0.2200) share_price=0.22
 [2026-02-09 15:12:35] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=19
-[2026-02-09 15:12:38] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 73.2% ($0.8200 → $0.2200) | btc_price=69162.4 | share_price=0.22 | strike=69082.39026009759
+[2026-02-09 15:12:38] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 73.2% ($0.8200 → $0.2200) share_price=0.22
 [2026-02-09 15:12:39] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=20
-[2026-02-09 15:12:41] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 78.0% ($0.8200 → $0.1800) | btc_price=69129.0 | share_price=0.18 | strike=69082.39026009759
+[2026-02-09 15:12:41] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 78.0% ($0.8200 → $0.1800) share_price=0.18
 [2026-02-09 15:12:42] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=21
-[2026-02-09 15:12:45] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 84.1% ($0.8200 → $0.1300) | btc_price=69129.0 | share_price=0.13 | strike=69082.39026009759
+[2026-02-09 15:12:45] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 84.1% ($0.8200 → $0.1300) share_price=0.13
 [2026-02-09 15:12:45] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=22
-[2026-02-09 15:12:48] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) | btc_price=69195.0 | share_price=0.09 | strike=69082.39026009759
+[2026-02-09 15:12:48] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) share_price=0.09
 [2026-02-09 15:12:49] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=23
-[2026-02-09 15:12:52] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) | btc_price=69200.0 | share_price=0.05 | strike=69082.39026009759
+[2026-02-09 15:12:52] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
 [2026-02-09 15:12:53] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=24
-[2026-02-09 15:12:55] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) | btc_price=69220.2 | share_price=0.05 | strike=69082.39026009759
+[2026-02-09 15:12:55] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
 [2026-02-09 15:12:56] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=25
-[2026-02-09 15:12:58] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) | btc_price=69220.2 | share_price=0.05 | strike=69082.39026009759
+[2026-02-09 15:12:58] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
 [2026-02-09 15:12:59] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=26
-[2026-02-09 15:13:02] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) | btc_price=69220.2 | share_price=0.04 | strike=69082.39026009759
+[2026-02-09 15:13:02] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) share_price=0.04
 [2026-02-09 15:13:02] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=27
-[2026-02-09 15:13:05] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) | btc_price=69220.2 | share_price=0.05 | strike=69082.39026009759
+[2026-02-09 15:13:05] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
 [2026-02-09 15:13:06] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=28
-[2026-02-09 15:13:08] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) | btc_price=69217.9 | share_price=0.07 | strike=69082.39026009759
+[2026-02-09 15:13:08] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) share_price=0.07
 [2026-02-09 15:13:09] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=29
-[2026-02-09 15:13:12] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) | btc_price=69217.9 | share_price=0.07 | strike=69082.39026009759
+[2026-02-09 15:13:12] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) share_price=0.07
 [2026-02-09 15:13:12] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=30
-[2026-02-09 15:13:15] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) | btc_price=69214.2 | share_price=0.07 | strike=69082.39026009759
+[2026-02-09 15:13:15] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) share_price=0.07
 [2026-02-09 15:13:16] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=31
-[2026-02-09 15:13:18] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) | btc_price=69190.5 | share_price=0.04 | strike=69082.39026009759
+[2026-02-09 15:13:18] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) share_price=0.04
 [2026-02-09 15:13:19] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=32
-[2026-02-09 15:13:21] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) | btc_price=69190.5 | share_price=0.06 | strike=69082.39026009759
+[2026-02-09 15:13:21] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) share_price=0.06
 [2026-02-09 15:13:22] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=33
-[2026-02-09 15:13:25] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) | btc_price=69192.2 | share_price=0.07 | strike=69082.39026009759
+[2026-02-09 15:13:25] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) share_price=0.07
 [2026-02-09 15:13:25] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=34
-[2026-02-09 15:13:28] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) | btc_price=69192.2 | share_price=0.04 | strike=69082.39026009759
+[2026-02-09 15:13:28] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) share_price=0.04
 [2026-02-09 15:13:29] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=35
-[2026-02-09 15:13:32] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) | btc_price=69192.4 | share_price=0.04 | strike=69082.39026009759
+[2026-02-09 15:13:32] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) share_price=0.04
 [2026-02-09 15:13:32] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=36
-[2026-02-09 15:13:35] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) | btc_price=69192.4 | share_price=0.05 | strike=69082.39026009759
+[2026-02-09 15:13:35] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
 [2026-02-09 15:13:36] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=37
-[2026-02-09 15:13:38] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) | btc_price=69192.4 | share_price=0.09 | strike=69082.39026009759
+[2026-02-09 15:13:38] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) share_price=0.09
 [2026-02-09 15:13:39] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=38
-[2026-02-09 15:13:42] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 85.4% ($0.8200 → $0.1200) | btc_price=69185.4 | share_price=0.12 | strike=69082.39026009759
+[2026-02-09 15:13:42] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 85.4% ($0.8200 → $0.1200) share_price=0.12
 [2026-02-09 15:13:42] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=39
-[2026-02-09 15:13:45] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) | btc_price=69157.0 | share_price=0.09 | strike=69082.39026009759
+[2026-02-09 15:13:45] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) share_price=0.09
 [2026-02-09 15:13:46] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=40
-[2026-02-09 15:13:49] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) | btc_price=69157.1 | share_price=0.05 | strike=69082.39026009759
+[2026-02-09 15:13:49] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
 [2026-02-09 15:13:49] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=41
-[2026-02-09 15:13:52] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) | btc_price=69171.4 | share_price=0.05 | strike=69082.39026009759
+[2026-02-09 15:13:52] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
 [2026-02-09 15:13:53] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=42
-[2026-02-09 15:13:56] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) | btc_price=69172.3 | share_price=0.04 | strike=69082.39026009759
+[2026-02-09 15:13:56] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) share_price=0.04
 [2026-02-09 15:13:56] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=43
-[2026-02-09 15:13:59] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) | btc_price=69192.4 | share_price=0.06 | strike=69082.39026009759
+[2026-02-09 15:13:59] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) share_price=0.06
 [2026-02-09 15:14:00] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=44
-[2026-02-09 15:14:03] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) | btc_price=69192.4 | share_price=0.06 | strike=69082.39026009759
+[2026-02-09 15:14:03] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) share_price=0.06
 [2026-02-09 15:14:03] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=45
-[2026-02-09 15:14:06] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) | btc_price=69192.4 | share_price=0.03 | strike=69082.39026009759
+[2026-02-09 15:14:06] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) share_price=0.03
 [2026-02-09 15:14:07] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=46
-[2026-02-09 15:14:09] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) | btc_price=69192.3 | share_price=0.05 | strike=69082.39026009759
+[2026-02-09 15:14:09] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
 [2026-02-09 15:14:10] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=47
-[2026-02-09 15:14:13] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) | btc_price=69192.2 | share_price=0.03 | strike=69082.39026009759
+[2026-02-09 15:14:13] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) share_price=0.03
 [2026-02-09 15:14:13] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=48
-[2026-02-09 15:14:16] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) | btc_price=69192.2 | share_price=0.03 | strike=69082.39026009759
+[2026-02-09 15:14:16] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) share_price=0.03
 [2026-02-09 15:14:17] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=49
-[2026-02-09 15:14:19] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) | btc_price=69172.7 | share_price=0.06 | strike=69082.39026009759
+[2026-02-09 15:14:19] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) share_price=0.06
 [2026-02-09 15:14:20] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=50
-[2026-02-09 15:14:23] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) | btc_price=69155.2 | share_price=0.03 | strike=69082.39026009759
+[2026-02-09 15:14:23] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) share_price=0.03
 [2026-02-09 15:14:23] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=51
-[2026-02-09 15:14:26] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) | btc_price=69153.8 | share_price=0.04 | strike=69082.39026009759
+[2026-02-09 15:14:26] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) share_price=0.04
 [2026-02-09 15:14:27] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=52
-[2026-02-09 15:14:29] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) | btc_price=69153.8 | share_price=0.06 | strike=69082.39026009759
+[2026-02-09 15:14:29] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) share_price=0.06
 [2026-02-09 15:14:30] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=53
-[2026-02-09 15:14:33] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) | btc_price=69139.6 | share_price=0.09 | strike=69082.39026009759
+[2026-02-09 15:14:33] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) share_price=0.09
 [2026-02-09 15:14:33] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=54
-[2026-02-09 15:14:36] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) | btc_price=69144.0 | share_price=0.07 | strike=69082.39026009759
+[2026-02-09 15:14:36] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) share_price=0.07
 [2026-02-09 15:14:37] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=55
-[2026-02-09 15:14:39] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) | btc_price=69144.3 | share_price=0.09 | strike=69082.39026009759
+[2026-02-09 15:14:39] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) share_price=0.09
 [2026-02-09 15:14:40] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=56
-[2026-02-09 15:14:43] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) | btc_price=69144.3 | share_price=0.05 | strike=69082.39026009759
+[2026-02-09 15:14:43] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
 [2026-02-09 15:14:44] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=57
-[2026-02-09 15:14:46] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) | btc_price=69142.9 | share_price=0.06 | strike=69082.39026009759
+[2026-02-09 15:14:46] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) share_price=0.06
 [2026-02-09 15:14:47] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=58
-[2026-02-09 15:14:50] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) | btc_price=69142.8 | share_price=0.03 | strike=69082.39026009759
+[2026-02-09 15:14:50] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) share_price=0.03
 [2026-02-09 15:14:50] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=59
-[2026-02-09 15:14:53] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 97.6% ($0.8200 → $0.0200) | btc_price=69142.8 | share_price=0.02 | strike=69082.39026009759
+[2026-02-09 15:14:53] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 97.6% ($0.8200 → $0.0200) share_price=0.02
 [2026-02-09 15:14:54] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=60
-[2026-02-09 15:14:56] | TRIGGER_CLOSE   | reason=⚠️ STOP LOSS - STRIKE HIT: BTC $69,142.80 >= $69,082.39 | btc_price=69142.8 | share_price=0.82 | strike=69082.39026009759
+[2026-02-09 15:14:56] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,142.80 >= $69,082.39 share_price=0.82
 [2026-02-09 15:14:57] | TRADE_CLOSE_FAIL | error=Unknown error | attempt=61
-[2026-02-09 15:15:00] | TRIGGER_CLOSE   | reason=⚠️ STOP LOSS - STRIKE HIT: BTC $69,167.70 >= $69,082.39 | btc_price=69167.7 | share_price=0.82 | strike=69082.39026009759
+[2026-02-09 15:15:00] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,167.70 >= $69,082.39 share_price=0.82
 [2026-02-09 15:15:00] | TRADE_CLOSE_FAIL | error=Unknown error | attempt=62
-[2026-02-09 15:15:02] | SESSION_END     | market=btc-updown-15m-1770642000 | strike=69082.39026009759 | evaluations=45 | signals=1 | max_total_score=71 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 15:30:01] | SESSION_END     | market=btc-updown-15m-1770642900 | strike=69180.55358507144 | evaluations=220 | signals=0 | max_total_score=63
-[2026-02-09 15:35:16] | TRADE_OPEN_OK   | direction=DOWN | price=0.83 | size=7.0 | btc=69020.8
-[2026-02-09 15:45:01] | SESSION_END     | market=btc-updown-15m-1770643800 | strike=69204.50542305519 | evaluations=55 | signals=1 | max_total_score=81 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 15:52:09] | TRADE_OPEN_OK   | direction=DOWN | price=0.9 | size=7.0 | btc=68764.7
-[2026-02-09 16:00:02] | SESSION_END     | market=btc-updown-15m-1770644700 | strike=69012.09087294654 | evaluations=62 | signals=1 | max_total_score=72 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 16:15:00] | SESSION_END     | market=btc-updown-15m-1770645600 | strike=68536.12995586658 | evaluations=211 | signals=0 | max_total_score=70
-[2026-02-09 16:27:04] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=71 | btc=68837.7
-[2026-02-09 16:27:08] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=71 | btc=68813.9
-[2026-02-09 16:27:12] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=71 | btc=68813.9
-[2026-02-09 16:27:15] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=71 | btc=68813.9
-[2026-02-09 16:27:18] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=71 | btc=68813.9
-[2026-02-09 16:27:22] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=71 | btc=68839.3
-[2026-02-09 16:27:26] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=71 | btc=68862.6
-[2026-02-09 16:27:29] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=71 | btc=68822.8
-[2026-02-09 16:27:32] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=71 | btc=68822.8
-[2026-02-09 16:27:36] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=71 | btc=68884.5
-[2026-02-09 16:27:39] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=71 | btc=68884.5
-[2026-02-09 16:27:43] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=71 | btc=68861.2
-[2026-02-09 16:27:46] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=71 | btc=68861.2
-[2026-02-09 16:27:50] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=71 | btc=68861.2
-[2026-02-09 16:27:53] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68921.6
-[2026-02-09 16:27:57] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68921.5
-[2026-02-09 16:28:00] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68921.6
-[2026-02-09 16:28:03] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68921.6
-[2026-02-09 16:28:07] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68921.6
-[2026-02-09 16:28:11] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68921.2
-[2026-02-09 16:28:14] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68921.2
-[2026-02-09 16:28:17] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68921.6
-[2026-02-09 16:28:21] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68925.0
-[2026-02-09 16:28:24] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68923.7
-[2026-02-09 16:28:28] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68924.9
-[2026-02-09 16:28:31] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68924.9
-[2026-02-09 16:28:35] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68925.0
-[2026-02-09 16:28:38] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68924.9
-[2026-02-09 16:28:42] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68924.9
-[2026-02-09 16:28:45] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68941.9
-[2026-02-09 16:28:49] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68953.8
-[2026-02-09 16:28:52] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68953.8
-[2026-02-09 16:28:55] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68953.8
-[2026-02-09 16:28:59] | TRADE_BLOCKED   | reason=Share price unavailable | btc=68925.0
-[2026-02-09 16:30:03] | SESSION_END     | market=btc-updown-15m-1770646500 | strike=68542.11780753177 | evaluations=208 | signals=20 | max_total_score=70
-[2026-02-09 16:36:42] | TRADE_OPEN_OK   | direction=DOWN | price=0.88 | size=7.0 | btc=68526.4
-[2026-02-09 16:37:19] | TRIGGER_CLOSE   | reason=⚠️ STOP LOSS - STRIKE HIT: BTC $69,000.00 >= $68,939.08 | btc_price=69000.0 | share_price=0.69 | strike=68939.07636834397
+[2026-02-09 15:15:02] | SESSION_END     | market=btc-updown-15m-1770642000| max_total_score=71
+[2026-02-09 15:30:01] | SESSION_END     | market=btc-updown-15m-1770642900| max_total_score=63
+[2026-02-09 15:35:16] | TRADE_OPEN   | direction=DOWN | price=0.83 | size=7.0
+[2026-02-09 15:45:01] | SESSION_END     | market=btc-updown-15m-1770643800| max_total_score=81
+[2026-02-09 15:52:09] | TRADE_OPEN   | direction=DOWN | price=0.9 | size=7.0
+[2026-02-09 16:00:02] | SESSION_END     | market=btc-updown-15m-1770644700| max_total_score=72
+[2026-02-09 16:15:00] | SESSION_END     | market=btc-updown-15m-1770645600| max_total_score=70
+[2026-02-09 16:30:03] | SESSION_END     | market=btc-updown-15m-1770646500| max_total_score=70
+[2026-02-09 16:36:42] | TRADE_OPEN   | direction=DOWN | price=0.88 | size=7.0
+[2026-02-09 16:37:19] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,000.00 >= $68,939.08 share_price=0.69
 [2026-02-09 16:37:26] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=None, error_message=Request exception!] | attempt=1
-[2026-02-09 16:37:29] | TRIGGER_CLOSE   | reason=⚠️ STOP LOSS - STRIKE HIT: BTC $69,006.40 >= $68,939.08 | btc_price=69006.4 | share_price=0.61 | strike=68939.07636834397
+[2026-02-09 16:37:29] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,006.40 >= $68,939.08 share_price=0.61
 [2026-02-09 16:37:36] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=None, error_message=Request exception!] | attempt=2
-[2026-02-09 16:37:38] | TRIGGER_CLOSE   | reason=⚠️ STOP LOSS - STRIKE HIT: BTC $69,020.60 >= $68,939.08 | btc_price=69020.6 | share_price=0.6 | strike=68939.07636834397
+[2026-02-09 16:37:38] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,020.60 >= $68,939.08 share_price=0.6
 [2026-02-09 16:37:45] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=None, error_message=Request exception!] | attempt=3
-[2026-02-09 16:37:48] | TRIGGER_CLOSE   | reason=⚠️ STOP LOSS - STRIKE HIT: BTC $69,150.00 >= $68,939.08 | btc_price=69150.0 | share_price=0.61 | strike=68939.07636834397
+[2026-02-09 16:37:48] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,150.00 >= $68,939.08 share_price=0.61
 [2026-02-09 16:37:51] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=4
-[2026-02-09 16:37:53] | TRIGGER_CLOSE   | reason=⚠️ STOP LOSS - STRIKE HIT: BTC $69,181.10 >= $68,939.08 | btc_price=69181.1 | share_price=0.58 | strike=68939.07636834397
+[2026-02-09 16:37:53] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,181.10 >= $68,939.08 share_price=0.58
 [2026-02-09 16:37:56] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=5
-[2026-02-09 16:37:58] | TRIGGER_CLOSE   | reason=⚠️ STOP LOSS - STRIKE HIT: BTC $69,292.30 >= $68,939.08 | btc_price=69292.3 | share_price=0.48 | strike=68939.07636834397
+[2026-02-09 16:37:58] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,292.30 >= $68,939.08 share_price=0.48
 [2026-02-09 16:38:01] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=6
-[2026-02-09 16:38:04] | TRIGGER_CLOSE   | reason=⚠️ STOP LOSS - STRIKE HIT: BTC $69,267.50 >= $68,939.08 | btc_price=69267.5 | share_price=0.53 | strike=68939.07636834397
+[2026-02-09 16:38:04] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,267.50 >= $68,939.08 share_price=0.53
 [2026-02-09 16:38:06] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=7
-[2026-02-09 16:38:09] | TRIGGER_CLOSE   | reason=⚠️ STOP LOSS - STRIKE HIT: BTC $69,281.10 >= $68,939.08 | btc_price=69281.1 | share_price=0.45 | strike=68939.07636834397
+[2026-02-09 16:38:09] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,281.10 >= $68,939.08 share_price=0.45
 [2026-02-09 16:38:11] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=8
-[2026-02-09 16:38:14] | TRIGGER_CLOSE   | reason=⚠️ STOP LOSS - STRIKE HIT: BTC $69,265.40 >= $68,939.08 | btc_price=69265.4 | share_price=0.46 | strike=68939.07636834397
+[2026-02-09 16:38:14] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,265.40 >= $68,939.08 share_price=0.46
 [2026-02-09 16:38:16] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=9
-[2026-02-09 16:38:19] | TRIGGER_CLOSE   | reason=⚠️ STOP LOSS - STRIKE HIT: BTC $69,165.90 >= $68,939.08 | btc_price=69165.9 | share_price=0.45 | strike=68939.07636834397
+[2026-02-09 16:38:19] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,165.90 >= $68,939.08 share_price=0.45
 [2026-02-09 16:38:22] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=10
-[2026-02-09 16:38:24] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 54.5% ($0.8800 → $0.4000) | btc_price=69192.2 | share_price=0.4 | strike=68939.07636834397
+[2026-02-09 16:38:24] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 54.5% ($0.8800 → $0.4000) share_price=0.4
 [2026-02-09 16:38:26] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=11
-[2026-02-09 16:38:29] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 54.5% ($0.8800 → $0.4000) | btc_price=69239.6 | share_price=0.4 | strike=68939.07636834397
+[2026-02-09 16:38:29] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 54.5% ($0.8800 → $0.4000) share_price=0.4
 [2026-02-09 16:38:31] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=12
-[2026-02-09 16:38:34] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 67.0% ($0.8800 → $0.2900) | btc_price=69239.6 | share_price=0.29 | strike=68939.07636834397
+[2026-02-09 16:38:34] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 67.0% ($0.8800 → $0.2900) share_price=0.29
 [2026-02-09 16:38:36] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=13
-[2026-02-09 16:38:39] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 64.8% ($0.8800 → $0.3100) | btc_price=69239.6 | share_price=0.31 | strike=68939.07636834397
+[2026-02-09 16:38:39] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 64.8% ($0.8800 → $0.3100) share_price=0.31
 [2026-02-09 16:38:41] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=14
-[2026-02-09 16:38:44] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 67.0% ($0.8800 → $0.2900) | btc_price=69192.6 | share_price=0.29 | strike=68939.07636834397
+[2026-02-09 16:38:44] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 67.0% ($0.8800 → $0.2900) share_price=0.29
 [2026-02-09 16:38:46] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=15
-[2026-02-09 16:38:49] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 67.0% ($0.8800 → $0.2900) | btc_price=69121.6 | share_price=0.29 | strike=68939.07636834397
+[2026-02-09 16:38:49] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 67.0% ($0.8800 → $0.2900) share_price=0.29
 [2026-02-09 16:38:52] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=16
-[2026-02-09 16:38:54] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 64.8% ($0.8800 → $0.3100) | btc_price=69121.6 | share_price=0.31 | strike=68939.07636834397
+[2026-02-09 16:38:54] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 64.8% ($0.8800 → $0.3100) share_price=0.31
 [2026-02-09 16:38:57] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=17
-[2026-02-09 16:38:59] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 64.8% ($0.8800 → $0.3100) | btc_price=69120.8 | share_price=0.31 | strike=68939.07636834397
+[2026-02-09 16:38:59] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 64.8% ($0.8800 → $0.3100) share_price=0.31
 [2026-02-09 16:39:02] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=18
-[2026-02-09 16:39:04] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 68.2% ($0.8800 → $0.2800) | btc_price=69195.2 | share_price=0.28 | strike=68939.07636834397
+[2026-02-09 16:39:04] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 68.2% ($0.8800 → $0.2800) share_price=0.28
 [2026-02-09 16:39:07] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=19
-[2026-02-09 16:39:09] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 63.6% ($0.8800 → $0.3200) | btc_price=69120.7 | share_price=0.32 | strike=68939.07636834397
+[2026-02-09 16:39:09] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 63.6% ($0.8800 → $0.3200) share_price=0.32
 [2026-02-09 16:39:12] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=20
-[2026-02-09 16:39:14] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 68.2% ($0.8800 → $0.2800) | btc_price=69127.2 | share_price=0.28 | strike=68939.07636834397
+[2026-02-09 16:39:14] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 68.2% ($0.8800 → $0.2800) share_price=0.28
 [2026-02-09 16:39:17] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=21
-[2026-02-09 16:39:19] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 72.7% ($0.8800 → $0.2400) | btc_price=69162.5 | share_price=0.24 | strike=68939.07636834397
+[2026-02-09 16:39:19] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 72.7% ($0.8800 → $0.2400) share_price=0.24
 [2026-02-09 16:39:22] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=22
-[2026-02-09 16:39:25] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 73.9% ($0.8800 → $0.2300) | btc_price=69200.0 | share_price=0.23 | strike=68939.07636834397
+[2026-02-09 16:39:25] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 73.9% ($0.8800 → $0.2300) share_price=0.23
 [2026-02-09 16:39:27] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=23
-[2026-02-09 16:39:29] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 69.3% ($0.8800 → $0.2700) | btc_price=69200.0 | share_price=0.27 | strike=68939.07636834397
+[2026-02-09 16:39:29] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 69.3% ($0.8800 → $0.2700) share_price=0.27
 [2026-02-09 16:39:32] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=24
-[2026-02-09 16:39:35] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 65.9% ($0.8800 → $0.3000) | btc_price=69161.9 | share_price=0.3 | strike=68939.07636834397
+[2026-02-09 16:39:35] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 65.9% ($0.8800 → $0.3000) share_price=0.3
 [2026-02-09 16:39:37] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=25
-[2026-02-09 16:39:40] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 64.8% ($0.8800 → $0.3100) | btc_price=69135.8 | share_price=0.31 | strike=68939.07636834397
+[2026-02-09 16:39:40] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 64.8% ($0.8800 → $0.3100) share_price=0.31
 [2026-02-09 16:39:42] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=26
-[2026-02-09 16:39:44] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 65.9% ($0.8800 → $0.3000) | btc_price=69109.5 | share_price=0.3 | strike=68939.07636834397
+[2026-02-09 16:39:44] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 65.9% ($0.8800 → $0.3000) share_price=0.3
 [2026-02-09 16:39:47] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=27
-[2026-02-09 16:39:49] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 76.1% ($0.8800 → $0.2100) | btc_price=69156.4 | share_price=0.21 | strike=68939.07636834397
+[2026-02-09 16:39:49] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 76.1% ($0.8800 → $0.2100) share_price=0.21
 [2026-02-09 16:39:52] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=28
-[2026-02-09 16:39:54] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 80.7% ($0.8800 → $0.1700) | btc_price=69220.1 | share_price=0.17 | strike=68939.07636834397
+[2026-02-09 16:39:54] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 80.7% ($0.8800 → $0.1700) share_price=0.17
 [2026-02-09 16:39:57] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=29
-[2026-02-09 16:39:59] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 81.8% ($0.8800 → $0.1600) | btc_price=69284.0 | share_price=0.16 | strike=68939.07636834397
+[2026-02-09 16:39:59] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 81.8% ($0.8800 → $0.1600) share_price=0.16
 [2026-02-09 16:40:01] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=30
-[2026-02-09 16:40:04] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 86.4% ($0.8800 → $0.1200) | btc_price=69284.0 | share_price=0.12 | strike=68939.07636834397
+[2026-02-09 16:40:04] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 86.4% ($0.8800 → $0.1200) share_price=0.12
 [2026-02-09 16:40:06] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=31
-[2026-02-09 16:40:08] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 88.6% ($0.8800 → $0.1000) | btc_price=69411.1 | share_price=0.1 | strike=68939.07636834397
+[2026-02-09 16:40:08] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 88.6% ($0.8800 → $0.1000) share_price=0.1
 [2026-02-09 16:40:11] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=32
-[2026-02-09 16:40:13] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 90.9% ($0.8800 → $0.0800) | btc_price=69470.2 | share_price=0.08 | strike=68939.07636834397
+[2026-02-09 16:40:13] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 90.9% ($0.8800 → $0.0800) share_price=0.08
 [2026-02-09 16:40:16] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=33
-[2026-02-09 16:40:18] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 93.2% ($0.8800 → $0.0600) | btc_price=69571.5 | share_price=0.06 | strike=68939.07636834397
+[2026-02-09 16:40:18] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 93.2% ($0.8800 → $0.0600) share_price=0.06
 [2026-02-09 16:40:21] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=34
-[2026-02-09 16:40:24] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 94.3% ($0.8800 → $0.0500) | btc_price=69644.6 | share_price=0.05 | strike=68939.07636834397
+[2026-02-09 16:40:24] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 94.3% ($0.8800 → $0.0500) share_price=0.05
 [2026-02-09 16:40:26] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=35
-[2026-02-09 16:40:29] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 92.0% ($0.8800 → $0.0700) | btc_price=69584.6 | share_price=0.07 | strike=68939.07636834397
+[2026-02-09 16:40:29] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 92.0% ($0.8800 → $0.0700) share_price=0.07
 [2026-02-09 16:40:31] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=36
-[2026-02-09 16:40:33] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 90.9% ($0.8800 → $0.0800) | btc_price=69575.0 | share_price=0.08 | strike=68939.07636834397
+[2026-02-09 16:40:33] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 90.9% ($0.8800 → $0.0800) share_price=0.08
 [2026-02-09 16:40:36] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=37
-[2026-02-09 16:40:38] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 90.9% ($0.8800 → $0.0800) | btc_price=69563.2 | share_price=0.08 | strike=68939.07636834397
+[2026-02-09 16:40:38] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 90.9% ($0.8800 → $0.0800) share_price=0.08
 [2026-02-09 16:40:41] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=38
-[2026-02-09 16:40:43] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 90.9% ($0.8800 → $0.0800) | btc_price=69520.7 | share_price=0.08 | strike=68939.07636834397
+[2026-02-09 16:40:43] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 90.9% ($0.8800 → $0.0800) share_price=0.08
 [2026-02-09 16:40:46] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=39
-[2026-02-09 16:40:48] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 88.6% ($0.8800 → $0.1000) | btc_price=69503.4 | share_price=0.1 | strike=68939.07636834397
+[2026-02-09 16:40:48] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 88.6% ($0.8800 → $0.1000) share_price=0.1
 [2026-02-09 16:40:51] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=40
-[2026-02-09 16:40:53] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 89.8% ($0.8800 → $0.0900) | btc_price=69428.1 | share_price=0.09 | strike=68939.07636834397
+[2026-02-09 16:40:53] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 89.8% ($0.8800 → $0.0900) share_price=0.09
 [2026-02-09 16:40:56] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=41
-[2026-02-09 16:40:58] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 90.9% ($0.8800 → $0.0800) | btc_price=69452.3 | share_price=0.08 | strike=68939.07636834397
+[2026-02-09 16:40:58] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 90.9% ($0.8800 → $0.0800) share_price=0.08
 [2026-02-09 16:41:01] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=42
-[2026-02-09 16:41:04] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 92.0% ($0.8800 → $0.0700) | btc_price=69425.3 | share_price=0.07 | strike=68939.07636834397
+[2026-02-09 16:41:04] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 92.0% ($0.8800 → $0.0700) share_price=0.07
 [2026-02-09 16:41:06] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=43
-[2026-02-09 16:41:09] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 90.9% ($0.8800 → $0.0800) | btc_price=69425.3 | share_price=0.08 | strike=68939.07636834397
+[2026-02-09 16:41:09] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 90.9% ($0.8800 → $0.0800) share_price=0.08
 [2026-02-09 16:41:11] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=44
-[2026-02-09 16:41:14] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 93.2% ($0.8800 → $0.0600) | btc_price=69454.0 | share_price=0.06 | strike=68939.07636834397
+[2026-02-09 16:41:14] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 93.2% ($0.8800 → $0.0600) share_price=0.06
 [2026-02-09 16:41:16] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=45
-[2026-02-09 16:41:19] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 95.5% ($0.8800 → $0.0400) | btc_price=69489.9 | share_price=0.04 | strike=68939.07636834397
+[2026-02-09 16:41:19] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 95.5% ($0.8800 → $0.0400) share_price=0.04
 [2026-02-09 16:41:22] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=46
-[2026-02-09 16:43:04] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=69352.9
-[2026-02-09 16:43:07] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=72 | btc=69397.9
-[2026-02-09 16:43:11] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=72 | btc=69420.2
-[2026-02-09 16:43:14] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=72 | btc=69437.3
-[2026-02-09 16:43:18] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=72 | btc=69437.3
-[2026-02-09 16:43:21] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=72 | btc=69437.3
-[2026-02-09 16:43:24] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=72 | btc=69437.3
-[2026-02-09 16:43:28] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=72 | btc=69437.3
-[2026-02-09 16:43:31] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=69371.8
-[2026-02-09 16:43:35] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=72 | btc=69371.8
-[2026-02-09 16:43:38] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=72 | btc=69313.9
-[2026-02-09 16:43:41] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=69305.0
-[2026-02-09 16:43:45] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=72 | btc=69286.7
-[2026-02-09 16:43:48] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=72 | btc=69265.1
-[2026-02-09 16:43:52] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=72 | btc=69265.0
-[2026-02-09 16:43:57] | TRADE_OPEN_OK   | direction=UP | price=0.95 | size=7.0 | btc=69247.6
-[2026-02-09 16:45:02] | SESSION_END     | market=btc-updown-15m-1770647400 | strike=68939.07636834397 | evaluations=42 | signals=1 | max_total_score=72 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 17:00:03] | SESSION_END     | market=btc-updown-15m-1770648300 | strike=69144.92569136692 | evaluations=163 | signals=0 | max_total_score=19
-[2026-02-09 17:05:17] | TRADE_OPEN_OK   | direction=UP | price=0.88 | size=7.0 | btc=69763.3
-[2026-02-09 17:15:00] | SESSION_END     | market=btc-updown-15m-1770649200 | strike=69237.16998684917 | evaluations=43 | signals=1 | max_total_score=77 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 17:24:04] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=72 | btc=69020.9
-[2026-02-09 17:24:08] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=72 | btc=69000.0
-[2026-02-09 17:24:11] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=72 | btc=69000.0
-[2026-02-09 17:24:14] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=72 | btc=68996.1
-[2026-02-09 17:24:18] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=72 | btc=68997.5
-[2026-02-09 17:24:21] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=72 | btc=68996.1
-[2026-02-09 17:24:25] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=72 | btc=68996.1
-[2026-02-09 17:24:28] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=72 | btc=68996.0
-[2026-02-09 17:24:32] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=72 | btc=68979.5
-[2026-02-09 17:24:35] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=72 | btc=68954.7
-[2026-02-09 17:24:39] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=72 | btc=68956.1
-[2026-02-09 17:24:42] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=72 | btc=68985.6
-[2026-02-09 17:24:46] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=68985.5
-[2026-02-09 17:24:49] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=68985.5
-[2026-02-09 17:24:52] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=68985.5
-[2026-02-09 17:24:56] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=68979.4
-[2026-02-09 17:24:59] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=68954.7
-[2026-02-09 17:25:03] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=75 | btc=68954.6
-[2026-02-09 17:25:06] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=75 | btc=68954.6
-[2026-02-09 17:25:10] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=75 | btc=68954.6
-[2026-02-09 17:25:13] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=75 | btc=68954.7
-[2026-02-09 17:25:17] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=75 | btc=68954.6
-[2026-02-09 17:25:20] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=75 | btc=68946.4
-[2026-02-09 17:25:24] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=75 | btc=68946.5
-[2026-02-09 17:25:27] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=75 | btc=68946.5
-[2026-02-09 17:25:31] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=75 | btc=68952.9
-[2026-02-09 17:25:34] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=75 | btc=68952.9
-[2026-02-09 17:25:37] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=75 | btc=68946.0
-[2026-02-09 17:25:41] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=75 | btc=68976.6
-[2026-02-09 17:25:44] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=75 | btc=68976.6
-[2026-02-09 17:25:48] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=75 | btc=68905.0
-[2026-02-09 17:25:51] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=75 | btc=68888.5
-[2026-02-09 17:25:55] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=75 | btc=68872.1
-[2026-02-09 17:25:58] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=75 | btc=68872.1
-[2026-02-09 17:26:02] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=75 | btc=68847.2
-[2026-02-09 17:26:05] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=77 | btc=68828.1
-[2026-02-09 17:26:09] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=77 | btc=68828.5
-[2026-02-09 17:26:12] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=77 | btc=68856.2
-[2026-02-09 17:26:16] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=77 | btc=68874.9
-[2026-02-09 17:26:19] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=77 | btc=68861.1
-[2026-02-09 17:26:23] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=77 | btc=68859.7
-[2026-02-09 17:26:26] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=77 | btc=68813.1
-[2026-02-09 17:26:30] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=77 | btc=68797.6
-[2026-02-09 17:26:33] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=77 | btc=68789.4
-[2026-02-09 17:26:37] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=77 | btc=68789.5
-[2026-02-09 17:26:40] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=77 | btc=68789.5
-[2026-02-09 17:26:44] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=77 | btc=68803.9
-[2026-02-09 17:26:47] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=77 | btc=68808.8
-[2026-02-09 17:26:51] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=77 | btc=68808.8
-[2026-02-09 17:26:54] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=77 | btc=68808.8
-[2026-02-09 17:26:58] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=77 | btc=68808.8
-[2026-02-09 17:27:02] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=77 | btc=68808.8
-[2026-02-09 17:27:05] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=80 | btc=68891.9
-[2026-02-09 17:27:08] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=80 | btc=68844.8
-[2026-02-09 17:27:12] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=80 | btc=68841.5
-[2026-02-09 17:27:15] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=80 | btc=68825.9
-[2026-02-09 17:27:19] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=80 | btc=68825.0
-[2026-02-09 17:27:22] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=80 | btc=68841.9
-[2026-02-09 17:27:25] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=80 | btc=68841.9
-[2026-02-09 17:27:29] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=80 | btc=68841.9
-[2026-02-09 17:27:43] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=80 | btc=68863.1
-[2026-02-09 17:27:46] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=80 | btc=68863.1
-[2026-02-09 17:27:50] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=80 | btc=68821.5
-[2026-02-09 17:27:53] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=80 | btc=68833.1
-[2026-02-09 17:27:57] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=80 | btc=68833.1
-[2026-02-09 17:28:00] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=80 | btc=68833.1
-[2026-02-09 17:28:28] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=68925.4
-[2026-02-09 17:28:31] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=68959.7
-[2026-02-09 17:28:34] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=68959.7
-[2026-02-09 17:28:38] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=68914.4
-[2026-02-09 17:28:41] | TRADE_BLOCKED   | reasons=Price too high ($1.00 > $0.95) | score=82 | btc=68904.5
-[2026-02-09 17:30:02] | SESSION_END     | market=btc-updown-15m-1770650100 | strike=69441.45970097832 | evaluations=186 | signals=0 | max_total_score=70
-[2026-02-09 17:36:22] | TRADE_OPEN_OK   | direction=UP | price=0.92 | size=7.0 | btc=69311.4
-[2026-02-09 17:45:01] | SESSION_END     | market=btc-updown-15m-1770651000 | strike=68883.3532476427 | evaluations=74 | signals=1 | max_total_score=73 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 17:53:08] | TRADE_OPEN_OK   | direction=DOWN | price=0.94 | size=7.0 | btc=69161.8
-[2026-02-09 17:55:59] | TRIGGER_CLOSE   | reason=⚠️ STOP LOSS - STRIKE HIT: BTC $69,516.10 >= $69,503.56 | btc_price=69516.1 | share_price=0.5 | strike=69503.56052435013
+[2026-02-09 16:43:57] | TRADE_OPEN   | direction=UP | price=0.95 | size=7.0
+[2026-02-09 16:45:02] | SESSION_END     | market=btc-updown-15m-1770647400| max_total_score=72
+[2026-02-09 17:00:03] | SESSION_END     | market=btc-updown-15m-1770648300| max_total_score=19
+[2026-02-09 17:05:17] | TRADE_OPEN   | direction=UP | price=0.88 | size=7.0
+[2026-02-09 17:15:00] | SESSION_END     | market=btc-updown-15m-1770649200| max_total_score=77
+[2026-02-09 17:30:02] | SESSION_END     | market=btc-updown-15m-1770650100| max_total_score=70
+[2026-02-09 17:36:22] | TRADE_OPEN   | direction=UP | price=0.92 | size=7.0
+[2026-02-09 17:45:01] | SESSION_END     | market=btc-updown-15m-1770651000| max_total_score=73
+[2026-02-09 17:53:08] | TRADE_OPEN   | direction=DOWN | price=0.94 | size=7.0
+[2026-02-09 17:55:59] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,516.10 >= $69,503.56 share_price=0.5
 [2026-02-09 17:56:02] | TRADE_CLOSE_OK  | size=6.9945 | price=0.54
-[2026-02-09 18:00:03] | SESSION_END     | market=btc-updown-15m-1770651900 | strike=69503.56052435013 | evaluations=119 | signals=1 | max_total_score=87 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 18:08:25] | TRADE_OPEN_OK   | direction=DOWN | price=0.92 | size=7.0 | btc=69252.5
-[2026-02-09 18:15:00] | SESSION_END     | market=btc-updown-15m-1770652800 | strike=69540.31148681513 | evaluations=117 | signals=1 | max_total_score=77 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 18:24:34] | TRADE_OPEN_OK   | direction=UP | price=0.89 | size=7.0 | btc=69400.2
-[2026-02-09 18:30:01] | SESSION_END     | market=btc-updown-15m-1770653700 | strike=69167.99079234169 | evaluations=143 | signals=1 | max_total_score=79 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 18:36:02] | TRADE_OPEN_OK   | direction=DOWN | price=0.87 | size=7.0 | btc=69316.4
-[2026-02-09 18:41:42] | TRIGGER_CLOSE   | reason=⚠️ STOP LOSS - STRIKE HIT: BTC $69,575.00 >= $69,564.43 | btc_price=69575.0 | share_price=0.58 | strike=69564.433273
+[2026-02-09 18:00:03] | SESSION_END     | market=btc-updown-15m-1770651900| max_total_score=87
+[2026-02-09 18:08:25] | TRADE_OPEN   | direction=DOWN | price=0.92 | size=7.0
+[2026-02-09 18:15:00] | SESSION_END     | market=btc-updown-15m-1770652800| max_total_score=77
+[2026-02-09 18:24:34] | TRADE_OPEN   | direction=UP | price=0.89 | size=7.0
+[2026-02-09 18:30:01] | SESSION_END     | market=btc-updown-15m-1770653700| max_total_score=79
+[2026-02-09 18:36:02] | TRADE_OPEN   | direction=DOWN | price=0.87 | size=7.0
+[2026-02-09 18:41:42] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,575.00 >= $69,564.43 share_price=0.58
 [2026-02-09 18:41:47] | TRADE_CLOSE_OK  | size=6.9747 | price=0.46
-[2026-02-09 18:45:01] | SESSION_END     | market=btc-updown-15m-1770654600 | strike=69564.433273 | evaluations=68 | signals=1 | max_total_score=77 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 18:57:52] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=70149.8
-[2026-02-09 18:57:55] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=70149.9
-[2026-02-09 18:57:59] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=70149.9
-[2026-02-09 18:58:02] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=75 | btc=70149.8
-[2026-02-09 18:58:06] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=75 | btc=70149.8
-[2026-02-09 18:58:13] | TRADE_OPEN_OK   | direction=UP | price=0.95 | size=7.0 | btc=70149.8
-[2026-02-09 19:00:00] | SESSION_END     | market=btc-updown-15m-1770655500 | strike=69906.29195599467 | evaluations=143 | signals=1 | max_total_score=75 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 19:15:01] | SESSION_END     | market=btc-updown-15m-1770656400 | strike=70052.5939825 | evaluations=215 | signals=0 | max_total_score=16
-[2026-02-09 19:28:22] | TRADE_OPEN_OK   | direction=UP | price=0.89 | size=7.0 | btc=69995.6
-[2026-02-09 19:30:02] | SESSION_END     | market=btc-updown-15m-1770657300 | strike=69888.9637528295 | evaluations=196 | signals=1 | max_total_score=72 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 19:35:48] | TRADE_OPEN_OK   | direction=UP | price=0.87 | size=7.0 | btc=70381.4
-[2026-02-09 19:45:02] | SESSION_END     | market=btc-updown-15m-1770658200 | strike=70004.68509231578 | evaluations=58 | signals=1 | max_total_score=74 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 19:58:22] | TRADE_OPEN_OK   | direction=DOWN | price=0.91 | size=7.0 | btc=70698.1
-[2026-02-09 20:00:03] | SESSION_END     | market=btc-updown-15m-1770659100 | strike=70804.87412504095 | evaluations=194 | signals=1 | max_total_score=71 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 20:03:44] | TRADE_OPEN_OK   | direction=UP | price=0.82 | size=7.0 | btc=70843.3
-[2026-02-09 20:08:25] | TRIGGER_CLOSE   | reason=⚠️ STOP LOSS - STRIKE HIT: BTC $70,559.90 <= $70,568.87 | btc_price=70559.9 | share_price=0.5 | strike=70568.86796019749
+[2026-02-09 18:45:01] | SESSION_END     | market=btc-updown-15m-1770654600| max_total_score=77
+[2026-02-09 18:58:13] | TRADE_OPEN   | direction=UP | price=0.95 | size=7.0
+[2026-02-09 19:00:00] | SESSION_END     | market=btc-updown-15m-1770655500| max_total_score=75
+[2026-02-09 19:15:01] | SESSION_END     | market=btc-updown-15m-1770656400| max_total_score=16
+[2026-02-09 19:28:22] | TRADE_OPEN   | direction=UP | price=0.89 | size=7.0
+[2026-02-09 19:30:02] | SESSION_END     | market=btc-updown-15m-1770657300| max_total_score=72
+[2026-02-09 19:35:48] | TRADE_OPEN   | direction=UP | price=0.87 | size=7.0
+[2026-02-09 19:45:02] | SESSION_END     | market=btc-updown-15m-1770658200| max_total_score=74
+[2026-02-09 19:58:22] | TRADE_OPEN   | direction=DOWN | price=0.91 | size=7.0
+[2026-02-09 20:00:03] | SESSION_END     | market=btc-updown-15m-1770659100| max_total_score=71
+[2026-02-09 20:03:44] | TRADE_OPEN   | direction=UP | price=0.82 | size=7.0
+[2026-02-09 20:08:25] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $70,559.90 <= $70,568.87 share_price=0.5
 [2026-02-09 20:08:28] | TRADE_CLOSE_OK  | size=7.0 | price=0.48
-[2026-02-09 20:15:00] | SESSION_END     | market=btc-updown-15m-1770660000 | strike=70568.86796019749 | evaluations=42 | signals=1 | max_total_score=71 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 20:23:40] | TRADE_OPEN_OK   | direction=DOWN | price=0.9 | size=7.0 | btc=70175.4
-[2026-02-09 20:30:00] | SESSION_END     | market=btc-updown-15m-1770660900 | strike=70497.09612949916 | evaluations=130 | signals=1 | max_total_score=71 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 20:43:26] | TRADE_OPEN_OK   | direction=UP | price=0.95 | size=7.0 | btc=70384.3
-[2026-02-09 20:45:00] | SESSION_END     | market=btc-updown-15m-1770661800 | strike=70239.65305308787 | evaluations=195 | signals=1 | max_total_score=75 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 20:55:36] | TRADE_OPEN_OK   | direction=DOWN | price=0.91 | size=7.0 | btc=70210.1
-[2026-02-09 21:00:02] | SESSION_END     | market=btc-updown-15m-1770662700 | strike=70391.42156670867 | evaluations=2 | signals=1 | max_total_score=81 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 21:15:01] | SESSION_END     | market=btc-updown-15m-1770663600 | strike=70376.41947088989 | evaluations=213 | signals=0 | max_total_score=39
-[2026-02-09 21:25:10] | TRADE_OPEN_OK   | direction=UP | price=0.93 | size=7.0 | btc=70648.2
-[2026-02-09 21:30:01] | SESSION_END     | market=btc-updown-15m-1770664500 | strike=70441.89734035458 | evaluations=144 | signals=1 | max_total_score=77 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 21:38:10] | TRADE_OPEN_OK   | direction=UP | price=0.9 | size=7.0 | btc=70846.9
-[2026-02-09 21:45:01] | SESSION_END     | market=btc-updown-15m-1770665400 | strike=70631.06358982339 | evaluations=123 | signals=1 | max_total_score=71 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 21:58:07] | TRADE_OPEN_OK   | direction=UP | price=0.92 | size=7.0 | btc=70994.0
-[2026-02-09 21:58:39] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 50.0% ($0.9200 → $0.4600) | btc_price=70912.6 | share_price=0.46 | strike=70891.15043276707
+[2026-02-09 20:15:00] | SESSION_END     | market=btc-updown-15m-1770660000| max_total_score=71
+[2026-02-09 20:23:40] | TRADE_OPEN   | direction=DOWN | price=0.9 | size=7.0
+[2026-02-09 20:30:00] | SESSION_END     | market=btc-updown-15m-1770660900| max_total_score=71
+[2026-02-09 20:43:26] | TRADE_OPEN   | direction=UP | price=0.95 | size=7.0
+[2026-02-09 20:45:00] | SESSION_END     | market=btc-updown-15m-1770661800| max_total_score=75
+[2026-02-09 20:55:36] | TRADE_OPEN   | direction=DOWN | price=0.91 | size=7.0
+[2026-02-09 21:00:02] | SESSION_END     | market=btc-updown-15m-1770662700| max_total_score=81
+[2026-02-09 21:15:01] | SESSION_END     | market=btc-updown-15m-1770663600| max_total_score=39
+[2026-02-09 21:25:10] | TRADE_OPEN   | direction=UP | price=0.93 | size=7.0
+[2026-02-09 21:30:01] | SESSION_END     | market=btc-updown-15m-1770664500| max_total_score=77
+[2026-02-09 21:38:10] | TRADE_OPEN   | direction=UP | price=0.9 | size=7.0
+[2026-02-09 21:45:01] | SESSION_END     | market=btc-updown-15m-1770665400| max_total_score=71
+[2026-02-09 21:58:07] | TRADE_OPEN   | direction=UP | price=0.92 | size=7.0
+[2026-02-09 21:58:39] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 50.0% ($0.9200 → $0.4600) share_price=0.46
 [2026-02-09 21:58:42] | TRADE_CLOSE_OK  | size=7.0 | price=0.28
-[2026-02-09 22:00:02] | SESSION_END     | market=btc-updown-15m-1770666300 | strike=70891.15043276707 | evaluations=212 | signals=1 | max_total_score=74 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 22:15:02] | SESSION_END     | market=btc-updown-15m-1770667200 | strike=70924.2772035 | evaluations=213 | signals=0 | max_total_score=66
-[2026-02-09 22:17:11] | TRADE_OPEN_OK   | direction=DOWN | price=0.87 | size=7.0 | btc=70657.7
-[2026-02-09 22:30:03] | SESSION_END     | market=btc-updown-15m-1770668100 | strike=70952.6837742826 | evaluations=6 | signals=1 | max_total_score=74 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 22:39:15] | TRADE_OPEN_OK   | direction=UP | price=0.92 | size=7.0 | btc=70749.8
-[2026-02-09 22:45:00] | SESSION_END     | market=btc-updown-15m-1770669000 | strike=70513.41659187073 | evaluations=127 | signals=1 | max_total_score=88 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 23:00:01] | SESSION_END     | market=btc-updown-15m-1770669900 | strike=70787.56906683225 | evaluations=218 | signals=0 | max_total_score=56
-[2026-02-09 23:07:05] | TRADE_OPEN_OK   | direction=DOWN | price=0.87 | size=7.0 | btc=70524.8
-[2026-02-09 23:15:02] | SESSION_END     | market=btc-updown-15m-1770670800 | strike=70715.46643354605 | evaluations=94 | signals=1 | max_total_score=72 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 23:28:15] | TRADE_OPEN_OK   | direction=DOWN | price=0.93 | size=7.0 | btc=70302.2
-[2026-02-09 23:30:02] | SESSION_END     | market=btc-updown-15m-1770671700 | strike=70381.67894377612 | evaluations=202 | signals=1 | max_total_score=72 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 23:35:05] | TRADE_OPEN_OK   | direction=DOWN | price=0.92 | size=7.0 | btc=69953.4
-[2026-02-09 23:45:02] | SESSION_END     | market=btc-updown-15m-1770672600 | strike=70282.94113970434 | evaluations=70 | signals=1 | max_total_score=72 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-09 23:53:21] | TRADE_OPEN_OK   | direction=UP | price=0.94 | size=7.0 | btc=70207.6
-[2026-02-10 00:00:01] | SESSION_END     | market=btc-updown-15m-1770673500 | strike=69974.94440370669 | evaluations=119 | signals=1 | max_total_score=73 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-10 00:15:01] | SESSION_END     | market=btc-updown-15m-1770674400 | strike=70365.97735520198 | evaluations=214 | signals=0 | max_total_score=60
-[2026-02-10 00:21:17] | TRADE_OPEN_OK   | direction=DOWN | price=0.89 | size=7.0 | btc=70400.1
-[2026-02-10 00:30:02] | SESSION_END     | market=btc-updown-15m-1770675300 | strike=70607.53965531901 | evaluations=92 | signals=1 | max_total_score=72 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-10 00:43:43] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=79 | btc=70483.9
-[2026-02-10 00:43:47] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=79 | btc=70483.9
-[2026-02-10 00:43:51] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=79 | btc=70483.9
-[2026-02-10 00:43:54] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=78 | btc=70511.6
-[2026-02-10 00:43:58] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=78 | btc=70511.6
-[2026-02-10 00:45:00] | SESSION_END     | market=btc-updown-15m-1770676200 | strike=70407.78077707034 | evaluations=226 | signals=0 | max_total_score=68
-[2026-02-10 00:52:52] | TRADE_OPEN_OK   | direction=DOWN | price=0.89 | size=7.0 | btc=70348.4
-[2026-02-10 01:00:01] | SESSION_END     | market=btc-updown-15m-1770677100 | strike=70476.09712284763 | evaluations=102 | signals=1 | max_total_score=71 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-10 01:06:06] | TRADE_OPEN_OK   | direction=UP | price=0.9 | size=7.0 | btc=70484.0
-[2026-02-10 01:12:21] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 53.3% ($0.9000 → $0.4200) | btc_price=70350.5 | share_price=0.42 | strike=70339.76206576367
+[2026-02-09 22:00:02] | SESSION_END     | market=btc-updown-15m-1770666300| max_total_score=74
+[2026-02-09 22:15:02] | SESSION_END     | market=btc-updown-15m-1770667200| max_total_score=66
+[2026-02-09 22:17:11] | TRADE_OPEN   | direction=DOWN | price=0.87 | size=7.0
+[2026-02-09 22:30:03] | SESSION_END     | market=btc-updown-15m-1770668100| max_total_score=74
+[2026-02-09 22:39:15] | TRADE_OPEN   | direction=UP | price=0.92 | size=7.0
+[2026-02-09 22:45:00] | SESSION_END     | market=btc-updown-15m-1770669000| max_total_score=88
+[2026-02-09 23:00:01] | SESSION_END     | market=btc-updown-15m-1770669900| max_total_score=56
+[2026-02-09 23:07:05] | TRADE_OPEN   | direction=DOWN | price=0.87 | size=7.0
+[2026-02-09 23:15:02] | SESSION_END     | market=btc-updown-15m-1770670800| max_total_score=72
+[2026-02-09 23:28:15] | TRADE_OPEN   | direction=DOWN | price=0.93 | size=7.0
+[2026-02-09 23:30:02] | SESSION_END     | market=btc-updown-15m-1770671700| max_total_score=72
+[2026-02-09 23:35:05] | TRADE_OPEN   | direction=DOWN | price=0.92 | size=7.0
+[2026-02-09 23:45:02] | SESSION_END     | market=btc-updown-15m-1770672600| max_total_score=72
+[2026-02-09 23:53:21] | TRADE_OPEN   | direction=UP | price=0.94 | size=7.0
+[2026-02-10 00:00:01] | SESSION_END     | market=btc-updown-15m-1770673500| max_total_score=73
+[2026-02-10 00:15:01] | SESSION_END     | market=btc-updown-15m-1770674400| max_total_score=60
+[2026-02-10 00:21:17] | TRADE_OPEN   | direction=DOWN | price=0.89 | size=7.0
+[2026-02-10 00:30:02] | SESSION_END     | market=btc-updown-15m-1770675300| max_total_score=72
+[2026-02-10 00:45:00] | SESSION_END     | market=btc-updown-15m-1770676200| max_total_score=68
+[2026-02-10 00:52:52] | TRADE_OPEN   | direction=DOWN | price=0.89 | size=7.0
+[2026-02-10 01:00:01] | SESSION_END     | market=btc-updown-15m-1770677100| max_total_score=71
+[2026-02-10 01:06:06] | TRADE_OPEN   | direction=UP | price=0.9 | size=7.0
+[2026-02-10 01:12:21] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 53.3% ($0.9000 → $0.4200) share_price=0.42
 [2026-02-10 01:12:27] | TRADE_CLOSE_OK  | size=6.9859 | price=0.32
-[2026-02-10 01:15:00] | SESSION_END     | market=btc-updown-15m-1770678000 | strike=70339.76206576367 | evaluations=80 | signals=1 | max_total_score=77 | trade_status=unknown | pnl_percent=0 | exit_price=0
-[2026-02-10 01:26:05] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=72 | btc=70252.9
-[2026-02-10 01:26:08] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=70252.9
-[2026-02-10 01:26:12] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=70252.9
-[2026-02-10 01:26:15] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=70252.9
-[2026-02-10 01:26:18] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=70252.9
-[2026-02-10 01:26:22] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=70252.9
-[2026-02-10 01:26:25] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=70252.9
-[2026-02-10 01:26:29] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=70252.8
-[2026-02-10 01:26:32] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=70252.8
-[2026-02-10 01:26:36] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=70252.8
-[2026-02-10 01:26:39] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=70240.0
-[2026-02-10 01:26:42] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=70240.0
-[2026-02-10 01:26:46] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=70240.1
-[2026-02-10 01:26:49] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=70240.1
-[2026-02-10 01:26:52] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=70240.0
-[2026-02-10 01:26:56] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=72 | btc=70240.1
-[2026-02-10 01:26:59] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=72 | btc=70240.1
-[2026-02-10 01:27:03] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=74 | btc=70252.9
-[2026-02-10 01:27:06] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=74 | btc=70252.9
-[2026-02-10 01:27:10] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=74 | btc=70270.7
-[2026-02-10 01:27:13] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=74 | btc=70261.3
-[2026-02-10 01:27:16] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=74 | btc=70255.0
-[2026-02-10 01:27:20] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=74 | btc=70251.5
-[2026-02-10 01:27:23] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=74 | btc=70258.6
-[2026-02-10 01:27:27] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=74 | btc=70258.6
-[2026-02-10 01:27:30] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=74 | btc=70258.6
-[2026-02-10 01:27:33] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=74 | btc=70258.6
-[2026-02-10 01:27:37] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=74 | btc=70258.6
-[2026-02-10 01:27:40] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=74 | btc=70258.6
-[2026-02-10 01:27:44] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=74 | btc=70271.6
-[2026-02-10 01:27:48] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=74 | btc=70271.6
-[2026-02-10 01:27:51] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=74 | btc=70271.6
-[2026-02-10 01:27:55] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=74 | btc=70271.4
-[2026-02-10 01:27:58] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=74 | btc=70271.4
-[2026-02-10 01:28:01] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=70271.4
-[2026-02-10 01:28:05] | TRADE_BLOCKED   | reasons=Price too high ($0.96 > $0.95) | score=76 | btc=70271.4
-[2026-02-10 01:28:08] | TRADE_BLOCKED   | reasons=Price too high ($0.97 > $0.95) | score=76 | btc=70271.4
-[2026-02-10 01:28:12] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=70271.3
-[2026-02-10 01:28:15] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=70271.3
-[2026-02-10 01:28:18] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=70271.3
-[2026-02-10 01:28:22] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=70268.7
-[2026-02-10 01:28:25] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=70268.7
-[2026-02-10 01:28:29] | TRADE_BLOCKED   | reasons=Price too high ($0.98 > $0.95) | score=76 | btc=70268.8
-[2026-02-10 01:28:32] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=70268.8
-[2026-02-10 01:28:35] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=70268.8
-[2026-02-10 01:28:39] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=70268.8
-[2026-02-10 01:28:42] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=70268.8
-[2026-02-10 01:28:45] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=70268.8
-[2026-02-10 01:28:49] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=70268.8
-[2026-02-10 01:28:52] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=70266.6
-[2026-02-10 01:28:55] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=70265.5
-[2026-02-10 01:28:59] | TRADE_BLOCKED   | reasons=Price too high ($0.99 > $0.95) | score=76 | btc=70265.5
-[2026-02-10 01:30:01] | SESSION_END     | market=btc-updown-15m-1770678900 | strike=70402.91304938239 | evaluations=213 | signals=0 | max_total_score=70
+[2026-02-10 01:15:00] | SESSION_END     | market=btc-updown-15m-1770678000| max_total_score=77
+[2026-02-10 01:30:01] | SESSION_END     | market=btc-updown-15m-1770678900| max_total_score=70
+[2026-02-10 09:27:06] | TRADE_OPEN   | direction=DOWN | price=0.77 | size=7.0
+[2026-02-10 09:27:06] | ENTRY_DETAILS   | score_summary=TOTAL: 74/100 | BB: 16/30 | ATR: 58/70 - ratio: x1.8 | time_left=T-2.95min
+[2026-02-10 09:30:02] | TRADE_RESULT_DETAILED | status=WIN | pnl=$29.87 (+29.9%) | entry_summary=SCORE: 74 | BB: 16/30 | ATR: 58/70 (x1.8) | closed_early=False | counterfactual=SAME | max_loss_signal_score=N/A | btc_final_diff=$-23.82
+[2026-02-10 09:30:02] | SESSION_END     | market=btc-updown-15m-1770707700 | max_total_score=74
+[2026-02-10 09:36:07] | TRADE_OPEN   | direction=DOWN | price=0.84 | size=7.0 | btc=68924.2
+[2026-02-10 09:36:07] | ENTRY_DETAILS   | score_summary=TOTAL: 75/100 | BB: 12/30 | ATR: 63/70 - ratio: x1.9 | time_left=T-8.93min
+[2026-02-10 09:45:00] | TRADE_RESULT_DETAILED | status=WIN | pnl=$19.05 (+19.0%) | entry_summary=SCORE: 75 | BB: 12/30 | ATR: 63/70 (x1.9) | closed_early=False | counterfactual=SAME | max_loss_signal_score=N/A | btc_final_diff=$-110.08
+[2026-02-10 09:45:00] | SESSION_END     | market=btc-updown-15m-1770708600 | max_total_score=75
+[2026-02-10 10:00:02] | SESSION_END     | market=btc-updown-15m-1770709500 | max_total_score=53
+[2026-02-10 10:11:15] | TRADE_OPEN      | direction=UP | price=0.84 | size=7.0
+[2026-02-10 10:11:15] | ENTRY_DETAILS   | score_summary=TOTAL: 87/100 | BB: 22/30 | ATR: 65/70 - ratio: x1.9 | time_left=T-3.81min
+[2026-02-10 10:13:29] | TRIGGER_CLOSE   | reason=⚠️ STOP LOSS - STRIKE HIT (Below) | share_price=0.5
+[2026-02-10 10:13:32] | TRADE_CLOSE_OK  | size=6.9652 | price=0.49
+[2026-02-10 10:15:00] | TRADE_RESULT_DETAILED | status=LOSS | pnl=$-2.47 (-42.0%) | entry_summary=SCORE: 87 | BB: 22/30 | ATR: 65/70 (x1.9) | closed_early=True | counterfactual=LOST | max_loss_signal_score=N/A | btc_final_diff=$-70.91
+[2026-02-10 10:24:09] | TRADE_OPEN      | direction=UP | price=0.92 | size=7.0
+[2026-02-10 10:24:09] | ENTRY_DETAILS   | score_summary=TOTAL: 73/100 | BB: 7/30 | ATR: 66/70 - ratio: x1.9 | time_left=T-5.91min
+[2026-02-10 10:30:01] | TRADE_RESULT_DETAILED | status=WIN | pnl=$8.70 (+8.7%) | entry_summary=SCORE: 73 | BB: 7/30 | ATR: 66/70 (x1.9) | closed_early=False | counterfactual=SAME | max_loss_signal_score=N/A | btc_final_diff=$215.24
+[2026-02-10 10:30:01] | SESSION_END     | market=btc-updown-15m-1770711300 | max_total_score=73
+[2026-02-10 10:38:03] | TRADE_OPEN      | direction=DOWN | price=0.91 | size=5.0
+[2026-02-10 10:38:03] | ENTRY_DETAILS   | score_summary=TOTAL: 71/100 | BB: 6/30 | ATR: 65/70 - ratio: x1.9 | time_left=T-6.99min
+[2026-02-10 10:41:33] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 53.8% ($0.9100 → $0.4200) | share_price=0.42
+[2026-02-10 10:41:37] | TRADE_CLOSE_OK  | size=5.0 | price=0.4
+[2026-02-10 10:45:03] | TRADE_RESULT_DETAILED | status=LOSS | pnl=$-2.55 (-56.0%) | entry_summary=SCORE: 71 | BB: 6/30 | ATR: 65/70 (x1.9) | closed_early=True | counterfactual=LOST | max_loss_signal_score=N/A | btc_final_diff=$25.61

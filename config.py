@@ -1,7 +1,7 @@
 # Trading Bot Configuration
 # === REAL TRADING ===
 REAL_TRADE = True  # Set to True to execute real trades, False for simulation only
-TRADE_AMOUNT = 7  # Trade amount in Shares (increased to 7 to avoid "min 5" errors on partial fills)
+TRADE_AMOUNT = 5  # Trade amount in Shares (increased to 7 to avoid "min 5" errors on partial fills)
 
 # === CLOSE CONDITIONS ===
 CLOSE_ON_TP = False  # Take Profit: Close position when target price is reached

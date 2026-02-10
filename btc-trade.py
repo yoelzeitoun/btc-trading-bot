@@ -63,10 +63,20 @@ POLYGON_RPC = "https://polygon.drpc.org"
 CTF_ADDRESS = "0x4D97DCd97eC945f40cF65F87097ACe5EA0476045" # Gnosis CTF
 USDC_ADDRESS = "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"
 CLAIMS_FILE = "pending_claims.json"
+CLAIMS_LOG_FILE = "claims.txt"
 
 # ABI Minimal pour le Claim
 CTF_ABI = '[{"constant":false,"inputs":[{"name":"collateralToken","type":"address"},{"name":"parentCollectionId","type":"bytes32"},{"name":"conditionId","type":"bytes32"},{"name":"indexSets","type":"uint256[]"}],"name":"redeemPositions","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}]'
-SAFE_ABI = '[{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"},{"internalType":"enum Enum.Operation","name":"operation","type":"uint8"},{"internalType":"uint256","name":"safeTxGas","type":"uint256"},{"internalType":"uint256","name":"baseGas","type":"uint256"},{"internalType":"uint256","name":"gasPrice","type":"uint256"},{"internalType":"address","name":"gasToken","type":"address"},{"internalType":"address payable","name":"refundReceiver","type":"address"},{"internalType":"bytes","name":"signatures","type":"bytes"}],"name":"execTransaction","outputs":[{"internalType":"bool","name":"success","type":"bool"}],"stateMutability":"payable","type":"function"}, {"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"},{"internalType":"enum Enum.Operation","name":"operation","type":"uint8"},{"internalType":"uint256","name":"safeTxGas","type":"uint256"},{"internalType":"uint256","name":"baseGas","type":"uint256"},{"internalType":"uint256","name":"gasPrice","type":"uint256"},{"internalType":"address","name":"gasToken","type":"address"},{"internalType":"address payable","name":"refundReceiver","type":"address"},{"internalType":"uint256","name":"_nonce","type":"uint256"}],"name":"getTransactionHash","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"}, {"inputs":[],"name":"nonce","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]'
+
+def log_claim_activity(message):
+    """Log claim related activity to claims.txt with timestamp"""
+    try:
+        from datetime import datetime
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        with open(CLAIMS_LOG_FILE, 'a') as f:
+            f.write(f"[{timestamp}] {message}\n")
+    except Exception as e:
+        print(f"Failed to write to claims log: {e}")
 
 def save_pending_claim(condition_id):
     """Enregistre un ID de marché pour le clamer plus tard"""
@@ -81,15 +91,20 @@ def save_pending_claim(condition_id):
             claims.append(condition_id)
             with open(CLAIMS_FILE, 'w') as f:
                 json.dump(claims, f)
-            print(f"📝 Market enregistré pour claim futur: {condition_id}")
+            msg = f"📝 Market saved for future claim: {condition_id}"
+            print(f"   {msg}")
+            log_claim_activity(msg)
     except Exception as e:
-        print(f"⚠️ Erreur sauvegarde claim: {e}")
+        msg = f"⚠️ Error saving claim: {e}"
+        print(f"   {msg}")
+        log_claim_activity(msg)
 
 def process_pending_claims():
     """Tente de clamer tous les marchés en attente (Supporte EOA et Proxy Gnosis Safe)"""
     if not os.path.exists(CLAIMS_FILE): return
 
     print("\n💰 VÉRIFICATION DES CLAIMS EN ATTENTE...")
+    log_claim_activity("Starting claim check process...")
     
     try:
         with open(CLAIMS_FILE, 'r') as f:
@@ -97,6 +112,7 @@ def process_pending_claims():
         
         if not claims: 
             print("   Aucun claim en attente.")
+            log_claim_activity("No pending claims found.")
             return
 
         # Connexion Web3
@@ -107,11 +123,15 @@ def process_pending_claims():
             w3.middleware_onion.inject(ExtraDataToPOAMiddleware, layer=0)
 
         if not w3.is_connected():
-            print("   ❌ Erreur connexion Polygon RPC")
+            msg = "❌ Erreur connexion Polygon RPC"
+            print(f"   {msg}")
+            log_claim_activity(msg)
             return
 
         if not PRIVATE_KEY:
-            print("   ❌ Private Key manquante, impossible de claim")
+            msg = "❌ Private Key manquante, impossible de claim"
+            print(f"   {msg}")
+            log_claim_activity(msg)
             return
         
         account = w3.eth.account.from_key(PRIVATE_KEY)
@@ -120,6 +140,7 @@ def process_pending_claims():
         safe_contract = None
         if PROXY_ADDRESS:
             print(f"   🛡️  Proxy detected: {PROXY_ADDRESS}")
+            log_claim_activity(f"Using Gnosis Proxy: {PROXY_ADDRESS}")
             safe_contract = w3.eth.contract(address=PROXY_ADDRESS, abi=json.loads(SAFE_ABI))
         
         contract = w3.eth.contract(address=CTF_ADDRESS, abi=json.loads(CTF_ABI))
@@ -132,6 +153,7 @@ def process_pending_claims():
         for i, condition_id in enumerate(claims):
             try:
                 print(f"   🔎 Vérification {condition_id[:10]}...")
+                log_claim_activity(f"Checking condition_id: {condition_id}")
                 
                 index_sets = [1, 2]
                 parent_collection_id = "0x" + "0"*64
@@ -176,6 +198,7 @@ def process_pending_claims():
                     txn_call = contract.functions.redeemPositions(
                         USDC_ADDRESS, parent_collection_id, condition_id, index_sets
                     )
+                    log_claim_activity(f"Using Direct EOA Path")
 
                 # Gas & Send
                 base_fee = w3.eth.get_block('latest')['baseFeePerGas']
@@ -188,6 +211,7 @@ def process_pending_claims():
                 except Exception as e:
                     if "insufficient funds" in str(e):
                         print("      ❌ PAS ASSEZ DE MATIC pour le gas.")
+                        log_claim_activity(f"Failed: Insufficient MATIC for gas. Error: {e}")
                         remaining_claims.append(condition_id)
                         continue
                     # Check for Safe-specific errors (GS013 = not an owner, GS026 = etc.)
@@ -197,6 +221,7 @@ def process_pending_claims():
                         print(f"      ⚠️  Gas Est. Failed (Safe GS013): Execution Reverted.")
                         print(f"          Possible reasons: Market not resolved yet on-chain, or Invalid Signature.")
                         print(f"      💡 Retrying next window.")
+                        log_claim_activity(f"Failed (GS013): Market not ready yet or invalid sig. Retrying.")
                         remaining_claims.append(condition_id)
                         continue
                     
@@ -206,10 +231,12 @@ def process_pending_claims():
                     if "execution reverted" in error_str and "GS" not in error_str:
                         print(f"      ⚠️  Transaction Reverted (Likely 0 balance or already claimed).")
                         print(f"          🗑️  Removing {condition_id[:10]}... from queue.")
+                        log_claim_activity(f"Failed (Reverted): Likely 0 balance/already claimed. Removing from queue. Error: {e}")
                         continue
                     
                     # For retryable network errors (timeout, rpc down):
                     # We keep it.
+                    log_claim_activity(f"Failed (Unknown Error): {e}. Retrying later.")
                     remaining_claims.append(condition_id)
                     continue
 
@@ -225,12 +252,15 @@ def process_pending_claims():
                 
                 signed_txn = w3.eth.account.sign_transaction(txn, private_key=PRIVATE_KEY)
                 tx_hash = w3.eth.send_raw_transaction(signed_txn.raw_transaction)
-                print(f"   🚀 Claim envoyé ! Hash: {w3.to_hex(tx_hash)}")
+                hash_hex = w3.to_hex(tx_hash)
+                print(f"   🚀 Claim envoyé ! Hash: {hash_hex}")
                 print(f"      ✅ Succès ! Retrait de la liste d'attente.")
+                log_claim_activity(f"SUCCESS: Tx Hash {hash_hex}")
 
                 
             except Exception as e:
                 print(f"   ❌ Erreur claim loop: {e}")
+                log_claim_activity(f"CRITICAL ERROR in loop: {e}")
                 remaining_claims.append(condition_id)
         
         # Sauvegarde de ce qui reste à traiter
@@ -238,8 +268,10 @@ def process_pending_claims():
             with open(CLAIMS_FILE, 'w') as f:
                 json.dump(remaining_claims, f)
             print(f"   💾 Liste mise à jour. Restants: {len(remaining_claims)}")
+            log_claim_activity(f"List updated. Claims remaining: {len(remaining_claims)}")
         elif len(remaining_claims) > 0:
             print(f"   ⏳ {len(remaining_claims)} claim(s) en attente (Maintien pour prochain cycle).")
+            log_claim_activity(f"No changes. Claims pending for next cycle: {len(remaining_claims)}")
 
         else:
              print("   ⚠️  Aucun claim n'a abouti (Gas ou Déjà fait).")
@@ -1207,7 +1239,11 @@ def log_to_results(event_type, details):
     try:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         # Format: [TIMESTAMP] | EVENT_TYPE | key=value | key=value...
-        detail_str = " | ".join([f"{k}={v}" for k, v in details.items()])
+        filtered_details = {
+            k: v for k, v in details.items()
+            if not (k == "strike" or k == "strike_price")
+        }
+        detail_str = " | ".join([f"{k}={v}" for k, v in filtered_details.items()])
         with open(stats_file, "a") as f:
             f.write(f"[{timestamp}] | {event_type:<15} | {detail_str}\n")
     except Exception as e:
@@ -1220,18 +1256,9 @@ def write_window_statistics(stats, trade_result=None):
     """
     details = {
         'market': stats.get('market_slug', 'unknown'),
-        'strike': stats.get('strike_price', 0),
-        'evaluations': stats.get('total_evaluations', 0),
-        'signals': stats.get('signals_triggered', 0),
         'max_total_score': stats.get('max_total_score', 0)
     }
     
-    if trade_result:
-        details['trade_status'] = trade_result.get('status', 'unknown')
-        if 'real_trade' in trade_result:
-             details['pnl_percent'] = trade_result['real_trade'].get('pnl_percent', 0)
-             details['exit_price'] = trade_result['real_trade'].get('exit_price', 0)
-
     log_to_results("SESSION_END", details)
 
 # --- 7. MAIN TRADING ENGINE ---
@@ -1587,7 +1614,7 @@ def run_advisor():
                             'result': result_status,
                             'profit_loss_pct': profit_pct,
                             'profit_loss_usd': profit,
-                            'trade_amount': trade_amount,
+                            'trade_amount': open_position.get('size', TRADE_AMOUNT) if open_position else TRADE_AMOUNT,
                             'signal_score': window_stats.get('signal_score', 0)
                         }
                         real_trade_info = signal_details.get('real_trade')
@@ -1797,10 +1824,10 @@ def run_advisor():
                             strike_status = "OK"
                             if direction == 'UP' and real_price <= strike_price:
                                 strike_status = f"{Colors.FAIL}HIT (Below Strike){Colors.ENDC}" 
-                                close_reason = f"⚠️ STOP LOSS - STRIKE HIT: BTC ${real_price:,.2f} <= ${strike_price:,.2f}"
+                                close_reason = f"⚠️ STOP LOSS - STRIKE HIT (Below)"
                             elif direction == 'DOWN' and real_price >= strike_price:
                                 strike_status = f"{Colors.FAIL}HIT (Above Strike){Colors.ENDC}"
-                                close_reason = f"⚠️ STOP LOSS - STRIKE HIT: BTC ${real_price:,.2f} >= ${strike_price:,.2f}"
+                                close_reason = f"⚠️ STOP LOSS - STRIKE HIT (Above)"
                             
                             lines.append(f"   3️⃣ SL (Strike Hit): {strike_status} (Diff ${dist:+,.2f})")
                         
@@ -1819,9 +1846,7 @@ def run_advisor():
                             ui.commit() # Freeze screen before closing logs
                             log_to_results("TRIGGER_CLOSE", {
                                 "reason": close_reason,
-                                "btc_price": real_price,
-                                "share_price": current_share if 'current_share' in locals() else 'N/A',
-                                "strike": strike_price
+                                "share_price": current_share if 'current_share' in locals() else 'N/A'
                             })
                             # ... (Normal close logic continues, printing to stdout as usual)
 
@@ -2077,11 +2102,9 @@ def run_advisor():
                                 for violation in constraint_violations:
                                     if violation not in window_stats['blocked_reasons']:
                                         window_stats['blocked_reasons'].append(violation)
-                                log_to_results("TRADE_BLOCKED", {
-                                    "reasons": ";".join(constraint_violations),
-                                    "score": display_score,
-                                    "btc": real_price
-                                })
+                                # Silent block - no more clogging results.txt
+                                # log_to_results("TRADE_BLOCKED", { ... })
+                                
                                 lines.append(f"\n{Colors.FAIL}🚫 TRADE BLOCKED - Constraints:{Colors.ENDC}")
                                 for violation in constraint_violations:
                                     lines.append(f"   ⛔ {violation}")
@@ -2112,10 +2135,8 @@ def run_advisor():
                                 # === EXECUTE REAL TRADE ===
                                 if REAL_TRADE:
                                     if share_price is None:
-                                        log_to_results("TRADE_BLOCKED", {
-                                            "reason": "Share price unavailable",
-                                            "btc": real_price
-                                        })
+                                        # Silent block
+                                        # log_to_results("TRADE_BLOCKED", { ... })
                                         print(f"   🚫 BLOCKED: Share price unavailable")
                                     else:
                                         print(f"   💼 EXECUTING ORDER...")
@@ -2135,11 +2156,10 @@ def run_advisor():
                                                 )
                                                 
                                                 if trade_result and trade_result.get('success'):
-                                                    log_to_results("TRADE_OPEN_OK", {
+                                                    log_to_results("TRADE_OPEN", {
                                                         "direction": trade_direction,
                                                         "price": share_price,
-                                                        "size": trade_result.get('size'),
-                                                        "btc": real_price
+                                                        "size": trade_result.get('size')
                                                     })
                                                     print(f"   🎉 SUCCESS! Size: {trade_result.get('size')}")
                                                     
