@@ -17,10 +17,7 @@ load_dotenv()
 # Load configuration
 from config import (
     TRADE_WINDOW_MIN, TRADE_WINDOW_MAX,
-    BOLLINGER_PERIOD, BOLLINGER_STD_DEV,
-    ATR_PERIOD, ATR_MULTIPLIER,
-    SHARE_PRICE_MIN, SHARE_PRICE_MAX,
-    LOOP_SLEEP_SECONDS, NEXT_MARKET_WAIT_SECONDS,
+    SHARE_PRICE_MAX,
     SCORE_THRESHOLD,
     WEIGHT_BOLLINGER, WEIGHT_ATR,
     REAL_TRADE, TRADE_AMOUNT, CLOSE_ON_TP, CLOSE_TP_PRICE, CLOSE_SL_SHARE_DROP_PERCENT, CLOSE_ON_STRIKE
@@ -67,6 +64,13 @@ CLAIMS_LOG_FILE = "claims.txt"
 
 # ABI Minimal pour le Claim
 CTF_ABI = '[{"constant":false,"inputs":[{"name":"collateralToken","type":"address"},{"name":"parentCollectionId","type":"bytes32"},{"name":"conditionId","type":"bytes32"},{"name":"indexSets","type":"uint256[]"}],"name":"redeemPositions","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}]'
+
+# ABI minimal pour Gnosis Safe (Proxy)
+SAFE_ABI = (
+    '[{"constant":true,"inputs":[],"name":"nonce","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},'
+    '{"constant":true,"inputs":[{"name":"to","type":"address"},{"name":"value","type":"uint256"},{"name":"data","type":"bytes"},{"name":"operation","type":"uint8"},{"name":"safeTxGas","type":"uint256"},{"name":"baseGas","type":"uint256"},{"name":"gasPrice","type":"uint256"},{"name":"gasToken","type":"address"},{"name":"refundReceiver","type":"address"},{"name":"_nonce","type":"uint256"}],"name":"getTransactionHash","outputs":[{"name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},'
+    '{"constant":false,"inputs":[{"name":"to","type":"address"},{"name":"value","type":"uint256"},{"name":"data","type":"bytes"},{"name":"operation","type":"uint8"},{"name":"safeTxGas","type":"uint256"},{"name":"baseGas","type":"uint256"},{"name":"gasPrice","type":"uint256"},{"name":"gasToken","type":"address"},{"name":"refundReceiver","type":"address"},{"name":"signatures","type":"bytes"}],"name":"execTransaction","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"}]'
+)
 
 def log_claim_activity(message):
     """Log claim related activity to claims.txt with timestamp"""
@@ -327,6 +331,110 @@ def calculate_atr(highs, lows, closes, period=14):
     atr = np.mean(true_ranges[-period:])
     return atr
 
+def calculate_adx(highs, lows, closes, period=14):
+    """
+    Calculate Average Directional Index (ADX) - measures trend strength (0-100)
+    ADX < 20: Weak/no trend
+    ADX 20-40: Moderate trend
+    ADX 40-60: Strong trend
+    ADX > 60: Very strong trend
+    """
+    if len(highs) < period * 2 or len(lows) < period * 2 or len(closes) < period * 2:
+        return None
+    
+    try:
+        # Calculate +DM and -DM
+        plus_dm = []
+        minus_dm = []
+        true_ranges = []
+        
+        for i in range(1, len(closes)):
+            high_diff = highs[i] - highs[i-1]
+            low_diff = lows[i-1] - lows[i]
+            
+            # +DM: Higher high movement
+            if high_diff > 0 and high_diff > low_diff:
+                plus_dm.append(high_diff)
+            else:
+                plus_dm.append(0)
+            
+            # -DM: Lower low movement
+            if low_diff > 0 and low_diff > high_diff:
+                minus_dm.append(low_diff)
+            else:
+                minus_dm.append(0)
+            
+            # True Range
+            high_low = highs[i] - lows[i]
+            high_close = abs(highs[i] - closes[i-1])
+            low_close = abs(lows[i] - closes[i-1])
+            tr = max(high_low, high_close, low_close)
+            true_ranges.append(tr)
+        
+        # Calculate smoothed values
+        plus_di = []
+        minus_di = []
+        
+        for i in range(len(true_ranges)):
+            if i < period - 1:
+                continue
+            
+            sum_plus_dm = sum(plus_dm[i-period+1:i+1])
+            sum_minus_dm = sum(minus_dm[i-period+1:i+1])
+            sum_tr = sum(true_ranges[i-period+1:i+1])
+            
+            if sum_tr == 0:
+                plus_di.append(0)
+                minus_di.append(0)
+            else:
+                plus_di.append(100 * sum_plus_dm / sum_tr)
+                minus_di.append(100 * sum_minus_dm / sum_tr)
+        
+        # Calculate DX and ADX
+        if len(plus_di) < period:
+            return None
+        
+        dx_values = []
+        for i in range(len(plus_di)):
+            di_sum = plus_di[i] + minus_di[i]
+            if di_sum == 0:
+                dx = 0
+            else:
+                dx = 100 * abs(plus_di[i] - minus_di[i]) / di_sum
+            dx_values.append(dx)
+        
+        # ADX is the smoothed DX
+        adx = np.mean(dx_values[-period:])
+        return adx
+    except Exception as e:
+        print(f"ADX calculation error: {e}")
+        return None
+
+def get_atr_multiplier(adx):
+    """
+    Dynamically adjust ATR multiplier based on ADX (trend strength) - Exponential scaling
+    
+    Formula: multiplier = 1.2 + (ADX / 25)
+    
+    Reflects the EXPONENTIAL nature of trend danger:
+    - ADX 0 (No Trend) → multiplier = 1.2x (base safety)
+    - ADX 25 (Moderate Trend) → multiplier = 2.2x
+    - ADX 50 (Strong Trend) → multiplier = 3.2x
+    - ADX 75 (Very Strong Trend) → multiplier = 4.0x (capped)
+    
+    At ADX 50, risk is ~3.2x higher (not 50% like linear would suggest)
+    This reflects the physical reality: trend moves are exponentially more dangerous
+    """
+    if adx is None:
+        return 1.2  # Default multiplier with safety buffer
+    
+    # Steep slope: each ADX point adds 0.04 to multiplier
+    # This creates reactive, non-linear behavior
+    dynamic_mult = 1.2 + (adx / 25.0)
+    
+    # Safety cap to prevent extreme values if ADX calculation bugs
+    return min(dynamic_mult, 4.0)
+
 def _safe_float(value):
     try:
         return float(value)
@@ -411,21 +519,6 @@ def execute_real_trade(poly_client, token_id, direction, share_price, strike_pri
         }
         
     # Validate all constraints before attempting trade
-    if share_price < SHARE_PRICE_MIN:
-        message = f"🚫 Cannot trade: Share price ${share_price:.3f} below minimum ${SHARE_PRICE_MIN}"
-        print(f"   {message}")
-        record_log(message)
-        return {
-            'success': False,
-            'error': message,
-            'direction': direction,
-            'token_id': token_id,
-            'share_price': share_price,
-            'current_btc': current_btc_price,
-            'strike_price': strike_price,
-            'log_lines': log_lines
-        }
-        
     if share_price > SHARE_PRICE_MAX:
         message = f"🚫 Cannot trade: Share price ${share_price:.3f} above maximum ${SHARE_PRICE_MAX}"
         print(f"   {message}")
@@ -1259,6 +1352,13 @@ def write_window_statistics(stats, trade_result=None):
         'max_total_score': stats.get('max_total_score', 0)
     }
     
+    # Add counterfactual SL result if trade was closed early via Stop Loss
+    if trade_result and isinstance(trade_result, dict):
+        if trade_result.get('real_trade', {}).get('close_reason') == 'stop_loss':
+            # Extract counterfactual if available
+            if 'counterfactual' in trade_result:
+                details['sl_counterfactual'] = trade_result.get('counterfactual')
+    
     log_to_results("SESSION_END", details)
 
 # --- 7. MAIN TRADING ENGINE ---
@@ -1315,7 +1415,6 @@ def run_advisor():
     else:
         poly_client = ClobClient("https://clob.polymarket.com", key=PRIVATE_KEY, creds=creds, chain_id=POLYGON)
 
-    print("\n🚀 DOUBLE BARRIER MEAN REVERSION BOT - CONTINUOUS MODE")
     print("="*60)
     print("📊 Bot will monitor markets continuously and auto-switch to new ones")
     print("="*60)
@@ -1529,14 +1628,13 @@ def run_advisor():
                                 entry_stats = open_position.get('entry_stats', {})
                                 max_loss_score = open_position.get('max_loss_signal_score', 'N/A')
                                 
-                                log_to_results("TRADE_RESULT_DETAILED", {
+                                log_to_results("TRADE_RESULT", {
                                     "status": result_status,
                                     "pnl": f"${profit:.2f} ({profit_pct:+.1f}%)",
                                     "entry_summary": f"SCORE: {entry_stats.get('total_score')} | BB: {entry_stats.get('bb_score')} | ATR: {entry_stats.get('atr_score')} ({entry_stats.get('atr_ratio')})",
                                     "closed_early": True,
                                     "counterfactual": "WON" if ghost_win else "LOST",
-                                    "max_loss_signal_score": max_loss_score,
-                                    "btc_final_diff": f"${final_price - strike_price:.2f}"
+                                    "max_loss_signal_score": max_loss_score
                                 })
 
                             else:
@@ -1593,14 +1691,13 @@ def run_advisor():
                             entry_stats = open_position.get('entry_stats', {}) if open_position else {}
                             max_loss_score = open_position.get('max_loss_signal_score', 'N/A') if open_position else 'N/A'
                             
-                            log_to_results("TRADE_RESULT_DETAILED", {
+                            log_to_results("TRADE_RESULT", {
                                 "status": result_status,
                                 "pnl": f"${profit:.2f} ({profit_pct:+.1f}%)",
                                 "entry_summary": f"SCORE: {entry_stats.get('total_score', '?')} | BB: {entry_stats.get('bb_score', '?')} | ATR: {entry_stats.get('atr_score', '?')} ({entry_stats.get('atr_ratio', '?')})",
                                 "closed_early": False,
                                 "counterfactual": "SAME",
-                                "max_loss_signal_score": max_loss_score,
-                                "btc_final_diff": f"${final_price - strike_price:.2f}"
+                                "max_loss_signal_score": max_loss_score
                             })
                         
                         # Prepare trade result for CSV
@@ -1628,6 +1725,15 @@ def run_advisor():
                                 result_data['real_trade']['close_result'] = open_position['close_result']
                             if open_position.get('close_attempts'):
                                 result_data['real_trade']['close_attempts'] = open_position['close_attempts']
+                            # Store SL counterfactual if position was closed early via Stop Loss
+                            if open_position.get('closed') and open_position.get('close_result', {}).get('reason') == 'stop_loss':
+                                # Calculate what would have happened if market ran to expiry
+                                sl_would_win = False
+                                if direction == "YES" and final_price > strike_price:
+                                    sl_would_win = True
+                                elif direction == "NO" and final_price < strike_price:
+                                    sl_would_win = True
+                                result_data['counterfactual'] = "WON" if sl_would_win else "LOST"
                         if window_stats.get('max_score_trade_taken'):
                             window_stats['max_score_trade_result'] = result_status
                     else:
@@ -1651,8 +1757,8 @@ def run_advisor():
                     # Tenter de récupérer l'argent des marchés précédents
                     process_pending_claims()
 
-                    print(f"⏭️  Moving to next market in {NEXT_MARKET_WAIT_SECONDS} seconds...\n")
-                    time.sleep(NEXT_MARKET_WAIT_SECONDS)
+                    print(f"⏭️  Moving to next market in 10 seconds...\n")
+                    time.sleep(10)
                     break
 
                 try:
@@ -1678,7 +1784,7 @@ def run_advisor():
 
                     if real_price is None:
                         print("   ⚠️  BTC price unavailable (all sources), skipping this evaluation")
-                        time.sleep(LOOP_SLEEP_SECONDS)
+                        time.sleep(1)
                         continue
 
                     # Store latest outcome prices if available
@@ -1723,7 +1829,7 @@ def run_advisor():
                         
                     except Exception as e:
                         print(f"   ⚠️  Kraken OHLC data unavailable: {e}")
-                        time.sleep(LOOP_SLEEP_SECONDS)
+                        time.sleep(1)
                         continue
                     
                     # 3. Monitor position and auto-close on TP / SL / STRIKE
@@ -1819,24 +1925,28 @@ def run_advisor():
 
                         
                         # 3️⃣ STRIKE PRICE CHECK
-                        if not close_reason and CLOSE_ON_STRIKE:
-                            dist = real_price - strike_price
-                            strike_status = "OK"
+                        dist = real_price - strike_price
+                        strike_status = "OK"
+                        if CLOSE_ON_STRIKE:
                             if direction == 'UP' and real_price <= strike_price:
                                 strike_status = f"{Colors.FAIL}HIT (Below Strike){Colors.ENDC}" 
-                                close_reason = f"⚠️ STOP LOSS - STRIKE HIT (Below)"
+                                if not close_reason:
+                                    close_reason = f"STRIKE HIT (Below)"
                             elif direction == 'DOWN' and real_price >= strike_price:
                                 strike_status = f"{Colors.FAIL}HIT (Above Strike){Colors.ENDC}"
-                                close_reason = f"⚠️ STOP LOSS - STRIKE HIT (Above)"
-                            
-                            lines.append(f"   3️⃣ SL (Strike Hit): {strike_status} (Diff ${dist:+,.2f})")
+                                if not close_reason:
+                                    close_reason = f"STRIKE HIT (Above)"
+                        else:
+                            strike_status = f"{Colors.WARNING}IGNORED{Colors.ENDC}"
+                        
+                        lines.append(f"   3️⃣ SL (Strike Hit): {strike_status} (Diff ${dist:+,.2f})")
                         
                         if not close_reason:
                             lines.append(f"\n   ✅ Position remains open")
                         
                         # Calculate and display scores during position monitoring
-                        upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=BOLLINGER_PERIOD, std_dev=2.0)
-                        atr = calculate_atr(highs, lows, closes, period=ATR_PERIOD)
+                        upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=20, std_dev=2.0)
+                        atr = calculate_atr(highs, lows, closes, period=14)
                         
                         # (Omitted Calculation logic for brevity in UI update, assumed correct from before)
                         # Just printing final buffered output
@@ -1844,7 +1954,11 @@ def run_advisor():
                         # === EXECUTE CLOSE IF CONDITION MET ===
                         if close_reason:
                             ui.commit() # Freeze screen before closing logs
-                            log_to_results("TRIGGER_CLOSE", {
+                            
+                            # Determine event type based on reason
+                            event_type = "TAKE_PROFIT" if "TAKE PROFIT" in close_reason else "STOP_LOSS"
+                            
+                            log_to_results(event_type, {
                                 "reason": close_reason,
                                 "share_price": current_share if 'current_share' in locals() else 'N/A'
                             })
@@ -1877,9 +1991,20 @@ def run_advisor():
                             
                             print(f"\n📊 CLOSE RESULT:")
                             if close_result and close_result.get('success'):
-                                log_to_results("TRADE_CLOSE_OK", {
-                                    "size": close_result.get('size'),
-                                    "price": close_result.get('price')
+                                # Calculate PNL
+                                entry_price = open_position.get('entry_price', 0)
+                                close_price = close_result.get('price', 0)
+                                size = close_result.get('size', 0)
+                                
+                                entry_cost = entry_price * size
+                                close_proceeds = close_price * size
+                                profit = close_proceeds - entry_cost
+                                profit_pct = (profit / entry_cost * 100) if entry_cost > 0 else 0
+                                
+                                log_to_results("TRADE_CLOSED", {
+                                    "size": size,
+                                    "price": close_price,
+                                    "pnl": f"${profit:.2f} ({profit_pct:+.1f}%)"
                                 })
                                 print(f"   ✅ SUCCESS!")
                                 print(f"   Order ID: {close_result.get('order_id')}")
@@ -1977,7 +2102,7 @@ def run_advisor():
                         MAX_SCORE_ATR = WEIGHT_ATR
                         
                         # === A. BOLLINGER BANDS SCORE (Proportional, Max 34) ===
-                        upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=BOLLINGER_PERIOD, std_dev=2.0)
+                        upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=20, std_dev=2.0)
                         
                         score_a = 0
                         bb_explain = "BB Unavailable"
@@ -2011,12 +2136,14 @@ def run_advisor():
                         details.append(f"BB:  {score_a}/{MAX_SCORE_BB} - {bb_explain}")
                         
                         # === B. ATR KINETIC BARRIER SCORE (Proportional, Max 33) ===
-                        atr = calculate_atr(highs, lows, closes, period=ATR_PERIOD)
+                        atr = calculate_atr(highs, lows, closes, period=14)
+                        adx = calculate_adx(highs, lows, closes, period=14)
+                        atr_multiplier = get_atr_multiplier(adx)
                         
                         score_b = 0
                         atr_explain = "ATR Unavailable"
                         if atr:
-                            max_move = atr * math.sqrt(minutes_left) * ATR_MULTIPLIER
+                            max_move = atr * math.sqrt(minutes_left) * atr_multiplier
                             dist = abs(real_price - strike_price)
                             
                             if dist < max_move:
@@ -2029,7 +2156,7 @@ def run_advisor():
                         trade_score += score_b
                         if atr:
                             ratio_value = (dist / max_move) if max_move else 0
-                            atr_explain = f"Dist ${dist:.2f} / Move ${max_move:.2f} (x{ratio_value:.1f})"
+                            atr_explain = f"Dist ${dist:.2f} / Move ${max_move:.2f} (x{ratio_value:.1f}) [ADX:{adx:.1f}→Mult:{atr_multiplier}]"
                         
                         # --- START CAPTURE FOR LOGGING ---
                         entry_logging_stats = {
@@ -2090,8 +2217,6 @@ def run_advisor():
                         # === HARD CONSTRAINTS CHECK ===
                         constraint_violations = []
                         if share_price is not None:
-                            if share_price < SHARE_PRICE_MIN:
-                                constraint_violations.append(f"Price too low (${share_price:.2f} < ${SHARE_PRICE_MIN})")
                             if share_price > SHARE_PRICE_MAX:
                                 constraint_violations.append(f"Price too high (${share_price:.2f} > ${SHARE_PRICE_MAX})")
                         
@@ -2237,13 +2362,13 @@ def run_advisor():
                     if lines:
                          ui.refresh(lines)
                     
-                    time.sleep(LOOP_SLEEP_SECONDS)
+                    time.sleep(1)
 
                 except Exception as e:
                     print(f"\n❌ Error in loop: {e}")
                     import traceback
                     traceback.print_exc()
-                    time.sleep(LOOP_SLEEP_SECONDS)
+                    time.sleep(1)
                 
         except Exception as e:
             print(f"\n❌ Error processing market: {e}")

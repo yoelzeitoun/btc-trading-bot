@@ -1,17 +1,17 @@
 [2026-02-09 06:35:06] | TRADE_OPEN   | token=54415556765446591301794307399840691496483362252874921126217096002119503724282 | direction=DOWN | price=0.87 | order_id=0x922fb40d8435d0a616f1849b78df9adda98efb66f7716f15674ada67ca270418 | size=7.0
-[2026-02-09 06:39:42] | TRIGGER_CLOSE   | 📈 TAKE PROFIT: Share price hit $0.99 (Current: $0.9900) share_price=0.99 | token=54415556765446591301794307399840691496483362252874921126217096002119503724282
-[2026-02-09 06:39:43] | TRADE_CLOSE_OK  | token=54415556765446591301794307399840691496483362252874921126217096002119503724282 | size=6.9716 | price=0.98 | order_id=0x1b7d0c198e41af90c980d08c6dd5d5fa4ca0d812b7c30b07f8bd50ec285a0ed6
+[2026-02-09 06:39:42] | TAKE_PROFIT     | 📈 TAKE PROFIT: Share price hit $0.99 (Current: $0.9900) share_price=0.99 | token=54415556765446591301794307399840691496483362252874921126217096002119503724282
+[2026-02-09 06:39:43] | TRADE_CLOSED   | token=54415556765446591301794307399840691496483362252874921126217096002119503724282 | size=6.9716 | price=0.98 | order_id=0x1b7d0c198e41af90c980d08c6dd5d5fa4ca0d812b7c30b07f8bd50ec285a0ed6
 [2026-02-09 06:56:44] | TRADE_OPEN   | direction=DOWN | price=0.91 | size=7.0
-[2026-02-09 06:57:40] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 50.5% ($0.9100 → $0.4500) share_price=0.45
-[2026-02-09 06:57:42] | TRADE_CLOSE_OK  | size=7.0 | price=0.39
+[2026-02-09 06:57:40] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 50.5% ($0.9100 → $0.4500) share_price=0.45
+[2026-02-09 06:57:42] | TRADE_CLOSED   | size=7.0 | price=0.39
 [2026-02-09 07:00:02] | SESSION_END     | market=btc-updown-15m-1770612300| max_total_score=72
 [2026-02-09 07:05:06] | TRADE_OPEN   | direction=DOWN | price=0.86 | size=7.0
-[2026-02-09 07:13:12] | TRIGGER_CLOSE   | 📈 TAKE PROFIT: Share price hit $0.99 (Current: $0.9900) share_price=0.99
-[2026-02-09 07:13:13] | TRADE_CLOSE_OK  | size=6.9684 | price=0.98
+[2026-02-09 07:13:12] | TAKE_PROFIT     | 📈 TAKE PROFIT: Share price hit $0.99 (Current: $0.9900) share_price=0.99
+[2026-02-09 07:13:13] | TRADE_CLOSED   | size=6.9684 | price=0.98
 [2026-02-09 07:15:01] | SESSION_END     | market=btc-updown-15m-1770613200| max_total_score=73
 [2026-02-09 07:24:45] | TRADE_OPEN   | direction=UP | price=0.94 | size=7.0
-[2026-02-09 07:27:31] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 100.0% ($0.9400 → $0.0000) share_price=0.0
-[2026-02-09 07:27:32] | TRADE_CLOSE_OK  | size=6.9945 | price=0.99
+[2026-02-09 07:27:31] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 100.0% ($0.9400 → $0.0000) share_price=0.0
+[2026-02-09 07:27:32] | TRADE_CLOSED   | size=6.9945 | price=0.99
 [2026-02-09 07:45:02] | SESSION_END     | market=btc-updown-15m-1770615000| max_total_score=52
 [2026-02-09 08:00:01] | SESSION_END     | market=btc-updown-15m-1770615900| max_total_score=70
 [2026-02-09 08:01:38] | TRADE_OPEN   | direction=DOWN | price=0.88 | size=7.0
@@ -45,8 +45,8 @@
 [2026-02-09 13:30:01] | SESSION_END     | market=btc-updown-15m-1770635700| max_total_score=89
 [2026-02-09 13:45:02] | SESSION_END     | market=btc-updown-15m-1770636600| max_total_score=63
 [2026-02-09 13:52:56] | TRADE_OPEN   | direction=DOWN | price=0.91 | size=7.0
-[2026-02-09 13:59:48] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 65.9% ($0.9100 → $0.3100) share_price=0.31
-[2026-02-09 13:59:50] | TRADE_CLOSE_OK  | size=6.9906 | price=0.83
+[2026-02-09 13:59:48] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 65.9% ($0.9100 → $0.3100) share_price=0.31
+[2026-02-09 13:59:50] | TRADE_CLOSED   | size=6.9906 | price=0.83
 [2026-02-09 14:00:03] | SESSION_END     | market=btc-updown-15m-1770637500| max_total_score=79
 [2026-02-09 14:08:05] | TRADE_OPEN   | direction=UP | price=0.91 | size=7.0
 [2026-02-09 14:15:00] | SESSION_END     | market=btc-updown-15m-1770638400| max_total_score=0
@@ -54,133 +54,133 @@
 [2026-02-09 14:30:01] | SESSION_END     | market=btc-updown-15m-1770639300| max_total_score=71
 [2026-02-09 14:45:01] | SESSION_END     | market=btc-updown-15m-1770640200| max_total_score=67
 [2026-02-09 14:52:06] | TRADE_OPEN   | direction=DOWN | price=0.84 | size=7.0
-[2026-02-09 14:59:18] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 51.2% ($0.8400 → $0.4100) share_price=0.41
-[2026-02-09 14:59:20] | TRADE_CLOSE_OK  | size=6.9684 | price=0.45
+[2026-02-09 14:59:18] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 51.2% ($0.8400 → $0.4100) share_price=0.41
+[2026-02-09 14:59:20] | TRADE_CLOSED   | size=6.9684 | price=0.45
 [2026-02-09 15:00:02] | SESSION_END     | market=btc-updown-15m-1770641100| max_total_score=71
 [2026-02-09 15:04:52] | TRADE_OPEN   | direction=DOWN | price=0.82 | size=7.0
-[2026-02-09 15:11:13] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,148.20 >= $69,082.39 share_price=0.45
+[2026-02-09 15:11:13] | STOP_LOSS      | STRIKE HIT: BTC $69,148.20 >= $69,082.39 share_price=0.45
 [2026-02-09 15:11:19] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=None, error_message=Request exception!] | attempt=1
-[2026-02-09 15:11:21] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 50.0% ($0.8200 → $0.4100) share_price=0.41
+[2026-02-09 15:11:21] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 50.0% ($0.8200 → $0.4100) share_price=0.41
 [2026-02-09 15:11:27] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=None, error_message=Request exception!] | attempt=2
-[2026-02-09 15:11:30] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 67.1% ($0.8200 → $0.2700) share_price=0.27
+[2026-02-09 15:11:30] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 67.1% ($0.8200 → $0.2700) share_price=0.27
 [2026-02-09 15:11:36] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=None, error_message=Request exception!] | attempt=3
-[2026-02-09 15:11:38] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 72.0% ($0.8200 → $0.2300) share_price=0.23
+[2026-02-09 15:11:38] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 72.0% ($0.8200 → $0.2300) share_price=0.23
 [2026-02-09 15:11:44] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=None, error_message=Request exception!] | attempt=4
-[2026-02-09 15:11:47] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 73.2% ($0.8200 → $0.2200) share_price=0.22
+[2026-02-09 15:11:47] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 73.2% ($0.8200 → $0.2200) share_price=0.22
 [2026-02-09 15:11:49] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=5
-[2026-02-09 15:11:51] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 68.3% ($0.8200 → $0.2600) share_price=0.26
+[2026-02-09 15:11:51] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 68.3% ($0.8200 → $0.2600) share_price=0.26
 [2026-02-09 15:11:52] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=6
-[2026-02-09 15:11:55] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 75.6% ($0.8200 → $0.2000) share_price=0.2
+[2026-02-09 15:11:55] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 75.6% ($0.8200 → $0.2000) share_price=0.2
 [2026-02-09 15:11:55] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=7
-[2026-02-09 15:11:58] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 76.8% ($0.8200 → $0.1900) share_price=0.19
+[2026-02-09 15:11:58] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 76.8% ($0.8200 → $0.1900) share_price=0.19
 [2026-02-09 15:11:59] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=8
-[2026-02-09 15:12:01] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 76.8% ($0.8200 → $0.1900) share_price=0.19
+[2026-02-09 15:12:01] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 76.8% ($0.8200 → $0.1900) share_price=0.19
 [2026-02-09 15:12:02] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=9
-[2026-02-09 15:12:05] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 76.8% ($0.8200 → $0.1900) share_price=0.19
+[2026-02-09 15:12:05] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 76.8% ($0.8200 → $0.1900) share_price=0.19
 [2026-02-09 15:12:06] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=10
-[2026-02-09 15:12:08] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 65.9% ($0.8200 → $0.2800) share_price=0.28
+[2026-02-09 15:12:08] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 65.9% ($0.8200 → $0.2800) share_price=0.28
 [2026-02-09 15:12:09] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=11
-[2026-02-09 15:12:11] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 58.5% ($0.8200 → $0.3400) share_price=0.34
+[2026-02-09 15:12:11] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 58.5% ($0.8200 → $0.3400) share_price=0.34
 [2026-02-09 15:12:12] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=12
-[2026-02-09 15:12:15] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 61.0% ($0.8200 → $0.3200) share_price=0.32
+[2026-02-09 15:12:15] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 61.0% ($0.8200 → $0.3200) share_price=0.32
 [2026-02-09 15:12:15] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=13
-[2026-02-09 15:12:18] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 62.2% ($0.8200 → $0.3100) share_price=0.31
+[2026-02-09 15:12:18] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 62.2% ($0.8200 → $0.3100) share_price=0.31
 [2026-02-09 15:12:19] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=14
-[2026-02-09 15:12:21] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 74.4% ($0.8200 → $0.2100) share_price=0.21
+[2026-02-09 15:12:21] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 74.4% ($0.8200 → $0.2100) share_price=0.21
 [2026-02-09 15:12:22] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=15
-[2026-02-09 15:12:25] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 78.0% ($0.8200 → $0.1800) share_price=0.18
+[2026-02-09 15:12:25] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 78.0% ($0.8200 → $0.1800) share_price=0.18
 [2026-02-09 15:12:25] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=16
-[2026-02-09 15:12:28] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 79.3% ($0.8200 → $0.1700) share_price=0.17
+[2026-02-09 15:12:28] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 79.3% ($0.8200 → $0.1700) share_price=0.17
 [2026-02-09 15:12:29] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=17
-[2026-02-09 15:12:31] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 79.3% ($0.8200 → $0.1700) share_price=0.17
+[2026-02-09 15:12:31] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 79.3% ($0.8200 → $0.1700) share_price=0.17
 [2026-02-09 15:12:32] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=18
-[2026-02-09 15:12:35] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 73.2% ($0.8200 → $0.2200) share_price=0.22
+[2026-02-09 15:12:35] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 73.2% ($0.8200 → $0.2200) share_price=0.22
 [2026-02-09 15:12:35] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=19
-[2026-02-09 15:12:38] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 73.2% ($0.8200 → $0.2200) share_price=0.22
+[2026-02-09 15:12:38] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 73.2% ($0.8200 → $0.2200) share_price=0.22
 [2026-02-09 15:12:39] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=20
-[2026-02-09 15:12:41] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 78.0% ($0.8200 → $0.1800) share_price=0.18
+[2026-02-09 15:12:41] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 78.0% ($0.8200 → $0.1800) share_price=0.18
 [2026-02-09 15:12:42] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=21
-[2026-02-09 15:12:45] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 84.1% ($0.8200 → $0.1300) share_price=0.13
+[2026-02-09 15:12:45] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 84.1% ($0.8200 → $0.1300) share_price=0.13
 [2026-02-09 15:12:45] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=22
-[2026-02-09 15:12:48] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) share_price=0.09
+[2026-02-09 15:12:48] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) share_price=0.09
 [2026-02-09 15:12:49] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=23
-[2026-02-09 15:12:52] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
+[2026-02-09 15:12:52] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
 [2026-02-09 15:12:53] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=24
-[2026-02-09 15:12:55] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
+[2026-02-09 15:12:55] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
 [2026-02-09 15:12:56] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=25
-[2026-02-09 15:12:58] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
+[2026-02-09 15:12:58] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
 [2026-02-09 15:12:59] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=26
-[2026-02-09 15:13:02] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) share_price=0.04
+[2026-02-09 15:13:02] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) share_price=0.04
 [2026-02-09 15:13:02] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=27
-[2026-02-09 15:13:05] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
+[2026-02-09 15:13:05] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
 [2026-02-09 15:13:06] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=28
-[2026-02-09 15:13:08] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) share_price=0.07
+[2026-02-09 15:13:08] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) share_price=0.07
 [2026-02-09 15:13:09] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=29
-[2026-02-09 15:13:12] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) share_price=0.07
+[2026-02-09 15:13:12] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) share_price=0.07
 [2026-02-09 15:13:12] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=30
-[2026-02-09 15:13:15] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) share_price=0.07
+[2026-02-09 15:13:15] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) share_price=0.07
 [2026-02-09 15:13:16] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=31
-[2026-02-09 15:13:18] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) share_price=0.04
+[2026-02-09 15:13:18] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) share_price=0.04
 [2026-02-09 15:13:19] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=32
-[2026-02-09 15:13:21] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) share_price=0.06
+[2026-02-09 15:13:21] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) share_price=0.06
 [2026-02-09 15:13:22] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=33
-[2026-02-09 15:13:25] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) share_price=0.07
+[2026-02-09 15:13:25] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) share_price=0.07
 [2026-02-09 15:13:25] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=34
-[2026-02-09 15:13:28] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) share_price=0.04
+[2026-02-09 15:13:28] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) share_price=0.04
 [2026-02-09 15:13:29] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=35
-[2026-02-09 15:13:32] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) share_price=0.04
+[2026-02-09 15:13:32] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) share_price=0.04
 [2026-02-09 15:13:32] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=36
-[2026-02-09 15:13:35] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
+[2026-02-09 15:13:35] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
 [2026-02-09 15:13:36] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=37
-[2026-02-09 15:13:38] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) share_price=0.09
+[2026-02-09 15:13:38] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) share_price=0.09
 [2026-02-09 15:13:39] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=38
-[2026-02-09 15:13:42] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 85.4% ($0.8200 → $0.1200) share_price=0.12
+[2026-02-09 15:13:42] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 85.4% ($0.8200 → $0.1200) share_price=0.12
 [2026-02-09 15:13:42] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=39
-[2026-02-09 15:13:45] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) share_price=0.09
+[2026-02-09 15:13:45] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) share_price=0.09
 [2026-02-09 15:13:46] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=40
-[2026-02-09 15:13:49] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
+[2026-02-09 15:13:49] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
 [2026-02-09 15:13:49] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=41
-[2026-02-09 15:13:52] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
+[2026-02-09 15:13:52] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
 [2026-02-09 15:13:53] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=42
-[2026-02-09 15:13:56] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) share_price=0.04
+[2026-02-09 15:13:56] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) share_price=0.04
 [2026-02-09 15:13:56] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=43
-[2026-02-09 15:13:59] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) share_price=0.06
+[2026-02-09 15:13:59] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) share_price=0.06
 [2026-02-09 15:14:00] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=44
-[2026-02-09 15:14:03] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) share_price=0.06
+[2026-02-09 15:14:03] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) share_price=0.06
 [2026-02-09 15:14:03] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=45
-[2026-02-09 15:14:06] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) share_price=0.03
+[2026-02-09 15:14:06] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) share_price=0.03
 [2026-02-09 15:14:07] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=46
-[2026-02-09 15:14:09] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
+[2026-02-09 15:14:09] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
 [2026-02-09 15:14:10] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=47
-[2026-02-09 15:14:13] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) share_price=0.03
+[2026-02-09 15:14:13] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) share_price=0.03
 [2026-02-09 15:14:13] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=48
-[2026-02-09 15:14:16] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) share_price=0.03
+[2026-02-09 15:14:16] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) share_price=0.03
 [2026-02-09 15:14:17] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=49
-[2026-02-09 15:14:19] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) share_price=0.06
+[2026-02-09 15:14:19] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) share_price=0.06
 [2026-02-09 15:14:20] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=50
-[2026-02-09 15:14:23] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) share_price=0.03
+[2026-02-09 15:14:23] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) share_price=0.03
 [2026-02-09 15:14:23] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=51
-[2026-02-09 15:14:26] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) share_price=0.04
+[2026-02-09 15:14:26] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 95.1% ($0.8200 → $0.0400) share_price=0.04
 [2026-02-09 15:14:27] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=52
-[2026-02-09 15:14:29] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) share_price=0.06
+[2026-02-09 15:14:29] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) share_price=0.06
 [2026-02-09 15:14:30] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=53
-[2026-02-09 15:14:33] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) share_price=0.09
+[2026-02-09 15:14:33] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) share_price=0.09
 [2026-02-09 15:14:33] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=54
-[2026-02-09 15:14:36] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) share_price=0.07
+[2026-02-09 15:14:36] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 91.5% ($0.8200 → $0.0700) share_price=0.07
 [2026-02-09 15:14:37] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=55
-[2026-02-09 15:14:39] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) share_price=0.09
+[2026-02-09 15:14:39] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 89.0% ($0.8200 → $0.0900) share_price=0.09
 [2026-02-09 15:14:40] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=56
-[2026-02-09 15:14:43] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
+[2026-02-09 15:14:43] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 93.9% ($0.8200 → $0.0500) share_price=0.05
 [2026-02-09 15:14:44] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=57
-[2026-02-09 15:14:46] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) share_price=0.06
+[2026-02-09 15:14:46] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 92.7% ($0.8200 → $0.0600) share_price=0.06
 [2026-02-09 15:14:47] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=58
-[2026-02-09 15:14:50] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) share_price=0.03
+[2026-02-09 15:14:50] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 96.3% ($0.8200 → $0.0300) share_price=0.03
 [2026-02-09 15:14:50] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=59
-[2026-02-09 15:14:53] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 97.6% ($0.8200 → $0.0200) share_price=0.02
+[2026-02-09 15:14:53] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 97.6% ($0.8200 → $0.0200) share_price=0.02
 [2026-02-09 15:14:54] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'invalid amounts, maker and taker amount must be higher than 0'}] | attempt=60
-[2026-02-09 15:14:56] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,142.80 >= $69,082.39 share_price=0.82
+[2026-02-09 15:14:56] | STOP_LOSS      | STRIKE HIT: BTC $69,142.80 >= $69,082.39 share_price=0.82
 [2026-02-09 15:14:57] | TRADE_CLOSE_FAIL | error=Unknown error | attempt=61
-[2026-02-09 15:15:00] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,167.70 >= $69,082.39 share_price=0.82
+[2026-02-09 15:15:00] | STOP_LOSS      | STRIKE HIT: BTC $69,167.70 >= $69,082.39 share_price=0.82
 [2026-02-09 15:15:00] | TRADE_CLOSE_FAIL | error=Unknown error | attempt=62
 [2026-02-09 15:15:02] | SESSION_END     | market=btc-updown-15m-1770642000| max_total_score=71
 [2026-02-09 15:30:01] | SESSION_END     | market=btc-updown-15m-1770642900| max_total_score=63
@@ -191,97 +191,97 @@
 [2026-02-09 16:15:00] | SESSION_END     | market=btc-updown-15m-1770645600| max_total_score=70
 [2026-02-09 16:30:03] | SESSION_END     | market=btc-updown-15m-1770646500| max_total_score=70
 [2026-02-09 16:36:42] | TRADE_OPEN   | direction=DOWN | price=0.88 | size=7.0
-[2026-02-09 16:37:19] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,000.00 >= $68,939.08 share_price=0.69
+[2026-02-09 16:37:19] | STOP_LOSS      | STRIKE HIT: BTC $69,000.00 >= $68,939.08 share_price=0.69
 [2026-02-09 16:37:26] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=None, error_message=Request exception!] | attempt=1
-[2026-02-09 16:37:29] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,006.40 >= $68,939.08 share_price=0.61
+[2026-02-09 16:37:29] | STOP_LOSS      | STRIKE HIT: BTC $69,006.40 >= $68,939.08 share_price=0.61
 [2026-02-09 16:37:36] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=None, error_message=Request exception!] | attempt=2
-[2026-02-09 16:37:38] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,020.60 >= $68,939.08 share_price=0.6
+[2026-02-09 16:37:38] | STOP_LOSS      | STRIKE HIT: BTC $69,020.60 >= $68,939.08 share_price=0.6
 [2026-02-09 16:37:45] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=None, error_message=Request exception!] | attempt=3
-[2026-02-09 16:37:48] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,150.00 >= $68,939.08 share_price=0.61
+[2026-02-09 16:37:48] | STOP_LOSS      | STRIKE HIT: BTC $69,150.00 >= $68,939.08 share_price=0.61
 [2026-02-09 16:37:51] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=4
-[2026-02-09 16:37:53] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,181.10 >= $68,939.08 share_price=0.58
+[2026-02-09 16:37:53] | STOP_LOSS      | STRIKE HIT: BTC $69,181.10 >= $68,939.08 share_price=0.58
 [2026-02-09 16:37:56] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=5
-[2026-02-09 16:37:58] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,292.30 >= $68,939.08 share_price=0.48
+[2026-02-09 16:37:58] | STOP_LOSS      | STRIKE HIT: BTC $69,292.30 >= $68,939.08 share_price=0.48
 [2026-02-09 16:38:01] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=6
-[2026-02-09 16:38:04] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,267.50 >= $68,939.08 share_price=0.53
+[2026-02-09 16:38:04] | STOP_LOSS      | STRIKE HIT: BTC $69,267.50 >= $68,939.08 share_price=0.53
 [2026-02-09 16:38:06] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=7
-[2026-02-09 16:38:09] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,281.10 >= $68,939.08 share_price=0.45
+[2026-02-09 16:38:09] | STOP_LOSS      | STRIKE HIT: BTC $69,281.10 >= $68,939.08 share_price=0.45
 [2026-02-09 16:38:11] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=8
-[2026-02-09 16:38:14] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,265.40 >= $68,939.08 share_price=0.46
+[2026-02-09 16:38:14] | STOP_LOSS      | STRIKE HIT: BTC $69,265.40 >= $68,939.08 share_price=0.46
 [2026-02-09 16:38:16] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=9
-[2026-02-09 16:38:19] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,165.90 >= $68,939.08 share_price=0.45
+[2026-02-09 16:38:19] | STOP_LOSS      | STRIKE HIT: BTC $69,165.90 >= $68,939.08 share_price=0.45
 [2026-02-09 16:38:22] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=10
-[2026-02-09 16:38:24] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 54.5% ($0.8800 → $0.4000) share_price=0.4
+[2026-02-09 16:38:24] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 54.5% ($0.8800 → $0.4000) share_price=0.4
 [2026-02-09 16:38:26] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=11
-[2026-02-09 16:38:29] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 54.5% ($0.8800 → $0.4000) share_price=0.4
+[2026-02-09 16:38:29] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 54.5% ($0.8800 → $0.4000) share_price=0.4
 [2026-02-09 16:38:31] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=12
-[2026-02-09 16:38:34] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 67.0% ($0.8800 → $0.2900) share_price=0.29
+[2026-02-09 16:38:34] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 67.0% ($0.8800 → $0.2900) share_price=0.29
 [2026-02-09 16:38:36] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=13
-[2026-02-09 16:38:39] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 64.8% ($0.8800 → $0.3100) share_price=0.31
+[2026-02-09 16:38:39] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 64.8% ($0.8800 → $0.3100) share_price=0.31
 [2026-02-09 16:38:41] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=14
-[2026-02-09 16:38:44] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 67.0% ($0.8800 → $0.2900) share_price=0.29
+[2026-02-09 16:38:44] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 67.0% ($0.8800 → $0.2900) share_price=0.29
 [2026-02-09 16:38:46] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=15
-[2026-02-09 16:38:49] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 67.0% ($0.8800 → $0.2900) share_price=0.29
+[2026-02-09 16:38:49] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 67.0% ($0.8800 → $0.2900) share_price=0.29
 [2026-02-09 16:38:52] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=16
-[2026-02-09 16:38:54] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 64.8% ($0.8800 → $0.3100) share_price=0.31
+[2026-02-09 16:38:54] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 64.8% ($0.8800 → $0.3100) share_price=0.31
 [2026-02-09 16:38:57] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=17
-[2026-02-09 16:38:59] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 64.8% ($0.8800 → $0.3100) share_price=0.31
+[2026-02-09 16:38:59] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 64.8% ($0.8800 → $0.3100) share_price=0.31
 [2026-02-09 16:39:02] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=18
-[2026-02-09 16:39:04] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 68.2% ($0.8800 → $0.2800) share_price=0.28
+[2026-02-09 16:39:04] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 68.2% ($0.8800 → $0.2800) share_price=0.28
 [2026-02-09 16:39:07] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=19
-[2026-02-09 16:39:09] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 63.6% ($0.8800 → $0.3200) share_price=0.32
+[2026-02-09 16:39:09] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 63.6% ($0.8800 → $0.3200) share_price=0.32
 [2026-02-09 16:39:12] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=20
-[2026-02-09 16:39:14] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 68.2% ($0.8800 → $0.2800) share_price=0.28
+[2026-02-09 16:39:14] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 68.2% ($0.8800 → $0.2800) share_price=0.28
 [2026-02-09 16:39:17] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=21
-[2026-02-09 16:39:19] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 72.7% ($0.8800 → $0.2400) share_price=0.24
+[2026-02-09 16:39:19] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 72.7% ($0.8800 → $0.2400) share_price=0.24
 [2026-02-09 16:39:22] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=22
-[2026-02-09 16:39:25] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 73.9% ($0.8800 → $0.2300) share_price=0.23
+[2026-02-09 16:39:25] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 73.9% ($0.8800 → $0.2300) share_price=0.23
 [2026-02-09 16:39:27] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=23
-[2026-02-09 16:39:29] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 69.3% ($0.8800 → $0.2700) share_price=0.27
+[2026-02-09 16:39:29] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 69.3% ($0.8800 → $0.2700) share_price=0.27
 [2026-02-09 16:39:32] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=24
-[2026-02-09 16:39:35] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 65.9% ($0.8800 → $0.3000) share_price=0.3
+[2026-02-09 16:39:35] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 65.9% ($0.8800 → $0.3000) share_price=0.3
 [2026-02-09 16:39:37] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=25
-[2026-02-09 16:39:40] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 64.8% ($0.8800 → $0.3100) share_price=0.31
+[2026-02-09 16:39:40] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 64.8% ($0.8800 → $0.3100) share_price=0.31
 [2026-02-09 16:39:42] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=26
-[2026-02-09 16:39:44] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 65.9% ($0.8800 → $0.3000) share_price=0.3
+[2026-02-09 16:39:44] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 65.9% ($0.8800 → $0.3000) share_price=0.3
 [2026-02-09 16:39:47] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=27
-[2026-02-09 16:39:49] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 76.1% ($0.8800 → $0.2100) share_price=0.21
+[2026-02-09 16:39:49] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 76.1% ($0.8800 → $0.2100) share_price=0.21
 [2026-02-09 16:39:52] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=28
-[2026-02-09 16:39:54] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 80.7% ($0.8800 → $0.1700) share_price=0.17
+[2026-02-09 16:39:54] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 80.7% ($0.8800 → $0.1700) share_price=0.17
 [2026-02-09 16:39:57] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=29
-[2026-02-09 16:39:59] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 81.8% ($0.8800 → $0.1600) share_price=0.16
+[2026-02-09 16:39:59] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 81.8% ($0.8800 → $0.1600) share_price=0.16
 [2026-02-09 16:40:01] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=30
-[2026-02-09 16:40:04] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 86.4% ($0.8800 → $0.1200) share_price=0.12
+[2026-02-09 16:40:04] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 86.4% ($0.8800 → $0.1200) share_price=0.12
 [2026-02-09 16:40:06] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=31
-[2026-02-09 16:40:08] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 88.6% ($0.8800 → $0.1000) share_price=0.1
+[2026-02-09 16:40:08] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 88.6% ($0.8800 → $0.1000) share_price=0.1
 [2026-02-09 16:40:11] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=32
-[2026-02-09 16:40:13] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 90.9% ($0.8800 → $0.0800) share_price=0.08
+[2026-02-09 16:40:13] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 90.9% ($0.8800 → $0.0800) share_price=0.08
 [2026-02-09 16:40:16] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=33
-[2026-02-09 16:40:18] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 93.2% ($0.8800 → $0.0600) share_price=0.06
+[2026-02-09 16:40:18] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 93.2% ($0.8800 → $0.0600) share_price=0.06
 [2026-02-09 16:40:21] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=34
-[2026-02-09 16:40:24] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 94.3% ($0.8800 → $0.0500) share_price=0.05
+[2026-02-09 16:40:24] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 94.3% ($0.8800 → $0.0500) share_price=0.05
 [2026-02-09 16:40:26] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=35
-[2026-02-09 16:40:29] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 92.0% ($0.8800 → $0.0700) share_price=0.07
+[2026-02-09 16:40:29] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 92.0% ($0.8800 → $0.0700) share_price=0.07
 [2026-02-09 16:40:31] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=36
-[2026-02-09 16:40:33] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 90.9% ($0.8800 → $0.0800) share_price=0.08
+[2026-02-09 16:40:33] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 90.9% ($0.8800 → $0.0800) share_price=0.08
 [2026-02-09 16:40:36] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=37
-[2026-02-09 16:40:38] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 90.9% ($0.8800 → $0.0800) share_price=0.08
+[2026-02-09 16:40:38] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 90.9% ($0.8800 → $0.0800) share_price=0.08
 [2026-02-09 16:40:41] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=38
-[2026-02-09 16:40:43] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 90.9% ($0.8800 → $0.0800) share_price=0.08
+[2026-02-09 16:40:43] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 90.9% ($0.8800 → $0.0800) share_price=0.08
 [2026-02-09 16:40:46] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=39
-[2026-02-09 16:40:48] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 88.6% ($0.8800 → $0.1000) share_price=0.1
+[2026-02-09 16:40:48] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 88.6% ($0.8800 → $0.1000) share_price=0.1
 [2026-02-09 16:40:51] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=40
-[2026-02-09 16:40:53] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 89.8% ($0.8800 → $0.0900) share_price=0.09
+[2026-02-09 16:40:53] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 89.8% ($0.8800 → $0.0900) share_price=0.09
 [2026-02-09 16:40:56] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=41
-[2026-02-09 16:40:58] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 90.9% ($0.8800 → $0.0800) share_price=0.08
+[2026-02-09 16:40:58] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 90.9% ($0.8800 → $0.0800) share_price=0.08
 [2026-02-09 16:41:01] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=42
-[2026-02-09 16:41:04] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 92.0% ($0.8800 → $0.0700) share_price=0.07
+[2026-02-09 16:41:04] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 92.0% ($0.8800 → $0.0700) share_price=0.07
 [2026-02-09 16:41:06] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=43
-[2026-02-09 16:41:09] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 90.9% ($0.8800 → $0.0800) share_price=0.08
+[2026-02-09 16:41:09] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 90.9% ($0.8800 → $0.0800) share_price=0.08
 [2026-02-09 16:41:11] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=44
-[2026-02-09 16:41:14] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 93.2% ($0.8800 → $0.0600) share_price=0.06
+[2026-02-09 16:41:14] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 93.2% ($0.8800 → $0.0600) share_price=0.06
 [2026-02-09 16:41:16] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=45
-[2026-02-09 16:41:19] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 95.5% ($0.8800 → $0.0400) share_price=0.04
+[2026-02-09 16:41:19] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 95.5% ($0.8800 → $0.0400) share_price=0.04
 [2026-02-09 16:41:22] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'not enough balance / allowance'}] | attempt=46
 [2026-02-09 16:43:57] | TRADE_OPEN   | direction=UP | price=0.95 | size=7.0
 [2026-02-09 16:45:02] | SESSION_END     | market=btc-updown-15m-1770647400| max_total_score=72
@@ -292,16 +292,16 @@
 [2026-02-09 17:36:22] | TRADE_OPEN   | direction=UP | price=0.92 | size=7.0
 [2026-02-09 17:45:01] | SESSION_END     | market=btc-updown-15m-1770651000| max_total_score=73
 [2026-02-09 17:53:08] | TRADE_OPEN   | direction=DOWN | price=0.94 | size=7.0
-[2026-02-09 17:55:59] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,516.10 >= $69,503.56 share_price=0.5
-[2026-02-09 17:56:02] | TRADE_CLOSE_OK  | size=6.9945 | price=0.54
+[2026-02-09 17:55:59] | STOP_LOSS      | STRIKE HIT: BTC $69,516.10 >= $69,503.56 share_price=0.5
+[2026-02-09 17:56:02] | TRADE_CLOSED   | size=6.9945 | price=0.54
 [2026-02-09 18:00:03] | SESSION_END     | market=btc-updown-15m-1770651900| max_total_score=87
 [2026-02-09 18:08:25] | TRADE_OPEN   | direction=DOWN | price=0.92 | size=7.0
 [2026-02-09 18:15:00] | SESSION_END     | market=btc-updown-15m-1770652800| max_total_score=77
 [2026-02-09 18:24:34] | TRADE_OPEN   | direction=UP | price=0.89 | size=7.0
 [2026-02-09 18:30:01] | SESSION_END     | market=btc-updown-15m-1770653700| max_total_score=79
 [2026-02-09 18:36:02] | TRADE_OPEN   | direction=DOWN | price=0.87 | size=7.0
-[2026-02-09 18:41:42] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $69,575.00 >= $69,564.43 share_price=0.58
-[2026-02-09 18:41:47] | TRADE_CLOSE_OK  | size=6.9747 | price=0.46
+[2026-02-09 18:41:42] | STOP_LOSS      | STRIKE HIT: BTC $69,575.00 >= $69,564.43 share_price=0.58
+[2026-02-09 18:41:47] | TRADE_CLOSED   | size=6.9747 | price=0.46
 [2026-02-09 18:45:01] | SESSION_END     | market=btc-updown-15m-1770654600| max_total_score=77
 [2026-02-09 18:58:13] | TRADE_OPEN   | direction=UP | price=0.95 | size=7.0
 [2026-02-09 19:00:00] | SESSION_END     | market=btc-updown-15m-1770655500| max_total_score=75
@@ -313,8 +313,8 @@
 [2026-02-09 19:58:22] | TRADE_OPEN   | direction=DOWN | price=0.91 | size=7.0
 [2026-02-09 20:00:03] | SESSION_END     | market=btc-updown-15m-1770659100| max_total_score=71
 [2026-02-09 20:03:44] | TRADE_OPEN   | direction=UP | price=0.82 | size=7.0
-[2026-02-09 20:08:25] | TRIGGER_CLOSE   | ⚠️ STOP LOSS - STRIKE HIT: BTC $70,559.90 <= $70,568.87 share_price=0.5
-[2026-02-09 20:08:28] | TRADE_CLOSE_OK  | size=7.0 | price=0.48
+[2026-02-09 20:08:25] | STOP_LOSS      | STRIKE HIT: BTC $70,559.90 <= $70,568.87 share_price=0.5
+[2026-02-09 20:08:28] | TRADE_CLOSED   | size=7.0 | price=0.48
 [2026-02-09 20:15:00] | SESSION_END     | market=btc-updown-15m-1770660000| max_total_score=71
 [2026-02-09 20:23:40] | TRADE_OPEN   | direction=DOWN | price=0.9 | size=7.0
 [2026-02-09 20:30:00] | SESSION_END     | market=btc-updown-15m-1770660900| max_total_score=71
@@ -328,8 +328,8 @@
 [2026-02-09 21:38:10] | TRADE_OPEN   | direction=UP | price=0.9 | size=7.0
 [2026-02-09 21:45:01] | SESSION_END     | market=btc-updown-15m-1770665400| max_total_score=71
 [2026-02-09 21:58:07] | TRADE_OPEN   | direction=UP | price=0.92 | size=7.0
-[2026-02-09 21:58:39] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 50.0% ($0.9200 → $0.4600) share_price=0.46
-[2026-02-09 21:58:42] | TRADE_CLOSE_OK  | size=7.0 | price=0.28
+[2026-02-09 21:58:39] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 50.0% ($0.9200 → $0.4600) share_price=0.46
+[2026-02-09 21:58:42] | TRADE_CLOSED   | size=7.0 | price=0.28
 [2026-02-09 22:00:02] | SESSION_END     | market=btc-updown-15m-1770666300| max_total_score=74
 [2026-02-09 22:15:02] | SESSION_END     | market=btc-updown-15m-1770667200| max_total_score=66
 [2026-02-09 22:17:11] | TRADE_OPEN   | direction=DOWN | price=0.87 | size=7.0
@@ -352,30 +352,82 @@
 [2026-02-10 00:52:52] | TRADE_OPEN   | direction=DOWN | price=0.89 | size=7.0
 [2026-02-10 01:00:01] | SESSION_END     | market=btc-updown-15m-1770677100| max_total_score=71
 [2026-02-10 01:06:06] | TRADE_OPEN   | direction=UP | price=0.9 | size=7.0
-[2026-02-10 01:12:21] | TRIGGER_CLOSE   | 📉 STOP LOSS: Share dropped 53.3% ($0.9000 → $0.4200) share_price=0.42
-[2026-02-10 01:12:27] | TRADE_CLOSE_OK  | size=6.9859 | price=0.32
+[2026-02-10 01:12:21] | STOP_LOSS      | 📉 STOP LOSS: Share dropped 53.3% ($0.9000 → $0.4200) share_price=0.42
+[2026-02-10 01:12:27] | TRADE_CLOSED   | size=6.9859 | price=0.32
 [2026-02-10 01:15:00] | SESSION_END     | market=btc-updown-15m-1770678000| max_total_score=77
 [2026-02-10 01:30:01] | SESSION_END     | market=btc-updown-15m-1770678900| max_total_score=70
 [2026-02-10 09:27:06] | TRADE_OPEN   | direction=DOWN | price=0.77 | size=7.0
 [2026-02-10 09:27:06] | ENTRY_DETAILS   | score_summary=TOTAL: 74/100 | BB: 16/30 | ATR: 58/70 - ratio: x1.8 | time_left=T-2.95min
-[2026-02-10 09:30:02] | TRADE_RESULT_DETAILED | status=WIN | pnl=$29.87 (+29.9%) | entry_summary=SCORE: 74 | BB: 16/30 | ATR: 58/70 (x1.8) | closed_early=False | counterfactual=SAME | max_loss_signal_score=N/A | btc_final_diff=$-23.82
+[2026-02-10 09:30:02] | TRADE_RESULT | status=WIN | pnl=$29.87 (+29.9%) | entry_summary=SCORE: 74 | BB: 16/30 | ATR: 58/70 (x1.8) | closed_early=False | counterfactual=SAME | max_loss_signal_score=N/A
 [2026-02-10 09:30:02] | SESSION_END     | market=btc-updown-15m-1770707700 | max_total_score=74
 [2026-02-10 09:36:07] | TRADE_OPEN   | direction=DOWN | price=0.84 | size=7.0 | btc=68924.2
 [2026-02-10 09:36:07] | ENTRY_DETAILS   | score_summary=TOTAL: 75/100 | BB: 12/30 | ATR: 63/70 - ratio: x1.9 | time_left=T-8.93min
-[2026-02-10 09:45:00] | TRADE_RESULT_DETAILED | status=WIN | pnl=$19.05 (+19.0%) | entry_summary=SCORE: 75 | BB: 12/30 | ATR: 63/70 (x1.9) | closed_early=False | counterfactual=SAME | max_loss_signal_score=N/A | btc_final_diff=$-110.08
+[2026-02-10 09:45:00] | TRADE_RESULT | status=WIN | pnl=$19.05 (+19.0%) | entry_summary=SCORE: 75 | BB: 12/30 | ATR: 63/70 (x1.9) | closed_early=False | counterfactual=SAME | max_loss_signal_score=N/A
 [2026-02-10 09:45:00] | SESSION_END     | market=btc-updown-15m-1770708600 | max_total_score=75
 [2026-02-10 10:00:02] | SESSION_END     | market=btc-updown-15m-1770709500 | max_total_score=53
 [2026-02-10 10:11:15] | TRADE_OPEN      | direction=UP | price=0.84 | size=7.0
 [2026-02-10 10:11:15] | ENTRY_DETAILS   | score_summary=TOTAL: 87/100 | BB: 22/30 | ATR: 65/70 - ratio: x1.9 | time_left=T-3.81min
-[2026-02-10 10:13:29] | TRIGGER_CLOSE   | reason=⚠️ STOP LOSS - STRIKE HIT (Below) | share_price=0.5
-[2026-02-10 10:13:32] | TRADE_CLOSE_OK  | size=6.9652 | price=0.49
-[2026-02-10 10:15:00] | TRADE_RESULT_DETAILED | status=LOSS | pnl=$-2.47 (-42.0%) | entry_summary=SCORE: 87 | BB: 22/30 | ATR: 65/70 (x1.9) | closed_early=True | counterfactual=LOST | max_loss_signal_score=N/A | btc_final_diff=$-70.91
+[2026-02-10 10:13:29] | STOP_LOSS      | reason=STRIKE HIT (Below) | share_price=0.5
+[2026-02-10 10:13:32] | TRADE_CLOSED   | size=6.9652 | price=0.49
+[2026-02-10 10:15:00] | TRADE_RESULT | status=LOSS | pnl=$-2.47 (-42.0%) | entry_summary=SCORE: 87 | BB: 22/30 | ATR: 65/70 (x1.9) | closed_early=True | counterfactual=LOST | max_loss_signal_score=N/A
 [2026-02-10 10:24:09] | TRADE_OPEN      | direction=UP | price=0.92 | size=7.0
 [2026-02-10 10:24:09] | ENTRY_DETAILS   | score_summary=TOTAL: 73/100 | BB: 7/30 | ATR: 66/70 - ratio: x1.9 | time_left=T-5.91min
-[2026-02-10 10:30:01] | TRADE_RESULT_DETAILED | status=WIN | pnl=$8.70 (+8.7%) | entry_summary=SCORE: 73 | BB: 7/30 | ATR: 66/70 (x1.9) | closed_early=False | counterfactual=SAME | max_loss_signal_score=N/A | btc_final_diff=$215.24
+[2026-02-10 10:30:01] | TRADE_RESULT | status=WIN | pnl=$8.70 (+8.7%) | entry_summary=SCORE: 73 | BB: 7/30 | ATR: 66/70 (x1.9) | closed_early=False | counterfactual=SAME | max_loss_signal_score=N/A
 [2026-02-10 10:30:01] | SESSION_END     | market=btc-updown-15m-1770711300 | max_total_score=73
 [2026-02-10 10:38:03] | TRADE_OPEN      | direction=DOWN | price=0.91 | size=5.0
 [2026-02-10 10:38:03] | ENTRY_DETAILS   | score_summary=TOTAL: 71/100 | BB: 6/30 | ATR: 65/70 - ratio: x1.9 | time_left=T-6.99min
-[2026-02-10 10:41:33] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 53.8% ($0.9100 → $0.4200) | share_price=0.42
-[2026-02-10 10:41:37] | TRADE_CLOSE_OK  | size=5.0 | price=0.4
-[2026-02-10 10:45:03] | TRADE_RESULT_DETAILED | status=LOSS | pnl=$-2.55 (-56.0%) | entry_summary=SCORE: 71 | BB: 6/30 | ATR: 65/70 (x1.9) | closed_early=True | counterfactual=LOST | max_loss_signal_score=N/A | btc_final_diff=$25.61
+[2026-02-10 10:41:33] | STOP_LOSS      | reason=📉 STOP LOSS: Share dropped 53.8% ($0.9100 → $0.4200) | share_price=0.42
+[2026-02-10 10:41:37] | TRADE_CLOSED   | size=5.0 | price=0.4
+[2026-02-10 10:45:03] | TRADE_RESULT | status=LOSS | pnl=$-2.55 (-56.0%) | entry_summary=SCORE: 71 | BB: 6/30 | ATR: 65/70 (x1.9) | closed_early=True | counterfactual=LOST | max_loss_signal_score=N/A
+[2026-02-10 10:54:57] | TRADE_OPEN      | direction=UP | price=0.89 | size=5.0
+[2026-02-10 10:54:57] | ENTRY_DETAILS   | score_summary=TOTAL: 71/100 | BB: 1/30 | ATR: 70/70 - ratio: x2.0 | time_left=T-5.09min
+[2026-02-10 11:00:02] | TRADE_RESULT | status=WIN | pnl=$12.36 (+12.4%) | entry_summary=SCORE: 71 | BB: 1/30 | ATR: 70/70 (x2.0) | closed_early=False | counterfactual=SAME | max_loss_signal_score=N/A
+[2026-02-10 11:00:02] | SESSION_END     | market=btc-updown-15m-1770713100 | max_total_score=71
+[2026-02-10 11:04:00] | TRADE_OPEN      | direction=UP | price=0.81 | size=5.0
+[2026-02-10 11:04:00] | ENTRY_DETAILS   | score_summary=TOTAL: 74/100 | BB: 4/30 | ATR: 70/70 - ratio: x2.2 | time_left=T-11.05min
+[2026-02-10 11:15:02] | TRADE_RESULT | status=WIN | pnl=$23.46 (+23.5%) | entry_summary=SCORE: 74 | BB: 4/30 | ATR: 70/70 (x2.2) | closed_early=False | counterfactual=SAME | max_loss_signal_score=N/A
+[2026-02-10 11:15:02] | SESSION_END     | market=btc-updown-15m-1770714000 | max_total_score=74
+[2026-02-10 11:20:09] | TRADE_OPEN      | direction=UP | price=0.71 | size=5.0
+[2026-02-10 11:20:09] | ENTRY_DETAILS   | score_summary=TOTAL: 80/100 | BB: 10/30 | ATR: 70/70 - ratio: x2.0 | time_left=T-9.92min
+[2026-02-10 11:20:38] | STOP_LOSS      | reason=STRIKE HIT (Below) | share_price=0.43
+[2026-02-10 11:20:42] | TRADE_CLOSE_FAIL | error=PolyApiException[status_code=400, error_message={'error': 'order 0x964341e8e64b1e3870efad2202e9fb56ff47a4ca970d4933dd60292ba70b43c4 is invalid. Size (4.93) lower than the minimum: 5'}] | attempt=1
+[2026-02-10 11:20:44] | STOP_LOSS      | reason=STRIKE HIT (Below) | share_price=0.38
+[2026-02-10 11:20:47] | TRADE_CLOSED   | size=4.9389 | price=0.41
+[2026-02-10 11:23:34] | TRADE_OPEN      | direction=UP | price=0.85 | size=7.0
+[2026-02-10 11:23:34] | ENTRY_DETAILS   | score_summary=TOTAL: 85/100 | BB: 20/30 | ATR: 65/70 - ratio: x1.9 | time_left=T-6.49min
+[2026-02-10 11:30:01] | TRADE_RESULT | status=WIN | pnl=$17.65 (+17.6%) | entry_summary=SCORE: 85 | BB: 20/30 | ATR: 65/70 (x1.9) | closed_early=False | counterfactual=SAME | max_loss_signal_score=N/A
+[2026-02-10 11:30:01] | SESSION_END     | market=btc-updown-15m-1770714900 | max_total_score=85
+[2026-02-10 11:36:13] | TRADE_OPEN      | direction=DOWN | price=0.87 | size=7.0
+[2026-02-10 11:36:13] | ENTRY_DETAILS   | score_summary=TOTAL: 71/100 | BB: 1/30 | ATR: 70/70 - ratio: x2.0 | time_left=T-8.84min
+[2026-02-10 11:45:01] | TRADE_RESULT | status=WIN | pnl=$14.94 (+14.9%) | entry_summary=SCORE: 71 | BB: 1/30 | ATR: 70/70 (x2.0) | closed_early=False | counterfactual=SAME | max_loss_signal_score=N/A
+[2026-02-10 11:45:01] | SESSION_END     | market=btc-updown-15m-1770715800 | max_total_score=71
+[2026-02-10 11:48:16] | TRADE_OPEN      | direction=DOWN | price=0.78 | size=7.0
+[2026-02-10 11:48:16] | ENTRY_DETAILS   | score_summary=TOTAL: 76/100 | BB: 6/30 | ATR: 70/70 - ratio: x2.0 | time_left=T-11.78min
+[2026-02-10 12:00:02] | TRADE_RESULT | status=WIN | pnl=$28.21 (+28.2%) | entry_summary=SCORE: 76 | BB: 6/30 | ATR: 70/70 (x2.0) | closed_early=False | counterfactual=SAME | max_loss_signal_score=N/A
+[2026-02-10 12:00:02] | SESSION_END     | market=btc-updown-15m-1770716700 | max_total_score=76
+[2026-02-10 12:15:02] | SESSION_END     | market=btc-updown-15m-1770717600 | max_total_score=8
+[2026-02-10 12:17:03] | TRADE_OPEN      | direction=DOWN | price=0.72 | size=7.0
+[2026-02-10 12:17:03] | ENTRY_DETAILS   | score_summary=TOTAL: 76/100 | BB: 6/30 | ATR: 70/70 - ratio: x2.0 | time_left=T-12.99min
+[2026-02-10 12:25:12] | TRIGGER_CLOSE   | reason=📉 STOP LOSS: Share dropped 51.4% ($0.7200 → $0.3500) | share_price=0.35
+[2026-02-10 12:25:15] | TRADE_CLOSE_OK  | size=6.9289 | price=0.32
+[2026-02-10 12:30:02] | TRADE_RESULT    | status=LOSS | pnl=$-2.82 (-56.0%) | entry_summary=SCORE: 76 | BB: 6/30 | ATR: 70/70 (x2.0) | closed_early=True | counterfactual=LOST | max_loss_signal_score=N/A | btc_final_diff=$48.47
+[2026-02-10 12:30:02] | SESSION_END     | market=btc-updown-15m-1770718500 | max_total_score=76
+[2026-02-10 12:35:02] | TRADE_OPEN      | direction=DOWN | price=0.81 | size=7.0
+[2026-02-10 12:35:02] | ENTRY_DETAILS   | score_summary=TOTAL: 71/100 | BB: 13/30 | ATR: 58/70 - ratio: x1.8 | time_left=T-10.01min
+[2026-02-10 12:45:00] | TRADE_RESULT    | status=WIN | pnl=$23.46 (+23.5%) | entry_summary=SCORE: 71 | BB: 13/30 | ATR: 58/70 (x1.8) | closed_early=False | counterfactual=SAME | max_loss_signal_score=N/A
+[2026-02-10 12:45:00] | SESSION_END     | market=btc-updown-15m-1770719400 | max_total_score=71
+[2026-02-10 12:56:06] | TRADE_OPEN      | direction=UP | price=0.73 | size=7.0
+[2026-02-10 12:56:06] | ENTRY_DETAILS   | score_summary=TOTAL: 75/100 | BB: 9/30 | ATR: 66/70 - ratio: x1.9 | time_left=T-3.97min
+[2026-02-10 12:58:39] | STOP_LOSS       | reason=📉 STOP LOSS: Share dropped 76.7% ($0.7300 → $0.1700) | share_price=0.17
+[2026-02-10 12:58:43] | TRADE_CLOSED    | size=6.901 | price=0.14 | pnl=$-4.07 (-80.8%)
+[2026-02-10 13:00:03] | TRADE_RESULT    | status=LOSS | pnl=$-4.14 (-81.1%) | entry_summary=SCORE: 75 | BB: 9/30 | ATR: 66/70 (x1.9) | closed_early=True | counterfactual=LOST | max_loss_signal_score=N/A
+[2026-02-10 13:00:03] | SESSION_END     | market=btc-updown-15m-1770720300 | max_total_score=75
+[2026-02-10 13:15:00] | SESSION_END     | market=btc-updown-15m-1770721200 | max_total_score=0
+[2026-02-10 13:30:01] | SESSION_END     | market=btc-updown-15m-1770722100 | max_total_score=11
+[2026-02-10 13:35:38] | TRADE_OPEN      | direction=UP | price=0.85 | size=7.0
+[2026-02-10 13:35:38] | ENTRY_DETAILS   | score_summary=TOTAL: 71/100 | BB: 12/30 | ATR: 59/70 - ratio: x1.8 | time_left=T-9.41min
+[2026-02-10 13:41:15] | STOP_LOSS       | reason=📉 STOP LOSS: Share dropped 54.1% ($0.8500 → $0.3900) | share_price=0.39
+[2026-02-10 13:41:20] | TRADE_CLOSED    | size=6.9652 | price=0.35 | pnl=$-3.48 (-58.8%)
+[2026-02-10 13:45:01] | TRADE_RESULT    | status=LOSS | pnl=$-3.51 (-59.0%) | entry_summary=SCORE: 71 | BB: 12/30 | ATR: 59/70 (x1.8) | closed_early=True | counterfactual=LOST | max_loss_signal_score=N/A
+[2026-02-10 13:45:01] | SESSION_END     | market=btc-updown-15m-1770723000 | max_total_score=71
+[2026-02-10 14:00:03] | SESSION_END     | market=btc-updown-15m-1770723900 | max_total_score=23
