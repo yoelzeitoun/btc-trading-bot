@@ -9,11 +9,11 @@ CLOSE_TP_PRICE = 0.99  # Take Profit: Close position when share price reaches th
 CLOSE_SL_SHARE_DROP_PERCENT = 50  # Stop Loss: Close if share price drops by this % from entry
 CLOSE_ON_STRIKE = True  # Stop Loss: Close on strike price hit
 # === SCORING & TRADE EXECUTION ===
-SCORE_THRESHOLD = 71  # Minimum total score required to execute a trade (0-100)
+SCORE_THRESHOLD = 70  # Minimum total score required to execute a trade (0-100)
 
 # === SCORING WEIGHTS ===
-WEIGHT_BOLLINGER = 40
-WEIGHT_ATR = 60
+WEIGHT_BOLLINGER = 50
+WEIGHT_ATR = 50
 
 # === BARRIER THRESHOLDS (HARD CONSTRAINTS) ===
 SHARE_PRICE_MAX = 0.95  # Maximum acceptable share price
