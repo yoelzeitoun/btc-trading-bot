@@ -4,6 +4,7 @@ import sys
 import os
 import re
 import json
+import csv
 import numpy as np
 import requests
 import concurrent.futures
@@ -71,6 +72,16 @@ SAFE_ABI = (
     '{"constant":false,"inputs":[{"name":"to","type":"address"},{"name":"value","type":"uint256"},{"name":"data","type":"bytes"},{"name":"operation","type":"uint8"},{"name":"safeTxGas","type":"uint256"},{"name":"baseGas","type":"uint256"},{"name":"gasPrice","type":"uint256"},{"name":"gasToken","type":"address"},{"name":"refundReceiver","type":"address"},{"name":"signatures","type":"bytes"}],"name":"execTransaction","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"}]'
 )
 
+def log_claim_activity(message):
+    """Log claim related activity to claims.txt with timestamp"""
+    try:
+        from datetime import datetime
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        with open(CLAIMS_LOG_FILE, 'a') as f:
+            f.write(f"[{timestamp}] {message}\n")
+    except Exception as e:
+        print(f"Failed to write to claims log: {e}")
+
 def save_pending_claim(condition_id):
     """Enregistre un ID de marché pour le clamer plus tard"""
     if not condition_id: return
@@ -84,15 +95,20 @@ def save_pending_claim(condition_id):
             claims.append(condition_id)
             with open(CLAIMS_FILE, 'w') as f:
                 json.dump(claims, f)
-            print(f"   📝 Market saved for future claim: {condition_id}")
+            msg = f"📝 Market saved for future claim: {condition_id}"
+            print(f"   {msg}")
+            log_claim_activity(msg)
     except Exception as e:
-        print(f"   ⚠️ Error saving claim: {e}")
+        msg = f"⚠️ Error saving claim: {e}"
+        print(f"   {msg}")
+        log_claim_activity(msg)
 
 def process_pending_claims():
     """Tente de clamer tous les marchés en attente (Supporte EOA et Proxy Gnosis Safe)"""
     if not os.path.exists(CLAIMS_FILE): return
 
     print("\n💰 VÉRIFICATION DES CLAIMS EN ATTENTE...")
+    log_claim_activity("Starting claim check process...")
     
     try:
         with open(CLAIMS_FILE, 'r') as f:
@@ -100,62 +116,80 @@ def process_pending_claims():
         
         if not claims: 
             print("   Aucun claim en attente.")
+            log_claim_activity("No pending claims found.")
             return
 
-        # Setup Web3
+        # Connexion Web3
         w3 = Web3(Web3.HTTPProvider(POLYGON_RPC))
+        
+        # Inject PoA middleware if available
         if ExtraDataToPOAMiddleware:
             w3.middleware_onion.inject(ExtraDataToPOAMiddleware, layer=0)
 
-        if not w3.is_connected() or not PRIVATE_KEY:
-            print("   ❌ Erreur: RPC non connecté ou Private Key manquante")
+        if not w3.is_connected():
+            msg = "❌ Erreur connexion Polygon RPC"
+            print(f"   {msg}")
+            log_claim_activity(msg)
+            return
+
+        if not PRIVATE_KEY:
+            msg = "❌ Private Key manquante, impossible de claim"
+            print(f"   {msg}")
+            log_claim_activity(msg)
             return
         
         account = w3.eth.account.from_key(PRIVATE_KEY)
         
-        # Parse ABIs once (not in loop)
-        ctf_abi = json.loads(CTF_ABI)
-        safe_abi = json.loads(SAFE_ABI) if PROXY_ADDRESS else None
-        
-        # Setup contracts
-        contract = w3.eth.contract(address=CTF_ADDRESS, abi=ctf_abi)
-        safe_contract = w3.eth.contract(address=PROXY_ADDRESS, abi=safe_abi) if PROXY_ADDRESS else None
-        
+        # Setup Proxy if available
+        safe_contract = None
         if PROXY_ADDRESS:
-            print(f"   🛡️  Using Gnosis Safe: {PROXY_ADDRESS}")
+            print(f"   🛡️  Proxy detected: {PROXY_ADDRESS}")
+            log_claim_activity(f"Using Gnosis Proxy: {PROXY_ADDRESS}")
+            safe_contract = w3.eth.contract(address=PROXY_ADDRESS, abi=json.loads(SAFE_ABI))
+        
+        contract = w3.eth.contract(address=CTF_ADDRESS, abi=json.loads(CTF_ABI))
         
         remaining_claims = []
+        
+        # Nonce setup
         current_nonce = w3.eth.get_transaction_count(account.address, 'latest')
         
         for i, condition_id in enumerate(claims):
             try:
-                print(f"   🔎 Checking {condition_id[:10]}...")
+                print(f"   🔎 Vérification {condition_id[:10]}...")
+                log_claim_activity(f"Checking condition_id: {condition_id}")
                 
-                # Prepare redemption data
                 index_sets = [1, 2]
                 parent_collection_id = "0x" + "0"*64
+                
+                # Prepare Data
                 inner_tx = contract.functions.redeemPositions(
-                    USDC_ADDRESS, parent_collection_id, condition_id, index_sets
+                     USDC_ADDRESS, parent_collection_id, condition_id, index_sets
                 ).build_transaction({'gas': 0, 'gasPrice': 0})
                 inner_data = inner_tx['data']
                 
-                # Build transaction call
+                txn_call = None
+                
+                # --- PROXY PATH ---
                 if safe_contract:
-                    # Gnosis Safe path
+                    # Check Safe Nonce
                     safe_nonce = safe_contract.functions.nonce().call()
-                    safe_tx_hash = safe_contract.functions.getTransactionHash(
+                    
+                    # Build Safe Hash
+                    safe_tx_hash_bytes = safe_contract.functions.getTransactionHash(
                         CTF_ADDRESS, 0, inner_data, 0, 0, 0, 0,
                         "0x0000000000000000000000000000000000000000",
                         "0x0000000000000000000000000000000000000000",
                         safe_nonce
                     ).call()
                     
-                    # Sign with V adjustment for Gnosis
-                    message = encode_defunct(primitive=safe_tx_hash)
-                    signed = w3.eth.account.sign_message(message, private_key=PRIVATE_KEY)
-                    sig = signed.signature
-                    v = sig[-1] + 4 if sig[-1] < 30 else sig[-1]
-                    signature = sig[:-1] + bytes([v])
+                    # Sign (EIP-191 + Gnosis V-adjustment)
+                    message = encode_defunct(primitive=safe_tx_hash_bytes)
+                    signed_message = w3.eth.account.sign_message(message, private_key=PRIVATE_KEY)
+                    sig_bytes = signed_message.signature
+                    v = sig_bytes[-1]
+                    if v < 30: v += 4
+                    signature = sig_bytes[:-1] + bytes([v])
                     
                     txn_call = safe_contract.functions.execTransaction(
                         CTF_ADDRESS, 0, inner_data, 0, 0, 0, 0,
@@ -164,83 +198,122 @@ def process_pending_claims():
                         signature
                     )
                 else:
-                    # Direct EOA path
+                    # --- DIRECT PATH ---
                     txn_call = contract.functions.redeemPositions(
                         USDC_ADDRESS, parent_collection_id, condition_id, index_sets
                     )
+                    log_claim_activity(f"Using Direct EOA Path")
 
-                # Estimate gas
+                # Gas & Send
+                base_fee = w3.eth.get_block('latest')['baseFeePerGas']
+                max_priority = w3.to_wei(40, 'gwei')
+                max_fee = base_fee + max_priority
+                
                 try:
                     gas_est = txn_call.estimate_gas({'from': account.address})
                     gas_limit = int(gas_est * 1.5)
                 except Exception as e:
+                    if "insufficient funds" in str(e):
+                        print("      ❌ PAS ASSEZ DE MATIC pour le gas.")
+                        log_claim_activity(f"Failed: Insufficient MATIC for gas. Error: {e}")
+                        remaining_claims.append(condition_id)
+                        continue
+                    # Check for Safe-specific errors (GS013 = not an owner, GS026 = etc.)
+                    # These should be RETRIED, not deleted
                     error_str = str(e)
-                    if "insufficient funds" in error_str:
-                        print("      ❌ Insufficient MATIC for gas")
+                    if "GS013" in error_str:
+                        print(f"      ⚠️  Gas Est. Failed (Safe GS013): Execution Reverted.")
+                        print(f"          Possible reasons: Market not resolved yet on-chain, or Invalid Signature.")
+                        print(f"      💡 Retrying next window.")
+                        log_claim_activity(f"Failed (GS013): Market not ready yet or invalid sig. Retrying.")
                         remaining_claims.append(condition_id)
-                    elif "GS013" in error_str:
-                        print("      ⚠️  Safe error GS013 - retrying next cycle")
-                        remaining_claims.append(condition_id)
-                    elif "execution reverted" in error_str and "GS" not in error_str:
-                        print(f"      🗑️  Reverted (likely 0 balance) - removing")
-                    else:
-                        remaining_claims.append(condition_id)
+                        continue
+                    
+                    # For "execution reverted" without Safe errors:
+                    # Could mean "Already Claimed", "Zero Balance", or "Lost".
+                    # We remove it to prevent clogging the list forever.
+                    if "execution reverted" in error_str and "GS" not in error_str:
+                        print(f"      ⚠️  Transaction Reverted (Likely 0 balance or already claimed).")
+                        print(f"          🗑️  Removing {condition_id[:10]}... from queue.")
+                        log_claim_activity(f"Failed (Reverted): Likely 0 balance/already claimed. Removing from queue. Error: {e}")
+                        continue
+                    
+                    # For retryable network errors (timeout, rpc down):
+                    # We keep it.
+                    log_claim_activity(f"Failed (Unknown Error): {e}. Retrying later.")
+                    remaining_claims.append(condition_id)
                     continue
 
-                # Build and send transaction
-                base_fee = w3.eth.get_block('latest')['baseFeePerGas']
+                txn_nonce = current_nonce + i
                 txn = txn_call.build_transaction({
                     'chainId': 137,
                     'gas': gas_limit,
-                    'maxFeePerGas': base_fee + w3.to_wei(40, 'gwei'),
-                    'maxPriorityFeePerGas': w3.to_wei(40, 'gwei'),
-                    'nonce': current_nonce + i,
+                    'maxFeePerGas': max_fee,
+                    'maxPriorityFeePerGas': max_priority,
+                    'nonce': txn_nonce,
                     'type': 2
                 })
                 
                 signed_txn = w3.eth.account.sign_transaction(txn, private_key=PRIVATE_KEY)
                 tx_hash = w3.eth.send_raw_transaction(signed_txn.raw_transaction)
-                print(f"   ✅ Claim sent: {w3.to_hex(tx_hash)}")
+                hash_hex = w3.to_hex(tx_hash)
+                print(f"   🚀 Claim envoyé ! Hash: {hash_hex}")
+                print(f"      ✅ Succès ! Retrait de la liste d'attente.")
+                log_claim_activity(f"SUCCESS: Tx Hash {hash_hex}")
+
                 
             except Exception as e:
-                print(f"   ❌ Error: {e}")
+                print(f"   ❌ Erreur claim loop: {e}")
+                log_claim_activity(f"CRITICAL ERROR in loop: {e}")
                 remaining_claims.append(condition_id)
         
-        # Update claims file
+        # Sauvegarde de ce qui reste à traiter
         if len(remaining_claims) != len(claims):
             with open(CLAIMS_FILE, 'w') as f:
                 json.dump(remaining_claims, f)
-            print(f"   💾 Updated - Remaining: {len(remaining_claims)}")
-        elif remaining_claims:
-            print(f"   ⏳ {len(remaining_claims)} pending for next cycle")
+            print(f"   💾 Liste mise à jour. Restants: {len(remaining_claims)}")
+            log_claim_activity(f"List updated. Claims remaining: {len(remaining_claims)}")
+        elif len(remaining_claims) > 0:
+            print(f"   ⏳ {len(remaining_claims)} claim(s) en attente (Maintien pour prochain cycle).")
+            log_claim_activity(f"No changes. Claims pending for next cycle: {len(remaining_claims)}")
+
+        else:
+             print("   ⚠️  Aucun claim n'a abouti (Gas ou Déjà fait).")
 
     except Exception as e:
-        print(f"❌ Error processing claims: {e}")
+        print(f"❌ Erreur générale process claims: {e}")
+
+# --- 2B. CHAINLINK BTC/USD STREAM CONFIG ---
+CHAINLINK_STREAM_URLS = [
+    os.getenv("CHAINLINK_STREAM_API_URL", "").strip(),
+    "https://data.chain.link/api/streams/btc-usd",
+    "https://data.chain.link/api/streams/btc-usd-cexprice-streams",
+    "https://data.chain.link/streams/btc-usd-cexprice-streams",
+    "https://data.chain.link/streams/btc-usd",
+]
+
+CHAINLINK_FEED_FALLBACK_URLS = [
+    os.getenv("CHAINLINK_FEED_API_URL", "").strip(),
+    "https://data.chain.link/feeds/ethereum/mainnet/btc-usd",
+]
 
 # --- 3. TECHNICAL INDICATORS ---
 
 def calculate_bollinger_bands(closes, period=20, std_dev=2.0):
-    """Calculate Bollinger Bands with EMA (less lag than SMA)"""
+    """Calculate Bollinger Bands"""
     if len(closes) < period:
         return None, None, None
     
-    closes_array = np.array(closes)
-    # EMA calculation with alpha = 2/(period+1)
-    alpha = 2.0 / (period + 1)
-    ema = closes_array[0]
-    for price in closes_array[1:]:
-        ema = alpha * price + (1 - alpha) * ema
-    middle_band = ema
-    
-    # Standard deviation for bands (still using recent prices)
-    std = np.std(closes_array[-period:])
+    closes_array = np.array(closes[-period:])
+    middle_band = np.mean(closes_array)
+    std = np.std(closes_array)
     upper_band = middle_band + (std_dev * std)
     lower_band = middle_band - (std_dev * std)
     
     return upper_band, middle_band, lower_band
 
-def calculate_atr(highs, lows, closes, period=5):
-    """Calculate Average True Range (reduced period for faster reaction)"""
+def calculate_atr(highs, lows, closes, period=14):
+    """Calculate Average True Range"""
     if len(highs) < period + 1 or len(lows) < period + 1 or len(closes) < period + 1:
         return None
     
@@ -258,20 +331,16 @@ def calculate_atr(highs, lows, closes, period=5):
     atr = np.mean(true_ranges[-period:])
     return atr
 
-def calculate_adx(highs, lows, closes, period=7):
+def calculate_adx(highs, lows, closes, period=14):
     """
-    Calculate Average Directional Index (ADX) with Directional Indicators (+DI, -DI)
-    Returns: (ADX, plus_di, minus_di) - all directional for trend confirmation
+    Calculate Average Directional Index (ADX) - measures trend strength (0-100)
     ADX < 20: Weak/no trend
     ADX 20-40: Moderate trend
     ADX 40-60: Strong trend
     ADX > 60: Very strong trend
-    
-    +DI > -DI: Uptrend
-    -DI > +DI: Downtrend
     """
     if len(highs) < period * 2 or len(lows) < period * 2 or len(closes) < period * 2:
-        return None, None, None
+        return None
     
     try:
         # Calculate +DM and -DM
@@ -323,7 +392,7 @@ def calculate_adx(highs, lows, closes, period=7):
         
         # Calculate DX and ADX
         if len(plus_di) < period:
-            return None, None, None
+            return None
         
         dx_values = []
         for i in range(len(plus_di)):
@@ -334,71 +403,37 @@ def calculate_adx(highs, lows, closes, period=7):
                 dx = 100 * abs(plus_di[i] - minus_di[i]) / di_sum
             dx_values.append(dx)
         
-        # ADX is the EMA-smoothed DX (more precise than simple average)
-        if len(dx_values) < period:
-            return None, None, None
-        
-        # Use EMA for smoothing (alpha = 2 / (period + 1))
-        alpha = 2.0 / (period + 1)
-        adx = dx_values[0]
-        for dx in dx_values[1:]:
-            adx = alpha * dx + (1 - alpha) * adx
-        
-        # Return ADX with final directional indicators
-        final_plus_di = plus_di[-1] if plus_di else 0
-        final_minus_di = minus_di[-1] if minus_di else 0
-        return adx, final_plus_di, final_minus_di
+        # ADX is the smoothed DX
+        adx = np.mean(dx_values[-period:])
+        return adx
     except Exception as e:
         print(f"ADX calculation error: {e}")
-        return None, None, None
-
-def calculate_rsi(closes, period=14):
-    """Calculate RSI (Relative Strength Index)"""
-    if len(closes) < period + 1:
         return None
-    
-    gains = []
-    losses = []
-    for i in range(1, period + 1):
-        change = closes[-(i + 1)] - closes[-(i + 2)]
-        if change >= 0:
-            gains.append(change)
-        else:
-            losses.append(abs(change))
-    
-    avg_gain = sum(gains) / period
-    avg_loss = sum(losses) / period
-    if avg_loss == 0:
-        return 100.0
-    
-    rs = avg_gain / avg_loss
-    return 100 - (100 / (1 + rs))
-
-def calculate_ema(closes, period=50):
-    """Calculate Exponential Moving Average (trend filter)"""
-    if len(closes) < period:
-        return closes[-1] if closes else None
-    
-    # Weighted EMA: gives more importance to recent prices
-    weights = np.exp(np.linspace(-1.0, 0.0, period))
-    weights /= weights.sum()
-    return np.average(closes[-period:], weights=weights)
 
 def get_atr_multiplier(adx):
     """
-    Dynamically adjust ATR multiplier based on ADX (trend strength) - logarithmic cap
+    Dynamically adjust ATR multiplier based on ADX (trend strength) - Exponential scaling
     
-    Softer curve that plateaus faster:
-    - Base: 1.2x
-    - Uses log(1+adx) to reduce aggressiveness at high ADX
-    - Capped to 3.0x
+    Formula: multiplier = 1.2 + (ADX / 25)
+    
+    Reflects the EXPONENTIAL nature of trend danger:
+    - ADX 0 (No Trend) → multiplier = 1.2x (base safety)
+    - ADX 25 (Moderate Trend) → multiplier = 2.2x
+    - ADX 50 (Strong Trend) → multiplier = 3.2x
+    - ADX 75 (Very Strong Trend) → multiplier = 4.0x (capped)
+    
+    At ADX 50, risk is ~3.2x higher (not 50% like linear would suggest)
+    This reflects the physical reality: trend moves are exponentially more dangerous
     """
     if adx is None:
-        return 1.5
+        return 1.2  # Default multiplier with safety buffer
     
-    base_mult = 1.2
-    added_risk = math.log1p(adx) / 1.5
-    return min(base_mult + added_risk, 3.0)
+    # Steep slope: each ADX point adds 0.04 to multiplier
+    # This creates reactive, non-linear behavior
+    dynamic_mult = 1.2 + (adx / 25.0)
+    
+    # Safety cap to prevent extreme values if ADX calculation bugs
+    return min(dynamic_mult, 4.0)
 
 def _safe_float(value):
     try:
@@ -406,145 +441,313 @@ def _safe_float(value):
     except (TypeError, ValueError):
         return None
 
-# BTC price sources (CEX APIs) - defined once globally
-PRICE_SOURCES = [
-    ("Kraken", "https://api.kraken.com/0/public/Ticker?pair=XXBTZUSD", lambda d: float(d["result"]["XXBTZUSD"]["c"][0])),
-    ("Coinbase", "https://api.coinbase.com/v2/prices/BTC-USD/spot", lambda d: float(d["data"]["amount"])),
-    ("Binance", "https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT", lambda d: float(d["price"])),
-    ("Bitstamp", "https://www.bitstamp.net/api/v2/ticker/btcusd", lambda d: float(d["last"])),
-]
-
-def fetch_btc_price(session=None):
-    """Fetch BTC/USD price from CEX APIs."""
+def fetch_chainlink_btc_usd_price(session=None):
+    """
+    Fetch BTC/USD price from multiple sources (Kraken first, then fallbacks).
+    """
     session = session or requests
-    for name, url, extractor in PRICE_SOURCES:
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+    sources = [
+        (
+            "Kraken",
+            "https://api.kraken.com/0/public/Ticker?pair=XXBTZUSD",
+            lambda data: data.get("result", {}).get("XXBTZUSD", {}).get("c", [None])[0],
+        ),
+        (
+            "Coinbase",
+            "https://api.coinbase.com/v2/prices/BTC-USD/spot",
+            lambda data: data.get("data", {}).get("amount"),
+        ),
+        (
+            "Binance",
+            "https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT",
+            lambda data: data.get("price"),
+        ),
+        (
+            "Bitstamp",
+            "https://www.bitstamp.net/api/v2/ticker/btcusd",
+            lambda data: data.get("last"),
+        ),
+    ]
+
+    for _, url, extractor in sources:
         try:
-            resp = session.get(url, timeout=2).json()
-            price = extractor(resp)
-            if 20000 <= price <= 200000:  # Sanity check
+            response = session.get(url, headers=headers, timeout=5)
+            response.raise_for_status()
+            data = response.json()
+            price = _safe_float(extractor(data))
+            if price and 20000 <= price <= 150000:
                 return price
         except Exception:
             continue
+
     return None
 
 # --- 3B. EXECUTE REAL TRADE ---
 def execute_real_trade(poly_client, token_id, direction, share_price, strike_price, current_btc_price):
-    """Execute a real trade on Polymarket."""
+    """
+    Execute a real trade on Polymarket.
+    
+    Args:
+        poly_client: ClobClient instance
+        token_id: The token ID to trade (YES or NO token)
+        direction: "UP" or "DOWN" 
+        share_price: Current market price of the share
+        strike_price: The strike price from the market
+        current_btc_price: Current BTC price
+        
+    Returns:
+        dict with trade result or None if trade failed
+    """
     log_lines = []
-    
-    # Default result structure
-    result = {
-        'success': False,
-        'direction': direction,
-        'token_id': token_id,
-        'share_price': share_price,
-        'current_btc': current_btc_price,
-        'strike_price': strike_price,
-        'log_lines': log_lines,
-        'error': None
-    }
-    
+    def record_log(message):
+        log_lines.append(message)
+
     if not REAL_TRADE:
-        print("   ℹ️  Simulation mode (REAL_TRADE=False)")
-        result['error'] = 'Simulation Mode'
-        return result
-    
-    # Validate constraints
+        message = "ℹ️  REAL_TRADE is False - Skipping actual order placement (simulation mode)"
+        print(f"   {message}")
+        record_log(message)
+        return {
+            'success': False,
+            'error': 'REAL_TRADE is False',
+            'direction': direction,
+            'token_id': token_id,
+            'share_price': share_price,
+            'current_btc': current_btc_price,
+            'strike_price': strike_price,
+            'log_lines': log_lines
+        }
+        
+    # Validate all constraints before attempting trade
     if share_price > SHARE_PRICE_MAX:
-        msg = f"🚫 Share price ${share_price:.3f} above max ${SHARE_PRICE_MAX}"
-        print(f"   {msg}")
-        log_lines.append(msg)
-        result['error'] = msg
-        return result
+        message = f"🚫 Cannot trade: Share price ${share_price:.3f} above maximum ${SHARE_PRICE_MAX}"
+        print(f"   {message}")
+        record_log(message)
+        return {
+            'success': False,
+            'error': message,
+            'direction': direction,
+            'token_id': token_id,
+            'share_price': share_price,
+            'current_btc': current_btc_price,
+            'strike_price': strike_price,
+            'log_lines': log_lines
+        }
     
     try:
-        # Fetch order book
-        book = requests.get(f"https://clob.polymarket.com/book?token_id={token_id}", timeout=10).json()
-        asks = book.get("asks", [])
+        # Fetch current order book to get best ask and minimum size
+        book_url = f"https://clob.polymarket.com/book?token_id={token_id}"
+        book_response = requests.get(book_url, timeout=10)
+        book_response.raise_for_status()
+        book_data = book_response.json()
+        
+        asks = book_data.get("asks", [])
+        min_order_size = _safe_float(book_data.get("min_order_size")) or 1.0
         
         if not asks:
-            result['error'] = "No asks available"
-            return result
+            message = "❌ No asks available in order book"
+            print(f"   {message}")
+            record_log(message)
+            return {
+                'success': False,
+                'error': message,
+                'direction': direction,
+                'token_id': token_id,
+                'share_price': share_price,
+                'current_btc': current_btc_price,
+                'strike_price': strike_price,
+                'log_lines': log_lines
+            }
+            
+        best_ask_price = min(float(a['price']) for a in asks)
         
-        best_ask = min(float(a['price']) for a in asks)
-        min_size = float(book.get("min_order_size", 1.0))
-        size = max(float(TRADE_AMOUNT), min_size)
-        cost = size * best_ask
-        
-        # Check balance/allowance
+        # === DETERMINE TRADE SIZE (SHARES) ===
+        actual_size = float(TRADE_AMOUNT)
+
+        # Enforce per-token minimum share size
+        if actual_size < min_order_size:
+            actual_size = float(min_order_size)
+            message = f"📊 Size below token minimum, using minimum size: {actual_size} shares"
+            print(f"   {message}")
+            record_log(message)
+
+        actual_cost = actual_size * best_ask_price
+            
+        # Check balance/allowance before placing order
         try:
             from py_clob_client.clob_types import BalanceAllowanceParams, AssetType, OrderArgs
-            balance_info = poly_client.get_balance_allowance(BalanceAllowanceParams(asset_type=AssetType.COLLATERAL))
-            
+            balance_params = BalanceAllowanceParams(asset_type=AssetType.COLLATERAL)
+            balance_info = poly_client.get_balance_allowance(balance_params)
+
+            # Support different response shapes
             if isinstance(balance_info, dict):
-                balance = _safe_float(balance_info.get("balance") or balance_info.get("collateral_balance"))
-                allowance = _safe_float(balance_info.get("allowance") or balance_info.get("collateral_allowance"))
+                raw_balance = balance_info.get("balance") or balance_info.get("collateral_balance")
+                raw_allowance = balance_info.get("allowance") or balance_info.get("collateral_allowance")
             else:
-                balance = _safe_float(getattr(balance_info, "balance", None))
-                allowance = _safe_float(getattr(balance_info, "allowance", None))
-            
-            if balance and allowance and (balance < cost or allowance < cost):
-                msg = f"🚫 Insufficient funds: balance=${balance:.2f}, allowance=${allowance:.2f}, need=${cost:.2f}"
-                print(f"   {msg}")
-                log_lines.append(msg)
-                result.update({'error': msg, 'price': best_ask, 'size': size, 'cost': cost})
-                return result
+                raw_balance = getattr(balance_info, "balance", None)
+                raw_allowance = getattr(balance_info, "allowance", None)
+
+            balance_val = _safe_float(raw_balance)
+            allowance_val = _safe_float(raw_allowance)
+
+            if balance_val is not None and allowance_val is not None:
+                required = actual_cost
+                if balance_val < required or allowance_val < required:
+                    message = (
+                        "🚫 Insufficient balance/allowance: "
+                        f"balance=${balance_val:.2f}, allowance=${allowance_val:.2f}, required=${required:.2f}"
+                    )
+                    print(f"   {message}")
+                    hint = "💡 Deposit/approve more USDC collateral in Polymarket to trade."
+                    print(f"   {hint}")
+                    record_log(message)
+                    record_log(hint)
+                    return {
+                        'success': False,
+                        'error': message,
+                        'direction': direction,
+                        'token_id': token_id,
+                        'share_price': share_price,
+                        'best_ask_price': best_ask_price,
+                        'size': actual_size,
+                        'cost': actual_cost,
+                        'current_btc': current_btc_price,
+                        'strike_price': strike_price,
+                        'log_lines': log_lines
+                    }
         except Exception as e:
-            print(f"   ⚠️  Could not verify balance: {e}")
+            message = f"⚠️  Could not verify balance/allowance: {e}"
+            print(f"   {message}")
+            record_log(message)
+
+        # Import OrderArgs
+        from py_clob_client.clob_types import OrderArgs
+        from datetime import datetime
         
-        # Place order with retry
-        print(f"\n   🔄 EXECUTING TRADE [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]")
-        print(f"      {direction} @ ${best_ask:.3f} × {size} shares = ${cost:.2f}")
-        log_lines.append(f"Trade: {direction} @ ${best_ask:.3f} × {size} shares")
+        trade_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f"\n   🔄 EXECUTING REAL TRADE... [{trade_time}]")
+        record_log(f"🔄 EXECUTING REAL TRADE... [{trade_time}]")
+        print(f"      Direction: {direction}")
+        record_log(f"Direction: {direction}")
+        print(f"      Token ID: {token_id}")
+        record_log(f"Token ID: {token_id}")
+        print(f"      Price: ${best_ask_price:.3f}")
+        record_log(f"Price: ${best_ask_price:.3f}")
+        print(f"      Size: {actual_size} shares")
+        record_log(f"Size: {actual_size} shares")
+        print(f"      Total Cost: ${actual_cost:.2f}")
+        record_log(f"Total Cost: ${actual_cost:.2f}")
+        print(f"      Expected Strategy: BTC {'>' if direction == 'UP' else '<'} ${strike_price:,.2f}")
+        record_log(f"Expected Strategy: BTC {'>' if direction == 'UP' else '<'} ${strike_price:,.2f}")
+        print(f"      Current BTC: ${current_btc_price:,.2f}")
+        record_log(f"Current BTC: ${current_btc_price:,.2f}")
         
-        order_args = OrderArgs(price=best_ask, size=size, side="BUY", token_id=token_id)
+        # Create order
+        order_args = OrderArgs(
+            price=best_ask_price,
+            size=actual_size,
+            side="BUY",
+            token_id=token_id
+        )
         
-        for attempt in range(1, 4):  # 3 attempts
+        # Place order with retry logic for timeouts
+        max_retries = 3
+        retry_delay = 2  # seconds
+        
+        for attempt in range(1, max_retries + 1):
             try:
-                print(f"   📡 Sending order (attempt {attempt}/3)...")
+                print(f"   📡 Sending order to Polymarket (Attempt {attempt}/{max_retries})...")
                 response = poly_client.create_and_post_order(order_args)
+                
+                # If we get here, request succeeded - break retry loop
                 break
+                
             except Exception as e:
-                if 'timeout' in str(e).lower() and attempt < 3:
-                    print(f"   ⚠️  Timeout, retrying...")
-                    time.sleep(2 ** attempt)  # Exponential backoff
-                    continue
-                raise
+                error_str = str(e)
+                
+                # Check if it's a timeout error
+                if 'timeout' in error_str.lower() or 'timed out' in error_str.lower():
+                    if attempt < max_retries:
+                        print(f"   ⚠️  Timeout on attempt {attempt}/{max_retries}, retrying in {retry_delay}s...")
+                        record_log(f"⚠️  Timeout on attempt {attempt}/{max_retries}, retrying in {retry_delay}s...")
+                        time.sleep(retry_delay)
+                        retry_delay *= 2  # Exponential backoff
+                        continue
+                    else:
+                        print(f"   ❌ All {max_retries} attempts failed due to timeout")
+                        record_log(f"❌ All {max_retries} attempts failed due to timeout")
+                        raise  # Re-raise to be caught by outer except
+                else:
+                    # Non-timeout error, don't retry
+                    raise
         
-        # Handle response
         if isinstance(response, dict) and response.get("success"):
             order_id = response.get("orderID", "unknown")
-            roi = ((size / cost - 1) * 100) if cost > 0 else 0
-            
-            print(f"   ✅ ORDER SUCCESS!")
+            print(f"   ✅ ORDER PLACED SUCCESSFULLY!")
             print(f"      Order ID: {order_id}")
-            print(f"      ROI if Win: {roi:.1f}%")
-            log_lines.append(f"✅ Order {order_id} placed")
+            print(f"      Cost: ${actual_cost:.2f}")
+            print(f"      Potential Profit: ${(actual_size - actual_cost):.2f}")
+            print(f"      ROI if Win: {((actual_size/actual_cost - 1) * 100):.1f}%")
+            record_log("✅ ORDER PLACED SUCCESSFULLY!")
+            record_log(f"Order ID: {order_id}")
+            record_log(f"Cost: ${actual_cost:.2f}")
+            record_log(f"Potential Profit: ${(actual_size - actual_cost):.2f}")
+            record_log(f"ROI if Win: {((actual_size/actual_cost - 1) * 100):.1f}%")
             
-            result.update({
+            from datetime import datetime
+            open_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            return {
                 'success': True,
                 'order_id': order_id,
-                'price': best_ask,
-                'size': size,
-                'cost': cost,
-                'min_order_size': min_size,
-                'open_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'direction': direction,
+                'price': best_ask_price,
+                'size': actual_size,
+                'cost': actual_cost,
+                'token_id': token_id,
+                'current_btc': current_btc_price,
+                'strike_price': strike_price,
+                'min_order_size': min_order_size,
+                'share_price': share_price,
+                'log_lines': log_lines,
+                'open_time': open_time,
                 'open_btc_price': current_btc_price
-            })
+            }
         else:
-            error = response.get("error", response) if isinstance(response, dict) else str(response)
-            print(f"   ❌ ORDER FAILED: {error}")
-            log_lines.append(f"❌ Order failed: {error}")
-            result.update({'error': error, 'price': best_ask, 'size': size, 'cost': cost})
-        
+            error_msg = response.get("error", response) if isinstance(response, dict) else str(response)
+            message = f"❌ ORDER FAILED: {error_msg}"
+            print(f"   {message}")
+            record_log(message)
+            return {
+                'success': False,
+                'error': error_msg,
+                'direction': direction,
+                'token_id': token_id,
+                'price': best_ask_price,
+                'size': actual_size,
+                'cost': actual_cost,
+                'current_btc': current_btc_price,
+                'strike_price': strike_price,
+                'min_order_size': min_order_size,
+                'share_price': share_price,
+                'log_lines': log_lines
+            }
+            
     except Exception as e:
-        print(f"   ❌ Trade exception: {e}")
+        message = f"❌ Error executing trade: {e}"
+        print(f"   {message}")
         import traceback
         traceback.print_exc()
-        log_lines.append(f"Exception: {e}")
-        result['error'] = str(e)
-    
-    return result
+        record_log(message)
+        return {
+            'success': False,
+            'error': str(e),
+            'direction': direction,
+            'token_id': token_id,
+            'share_price': share_price,
+            'current_btc': current_btc_price,
+            'strike_price': strike_price,
+            'log_lines': log_lines
+        }
 
 def get_max_sellable_size(poly_client, token_id):
     """
@@ -1125,9 +1328,6 @@ def log_to_results(event_type, details):
     event_type: 'TRADE_OPEN', 'TRADE_CLOSE', 'MONITOR_TRIGGER', 'ERROR', 'STATS'
     details: dict of key-value pairs
     """
-    # Silence ultra-verbose events (can be re-enabled if needed)
-    if event_type in {"EMA_TREND_FILTER", "ADX_DIRECTIONAL", "BB_SQUEEZE_MALUS", "BB_SQUEEZE_BONUS", "TRADE_BLOCKED"}:
-        return
     stats_file = "results.txt"
     try:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -1352,7 +1552,6 @@ def run_advisor():
             print("="*60)
             
             open_position = None
-            executor = concurrent.futures.ThreadPoolExecutor(max_workers=3)
 
             while True:
                 lines = []  # Buffer for UI
@@ -1366,10 +1565,10 @@ def run_advisor():
                     print("⏰ MARKET EXPIRED!")
                     print("="*60)
                     
-                    # Check final result (BTC/USD price from CEX)
-                    final_price = fetch_btc_price()
+                    # Check final result (Chainlink BTC/USD stream price)
+                    final_price = fetch_chainlink_btc_usd_price()
                     if final_price is None:
-                        print("⚠️  BTC price unavailable. Skipping final resolution check.")
+                        print("⚠️  Chainlink price unavailable. Skipping final resolution check.")
                     else:
                         window_stats['final_btc_price'] = final_price
                         print(f"\n📊 FINAL RESULTS:")
@@ -1569,18 +1768,19 @@ def run_advisor():
                     down_price = 0.0
                     clob_token_ids = market_data.get('clob_token_ids')
 
-                    future_btc = executor.submit(fetch_btc_price, session)
-                    if clob_token_ids and clob_token_ids.get('yes') and clob_token_ids.get('no'):
-                        future_yes = executor.submit(fetch_clob_best_ask, clob_token_ids['yes'], session)
-                        future_no = executor.submit(fetch_clob_best_ask, clob_token_ids['no'], session)
-                    else:
-                        future_yes = None
-                        future_no = None
+                    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+                        future_btc = executor.submit(fetch_chainlink_btc_usd_price, session)
+                        if clob_token_ids and clob_token_ids.get('yes') and clob_token_ids.get('no'):
+                            future_yes = executor.submit(fetch_clob_best_ask, clob_token_ids['yes'], session)
+                            future_no = executor.submit(fetch_clob_best_ask, clob_token_ids['no'], session)
+                        else:
+                            future_yes = None
+                            future_no = None
 
-                    real_price = future_btc.result()
-                    if future_yes and future_no:
-                        up_price = future_yes.result()
-                        down_price = future_no.result()
+                        real_price = future_btc.result()
+                        if future_yes and future_no:
+                            up_price = future_yes.result()
+                            down_price = future_no.result()
 
                     if real_price is None:
                         print("   ⚠️  BTC price unavailable (all sources), skipping this evaluation")
@@ -1622,11 +1822,10 @@ def run_advisor():
                             raise Exception(f"Kraken API error: {kraken_data['error']}")
                         
                         ohlc_data = kraken_data['result']['XXBTZUSD']
-                        # Take last 200 candles: [time, open, high, low, close, vwap, volume, count]
-                        # More history stabilizes the ADX before reaching current candle
-                        closes = [float(candle[4]) for candle in ohlc_data[-200:]]
-                        highs = [float(candle[2]) for candle in ohlc_data[-200:]]
-                        lows = [float(candle[3]) for candle in ohlc_data[-200:]]
+                        # Take last 60 candles: [time, open, high, low, close, vwap, volume, count]
+                        closes = [float(candle[4]) for candle in ohlc_data[-60:]]
+                        highs = [float(candle[2]) for candle in ohlc_data[-60:]]
+                        lows = [float(candle[3]) for candle in ohlc_data[-60:]]
                         
                     except Exception as e:
                         print(f"   ⚠️  Kraken OHLC data unavailable: {e}")
@@ -1747,7 +1946,7 @@ def run_advisor():
                         
                         # Calculate and display scores during position monitoring
                         upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=20, std_dev=2.0)
-                        atr = calculate_atr(highs, lows, closes, period=7)
+                        atr = calculate_atr(highs, lows, closes, period=14)
                         
                         # (Omitted Calculation logic for brevity in UI update, assumed correct from before)
                         # Just printing final buffered output
@@ -1892,14 +2091,8 @@ def run_advisor():
                         
                         # Show outcome prices
                         outcome_prices = market_data.get('outcome_prices', {})
-                        up_price = outcome_prices.get('up')
-                        down_price = outcome_prices.get('down')
-                        if up_price is not None and down_price is not None:
-                            lines.append(f"   Market: UP {up_price*100:.1f}¢ | DOWN {down_price*100:.1f}¢")
-                        else:
-                            up_label = f"{up_price*100:.1f}¢" if up_price is not None else "N/A"
-                            down_label = f"{down_price*100:.1f}¢" if down_price is not None else "N/A"
-                            lines.append(f"   Market: UP {up_label} | DOWN {down_label}")
+                        if outcome_prices.get('up') is not None:
+                            lines.append(f"   Market: UP {outcome_prices['up']*100:.1f}¢ | DOWN {outcome_prices['down']*100:.1f}¢")
                         
                         trade_score = 0
                         details = []
@@ -1913,7 +2106,6 @@ def run_advisor():
                         
                         score_a = 0
                         bb_explain = "BB Unavailable"
-                        bb_bandwidth = None
                         if upper_bb and lower_bb and middle_bb:
                             bb_bandwidth = (upper_bb - lower_bb) / middle_bb if middle_bb > 0 else 0
                             bb_range = upper_bb - lower_bb
@@ -1943,69 +2135,13 @@ def run_advisor():
 
                         details.append(f"BB:  {score_a}/{MAX_SCORE_BB} - {bb_explain}")
                         
-                        # === SQUEEZE INTELLIGENT : Bonus ou Malus selon le context ===
-                        # 1. On calcule la moyenne de la largeur des bandes (historique)
-                        avg_bandwidth = None
-                        if len(closes) >= 40:
-                            bandwidths = []
-                            for i in range(20, len(closes) + 1):
-                                window_closes = closes[i-20:i]
-                                w_upper, w_middle, w_lower = calculate_bollinger_bands(window_closes, period=20, std_dev=2.0)
-                                if w_upper and w_lower and w_middle:
-                                    bandwidths.append((w_upper - w_lower) / w_middle if w_middle > 0 else 0)
-                            if len(bandwidths) >= 20:
-                                avg_bandwidth = sum(bandwidths[-20:]) / 20
-
-                        # 2. On vérifie si on est en "Squeeze" (Calme plat)
-                        if bb_bandwidth is not None and avg_bandwidth is not None and bb_bandwidth < (0.5 * avg_bandwidth):
-                            
-                            # 3. Récupérer l'ATR et calculer la zone de sécurité
-                            current_atr = calculate_atr(highs, lows, closes, period=5)
-                            current_atr = current_atr if current_atr else 0
-                            safety_margin = (current_atr * 2) if current_atr > 0 else (real_price * 0.001)
-                            
-                            distance_to_strike = abs(real_price - strike_price)
-                            
-                            # 4. Est-ce qu'on gagne actuellement ?
-                            trade_direction = 'UP' if real_price > strike_price else 'DOWN'
-                            is_winning_side = (trade_direction == 'UP' and real_price > strike_price) or \
-                                              (trade_direction == 'DOWN' and real_price < strike_price)
-
-                            # 5. VERDICT : Bonus ou Malus selon le context
-                            if is_winning_side and distance_to_strike > safety_margin:
-                                # CAS 1 : On mène confortablement et le marché s'endort -> EXCELLENT
-                                squeeze_bonus = 10
-                                trade_score += squeeze_bonus
-                                details.append(f"BB Squeeze: +{squeeze_bonus} (BONUS: Safe Lead & Low Volatility)")
-                                log_to_results("BB_SQUEEZE_BONUS", {
-                                    "dist_to_strike": f"{distance_to_strike:.2f}",
-                                    "safety_margin": f"{safety_margin:.2f}",
-                                    "bandwidth": f"{bb_bandwidth:.4f}",
-                                    "avg_bandwidth": f"{avg_bandwidth:.4f}"
-                                })
-                            else:
-                                # CAS 2 : Match nul ou serré et le marché s'endort -> DANGEREUX
-                                squeeze_penalty = 15
-                                trade_score -= squeeze_penalty
-                                details.append(f"BB Squeeze: -{squeeze_penalty} (MALUS: Stuck near Strike)")
-                                log_to_results("BB_SQUEEZE_MALUS", {
-                                    "dist_to_strike": f"{distance_to_strike:.2f}",
-                                    "safety_margin": f"{safety_margin:.2f}",
-                                    "bandwidth": f"{bb_bandwidth:.4f}",
-                                    "avg_bandwidth": f"{avg_bandwidth:.4f}"
-                                })
-                        
-                        trade_direction = 'UP' if real_price > strike_price else 'DOWN'
-
                         # === B. ATR KINETIC BARRIER SCORE (Proportional, Max 33) ===
-                        atr = calculate_atr(highs, lows, closes, period=5)
-                        adx, plus_di, minus_di = calculate_adx(highs, lows, closes, period=7)
-                        rsi = calculate_rsi(closes, period=14)
+                        atr = calculate_atr(highs, lows, closes, period=14)
+                        adx = calculate_adx(highs, lows, closes, period=14)
                         atr_multiplier = get_atr_multiplier(adx)
                         
                         score_b = 0
                         atr_explain = "ATR Unavailable"
-                        ratio_value = None
                         if atr:
                             max_move = atr * math.sqrt(minutes_left) * atr_multiplier
                             dist = abs(real_price - strike_price)
@@ -2016,119 +2152,34 @@ def run_advisor():
                                 if max_move > 0:
                                     distance_ratio = min((dist - max_move) / max_move, 1.0)
                                     score_b = int(round(MAX_SCORE_ATR * distance_ratio))
-                            
-                            ratio_value = (dist / max_move) if max_move else 0
-                            atr_explain = f"Dist ${dist:.2f} / Move ${max_move:.2f} (x{ratio_value:.1f}) [ADX:{adx:.1f}→Mult:{atr_multiplier}]"
                         
                         trade_score += score_b
-                        
-                        # === C. RSI bonus/malus (momentum filter, not a hard block) ===
-                        rsi_score = 0
-                        if rsi is not None:
-                            if trade_direction == 'UP' and rsi > 70:
-                                rsi_score = -5
-                            elif trade_direction == 'UP' and 40 < rsi < 60:
-                                rsi_score = 5
-                        trade_score += rsi_score
-                        
-                        # === D. EMA 50 TREND FILTER (Major penalty if trading against trend) ===
-                        ema_50 = calculate_ema(closes, period=50)
-                        trend_score = 0
-                        ema_explain = "EMA N/A"
-                        
-                        if ema_50 is not None:
-                            if trade_direction == 'UP':
-                                if real_price > ema_50:
-                                    trend_score = 10
-                                    ema_explain = f"EMA Bullish: Price ${real_price:.2f} > EMA ${ema_50:.2f} ✓"
-                                else:
-                                    trend_score = -20
-                                    ema_explain = f"EMA Bearish: Price ${real_price:.2f} < EMA ${ema_50:.2f} ✗ (against trend)"
-                            elif trade_direction == 'DOWN':
-                                if real_price < ema_50:
-                                    trend_score = 10
-                                    ema_explain = f"EMA Bearish: Price ${real_price:.2f} < EMA ${ema_50:.2f} ✓"
-                                else:
-                                    trend_score = -20
-                                    ema_explain = f"EMA Bullish: Price ${real_price:.2f} > EMA ${ema_50:.2f} ✗ (against trend)"
-                            
-                            trade_score += trend_score
-                            log_to_results("EMA_TREND_FILTER", {
-                                "direction": trade_direction,
-                                "price": f"{real_price:.2f}",
-                                "ema_50": f"{ema_50:.2f}",
-                                "trend_score": trend_score,
-                                "explanation": ema_explain
-                            })
-                        
-                        # === E. ADX DIRECTIONAL CONFIRMATION (Momentum alignment) ===
-                        adx_dir_score = 0
-                        adx_dir_explain = "ADX N/A"
-                        
-                        if adx is not None and plus_di is not None and minus_di is not None:
-                            is_strong_trend = adx >= 25  # ADX > 25 = meaningful trend
-                            price_moving_away = (trade_direction == 'UP' and real_price > strike_price) or \
-                                                (trade_direction == 'DOWN' and real_price < strike_price)
-                            
-                            # Determine directional strength
-                            if trade_direction == 'UP':
-                                di_dominance = plus_di > minus_di  # +DI should be stronger for uptrend
-                            else:
-                                di_dominance = minus_di > plus_di  # -DI should be stronger for downtrend
-                            
-                            # SCENARIO 1: Price moves AWAY from strike + Strong ADX + DI aligned = SURF THE WAVE
-                            if price_moving_away and is_strong_trend and di_dominance:
-                                adx_dir_score = 15
-                                adx_dir_explain = f"ADX SURFER: Trend {adx:.1f} +DI:{plus_di:.1f} -DI:{minus_di:.1f} = Riding Momentum ✓"
-                            # SCENARIO 2: Price moves AWAY from strike BUT ADX weak = NO CONFIRMATION
-                            elif price_moving_away and not is_strong_trend:
-                                adx_dir_score = 0
-                                adx_dir_explain = f"ADX WEAK: {adx:.1f} < 25 (no momentum confirmation)"
-                            # SCENARIO 3: Price moves TOWARD strike + Strong ADX = FALLING KNIFE (DANGER!)
-                            elif not price_moving_away and is_strong_trend:
-                                adx_dir_score = -30  # Heavy penalty: fighting a strong trend
-                                adx_dir_explain = f"ADX KNIFE: Strong trend {adx:.1f} but price toward strike (DANGER) ✗"
-                            # SCENARIO 4: Price moves TOWARD strike + Weak ADX = Still risky
-                            else:
-                                adx_dir_score = -15
-                                adx_dir_explain = f"ADX CAUTION: Price toward strike, weak trend {adx:.1f}"
-                            
-                            trade_score += adx_dir_score
-                            log_to_results("ADX_DIRECTIONAL", {
-                                "adx": f"{adx:.2f}",
-                                "plus_di": f"{plus_di:.2f}",
-                                "minus_di": f"{minus_di:.2f}",
-                                "direction": trade_direction,
-                                "moving_away": price_moving_away,
-                                "di_aligned": di_dominance,
-                                "adx_score": adx_dir_score,
-                                "explanation": adx_dir_explain
-                            })
+                        if atr:
+                            ratio_value = (dist / max_move) if max_move else 0
+                            atr_explain = f"Dist ${dist:.2f} / Move ${max_move:.2f} (x{ratio_value:.1f}) [ADX:{adx:.1f}→Mult:{atr_multiplier}]"
                         
                         # --- START CAPTURE FOR LOGGING ---
                         entry_logging_stats = {
                             "total_score": max(0, trade_score),
                             "bb_score": f"{score_a}/{MAX_SCORE_BB}",
                             "atr_score": f"{score_b}/{MAX_SCORE_ATR}",
-                            "atr_ratio": f"x{ratio_value:.1f}" if ratio_value is not None else "N/A",
+                            "atr_ratio": f"x{ratio_value:.1f}" if atr else "N/A",
                             "minutes_left": minutes_left
                         }
                         # --- END CAPTURE ---
 
                         details.append(f"ATR: {score_b}/{MAX_SCORE_ATR} - {atr_explain}")
-                        if rsi is None:
-                            details.append("RSI: N/A")
-                        else:
-                            rsi_note = f" (Adj {rsi_score:+d})" if rsi_score != 0 else ""
-                            details.append(f"RSI: {rsi:.1f}{rsi_note}")
-                        
-                        details.append(f"EMA: {ema_explain} ({trend_score:+d})")
-                        details.append(f"ADX: {adx_dir_explain} ({adx_dir_score:+d})")
                         
                         # Get share_price and share_type for constraints (not scoring)
-                        outcome_prices = market_data.get('outcome_prices') or {}
-                        share_price = outcome_prices.get('up' if trade_direction == 'UP' else 'down')
-                        share_type = "YES" if trade_direction == 'UP' else "NO"
+                        share_price = None
+                        share_type = "UNKNOWN"
+                        try:
+                            outcome_prices = market_data.get('outcome_prices', {})
+                            if outcome_prices.get('up') is not None and outcome_prices.get('down') is not None:
+                                share_price = outcome_prices['up'] if real_price > strike_price else outcome_prices['down']
+                                share_type = "YES" if real_price > strike_price else "NO"
+                        except Exception:
+                            pass
                         
                         # === DECISION ===
                         # Clamp negative scores to 0 for display
@@ -2164,27 +2215,24 @@ def run_advisor():
                             lines.append(f"      {detail}")
                         
                         # === HARD CONSTRAINTS CHECK ===
+                        constraint_violations = []
+                        if share_price is not None:
+                            if share_price > SHARE_PRICE_MAX:
+                                constraint_violations.append(f"Price too high (${share_price:.2f} > ${SHARE_PRICE_MAX})")
+                        
                         lines.append("-" * 60)
                         if display_score >= SCORE_THRESHOLD:
-                            if share_price is not None and share_price > SHARE_PRICE_MAX:
-                                violation = f"Price too high (${share_price:.2f} > ${SHARE_PRICE_MAX})"
+                            if constraint_violations:
                                 window_stats['blocked_signals'] += 1
-                                if violation not in window_stats['blocked_reasons']:
-                                    window_stats['blocked_reasons'].append(violation)
+                                for violation in constraint_violations:
+                                    if violation not in window_stats['blocked_reasons']:
+                                        window_stats['blocked_reasons'].append(violation)
                                 # Silent block - no more clogging results.txt
-                                log_to_results("TRADE_BLOCKED", {
-                                    "reason": "PRICE_TOO_HIGH",
-                                    "direction": trade_direction,
-                                    "score": display_score,
-                                    "share_price": f"{share_price:.3f}",
-                                    "btc_price": f"{real_price:.2f}"
-                                })
+                                # log_to_results("TRADE_BLOCKED", { ... })
                                 
                                 lines.append(f"\n{Colors.FAIL}🚫 TRADE BLOCKED - Constraints:{Colors.ENDC}")
-                                lines.append(f"   ⛔ {violation}")
-                                ui.refresh(lines)
-                                time.sleep(1)
-                                continue
+                                for violation in constraint_violations:
+                                    lines.append(f"   ⛔ {violation}")
                             else:
                                 # TRADE TRIGGER!
                                 ui.refresh(lines) # Show the winning Score 72 scan
@@ -2321,8 +2369,6 @@ def run_advisor():
                     import traceback
                     traceback.print_exc()
                     time.sleep(1)
-
-            executor.shutdown(wait=False)
                 
         except Exception as e:
             print(f"\n❌ Error processing market: {e}")
