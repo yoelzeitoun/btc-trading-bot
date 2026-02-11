@@ -453,3 +453,5 @@
 [2026-02-10 19:45:01] | SESSION_END     | market=btc-updown-15m-1770744600 | max_total_score=58
 [2026-02-10 22:45:00] | SESSION_END     | market=btc-updown-15m-1770755400 | max_total_score=6
 [2026-02-11 08:45:09] | SESSION_END     | market=btc-updown-15m-1770791400 | max_total_score=0
+[2026-02-11 09:00:01] | SESSION_END     | market=btc-updown-15m-1770792300 | max_total_score=7
+[2026-02-11 09:15:00] | SESSION_END     | market=btc-updown-15m-1770793200 | max_total_score=0

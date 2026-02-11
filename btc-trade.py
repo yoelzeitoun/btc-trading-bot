@@ -410,6 +410,15 @@ def calculate_adx(highs, lows, closes, period=14):
         print(f"ADX calculation error: {e}")
         return None
 
+def calculate_ema(closes, period=20):
+    """Calculate Exponential Moving Average"""
+    if len(closes) < period:
+        return closes[-1] if closes else 0
+    weights = np.exp(np.linspace(-1., 0., period))
+    weights /= weights.sum()
+    a = np.array(closes[-period:])
+    return np.dot(a, weights)
+
 def get_atr_multiplier(adx):
     """
     Dynamically adjust ATR multiplier based on ADX (trend strength) - Exponential scaling
@@ -2051,78 +2060,108 @@ def run_advisor():
                         trade_score = 0
                         details = []
                         
-                        # Max score for each component
-                        MAX_SCORE_BB = WEIGHT_BOLLINGER
-                        MAX_SCORE_ATR = WEIGHT_ATR
+                        # -----------------------------------------------------------
+                        # LOGIQUE "SAFETY FIRST" (RESTAURÉE)
+                        # -----------------------------------------------------------
                         
-                        # === A. BOLLINGER BANDS SCORE (Proportional, Max 34) ===
+                        # A. ATR DE SURVIE (Le "Coussin")
+                        # On calcule deux ATR pour ne pas se faire avoir par un calme temporaire
+                        atr_fast = calculate_atr(highs, lows, closes, period=5)
+                        atr_slow = calculate_atr(highs, lows, closes, period=14)
+                        # On prend le pire des cas (le plus grand) pour la sécurité
+                        safe_atr = max(atr_fast, atr_slow) if (atr_fast and atr_slow) else (atr_fast or atr_slow or 0)
+                        
+                        # Formule du "Mur de Sécurité" : ATR * sqrt(temps) * FACTEUR DE PEUR (2.5)
+                        # Si le prix est plus proche que ça, on refuse le trade.
+                        required_distance = safe_atr * math.sqrt(minutes_left) * 2.5
+                        actual_distance = abs(real_price - strike_price)
+                        
+                        score_b = 0
+                        ratio_value = 0
+                        
+                        if safe_atr and actual_distance < required_distance:
+                            score_b = 0 # DANGER IMMÉDIAT
+                            atr_explain = f"⛔ DANGER: Dist {actual_distance:.2f} < Requise {required_distance:.2f} (ATR Safe: {safe_atr:.2f})"
+                        elif safe_atr:
+                            # Plus on est loin au-delà du requis, meilleur est le score (max 50)
+                            cushion = actual_distance / required_distance
+                            score_b = min(50, int(30 * cushion)) 
+                            ratio_value = cushion
+                            atr_explain = f"✅ SAFE: Marge x{cushion:.1f} (Dist {actual_distance:.2f} > Req {required_distance:.2f})"
+
+                        # B. BOLLINGER "ANTI-SQUEEZE"
+                        # On refuse la volatilité qui explose (Squeeze)
                         upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=20, std_dev=2.0)
                         
                         score_a = 0
-                        bb_explain = "BB Unavailable"
-                        if upper_bb and lower_bb and middle_bb:
-                            bb_bandwidth = (upper_bb - lower_bb) / middle_bb if middle_bb > 0 else 0
-                            bb_range = upper_bb - lower_bb
-                            target_position = (strike_price - lower_bb) / bb_range
-                            target_position = max(0, min(1, target_position))
-                            
-                            if real_price > strike_price:  # UP
-                                if target_position < 0.5:
-                                    score_a = int(round(MAX_SCORE_BB * (1 - target_position / 0.5)))
-                                    score_a = min(score_a, MAX_SCORE_BB)
-                                else:
-                                    score_a = 0
-                            else:  # DOWN
-                                if target_position > 0.5:
-                                    score_a = int(round(MAX_SCORE_BB * ((target_position - 0.5) / 0.5)))
-                                    score_a = min(score_a, MAX_SCORE_BB)
-                                else:
-                                    score_a = 0
-
-                        trade_score += score_a
-                        # Explain BB score
+                        bb_explain = "N/A"
+                        
                         if upper_bb and lower_bb:
-                            if real_price > strike_price:
-                                bb_explain = f"Strike @ {target_position:.1%} (Low is good)"
-                            else:
-                                bb_explain = f"Strike @ {target_position:.1%} (High is good)"
-
-                        details.append(f"BB:  {score_a}/{MAX_SCORE_BB} - {bb_explain}")
-                        
-                        # === B. ATR KINETIC BARRIER SCORE (Proportional, Max 33) ===
-                        atr = calculate_atr(highs, lows, closes, period=14)
-                        adx = calculate_adx(highs, lows, closes, period=14)
-                        atr_multiplier = get_atr_multiplier(adx)
-                        
-                        score_b = 0
-                        atr_explain = "ATR Unavailable"
-                        if atr:
-                            max_move = atr * math.sqrt(minutes_left) * atr_multiplier
-                            dist = abs(real_price - strike_price)
+                            bandwidth = upper_bb - lower_bb
                             
-                            if dist < max_move:
-                                score_b = 0
+                            # 1. Check Anti-Squeeze : Si les bandes sont trop serrées par rapport à l'ATR, ça va exploser.
+                            if bandwidth < (safe_atr * 2):
+                                score_a = 0
+                                bb_explain = "⛔ REJET: Squeeze détecté (Explosion imminente)"
                             else:
-                                if max_move > 0:
-                                    distance_ratio = min((dist - max_move) / max_move, 1.0)
-                                    score_b = int(round(MAX_SCORE_ATR * distance_ratio))
+                                # 2. Check Position "Safe Half"
+                                # Si on joue UP, on veut être dans la moitié HAUTE des bandes (loin du bas)
+                                # Si on joue DOWN, on veut être dans la moitié BASSE (loin du haut)
+                                is_safe_side = False
+                                trade_direction_check = 'UP' if real_price > strike_price else 'DOWN'
+                                
+                                if trade_direction_check == 'UP':
+                                    # On vérifie si on est plus proche de la bande haute que de la basse
+                                    pos = (real_price - lower_bb) / bandwidth
+                                    if pos > 0.4: is_safe_side = True # Tolérance légère
+                                else:
+                                    pos = (upper_bb - real_price) / bandwidth
+                                    if pos > 0.4: is_safe_side = True
+
+                                if is_safe_side:
+                                    score_a = 40
+                                    bb_explain = "✅ Position Confortable dans les bandes"
+                                else:
+                                    score_a = 10
+                                    bb_explain = "⚠️ Risqué (Trop proche du milieu/opposé)"
+
+                        # C. VETO ADX (Tendance Contraire)
+                        # Si une tendance FORTE existe CONTRE nous, on annule tout (Veto)
+                        adx = calculate_adx(highs, lows, closes, period=14)
+                        # Note: Idéalement ta fonction ADX doit retourner (adx, +DI, -DI), mais faisons simple :
+                        trend_penalty = 0
+                        trade_direction_check = 'UP' if real_price > strike_price else 'DOWN'
+                        ema_fast = calculate_ema(closes, 20) if 'calculate_ema' in dir() else None
                         
-                        trade_score += score_b
-                        if atr:
-                            ratio_value = (dist / max_move) if max_move else 0
-                            atr_explain = f"Dist ${dist:.2f} / Move ${max_move:.2f} (x{ratio_value:.1f}) [ADX:{adx:.1f}→Mult:{atr_multiplier}]"
+                        if adx and adx > 30: # Tendance forte
+                             if ema_fast:
+                                  # Si on est UP mais que le prix baisse fort récemment (approximé)
+                                  if real_price < ema_fast:
+                                      if trade_direction_check == 'UP':
+                                          trend_penalty = 100
+                                          details.append("⛔ VETO: Tendance Baissière Forte (ADX>30)")
+                                  elif real_price > ema_fast:
+                                      if trade_direction_check == 'DOWN':
+                                          trend_penalty = 100
+                                          details.append("⛔ VETO: Tendance Haussière Forte (ADX>30)")
+
+                        # CALCUL FINAL
+                        trade_score = score_a + score_b - trend_penalty
                         
                         # --- START CAPTURE FOR LOGGING ---
                         entry_logging_stats = {
                             "total_score": max(0, trade_score),
-                            "bb_score": f"{score_a}/{MAX_SCORE_BB}",
-                            "atr_score": f"{score_b}/{MAX_SCORE_ATR}",
-                            "atr_ratio": f"x{ratio_value:.1f}" if atr else "N/A",
+                            "bb_score": f"{score_a}/40",
+                            "atr_score": f"{score_b}/50",
+                            "atr_ratio": f"x{ratio_value:.1f}" if ratio_value else "N/A",
                             "minutes_left": minutes_left
                         }
                         # --- END CAPTURE ---
 
-                        details.append(f"ATR: {score_b}/{MAX_SCORE_ATR} - {atr_explain}")
+                        details.append(f"BB:  {score_a}/40 - {bb_explain}")
+                        details.append(f"ATR: {score_b}/50 - {atr_explain}")
+                        if trend_penalty > 0:
+                            details.append(f"ADX VETO: -{trend_penalty} (Tendance Forte Opposée)")
                         
                         # Get share_price and share_type for constraints (not scoring)
                         share_price = None
@@ -2138,6 +2177,7 @@ def run_advisor():
                         # === DECISION ===
                         # Clamp negative scores to 0 for display
                         display_score = max(0, trade_score)
+
                         
                         window_stats['total_evaluations'] += 1
                         window_stats['total_score_a'] += score_a
