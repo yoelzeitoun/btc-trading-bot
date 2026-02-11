@@ -1101,10 +1101,59 @@ def find_current_btc_15m_market(verbose=True):
             except: pass
 
         # STRIKE PRICE (Critical)
-        # Fetch from Kraken OHLC at market_start_timestamp
+        # Strategy: 
+        # 1. Scrape Polymarket page for the "Price to Beat" (closePrice of previous candle)
+        # 2. Fallback to Kraken OHLC if scraping fails
+        
         strike_price = None
-        if market_start_timestamp > 0:
-            if verbose: print(f"   📊 Fetching Strike Price (BTC @ {market_start_timestamp})...")
+        strike_source = None
+        
+        # 1. Scrape Page
+        if verbose: print(f"   📊 Fetching Market Page for Strike Price...")
+        try:
+             # Mimic Real Browser to get the JSON hydration data
+             scrape_headers = {
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+             }
+             page_url = f"https://polymarket.com/event/{live_slug}"
+             page_resp = requests.get(page_url, headers=scrape_headers, timeout=5)
+             
+             if page_resp.status_code == 200:
+                 # Construct target ISO time for the END of the previous candle (which is START of this market)
+                 # Format: 2026-02-10T20:45:00.000Z
+                 dt_start = datetime.fromtimestamp(market_start_timestamp, tz=timezone.utc)
+                 target_iso = dt_start.strftime('%Y-%m-%dT%H:%M:%S.000Z')
+                 
+                 # Regex to find the JSON objects with closePrice
+                 # Look for: {"startTime":"...","endTime":"2026...","openPrice":...,"closePrice":68853.48,...}
+                 # We capture endTime and closePrice
+                 pattern = r'"endTime":"([^"]+)","openPrice":[\d.]+,"closePrice":([\d.]+)'
+                 matches = re.findall(pattern, page_resp.text)
+                 
+                 for end_time_str, price_str in matches:
+                     if end_time_str == target_iso:
+                         strike_price = float(price_str)
+                         strike_source = "Polymarket (Exact ISO Match)"
+                         if verbose: print(f"   💰 Strike Price (Polymarket Scrape): ${strike_price:,.2f}")
+                         break
+            
+                 # Fallback: if exact match failed, try matching just the HH:MM:SS part
+                 if strike_price is None:
+                     simple_target = dt_start.strftime('%Y-%m-%dT%H:%M:%S')
+                     for end_time_str, price_str in matches:
+                         if simple_target in end_time_str:
+                             strike_price = float(price_str)
+                             strike_source = "Polymarket (Fuzzy ISO Match)"
+                             if verbose: print(f"   💰 Strike Price (Polymarket Scrape Fuzzy): ${strike_price:,.2f}")
+                             break
+
+        except Exception as e:
+            if verbose: print(f"   ⚠️  Scrape error: {e}")
+
+        # 2. Kraken Fallback if Scrape Failed
+        if strike_price is None and market_start_timestamp > 0:
+            if verbose: print(f"   📊 Fetching Strike Price (Kraken Fallback)...")
             try:
                 # 2-minute buffer lookback to ensure we catch the candle
                 k_url = f"https://api.kraken.com/0/public/OHLC?pair=XBTUSD&interval=1&since={market_start_timestamp - 120}"
@@ -1118,6 +1167,7 @@ def find_current_btc_15m_market(verbose=True):
                         
                         if target_candle:
                             strike_price = float(target_candle[1]) # Open price
+                            strike_source = "Kraken (Exact Candle)"
                             if verbose: print(f"   💰 Strike Price (Kraken Open): ${strike_price:,.2f}")
                         else:
                             # Fallback: Closest candle
@@ -1125,6 +1175,7 @@ def find_current_btc_15m_market(verbose=True):
                                 closest = min(candles, key=lambda c: abs(int(c[0]) - market_start_timestamp))
                                 if abs(int(closest[0]) - market_start_timestamp) <= 60:
                                     strike_price = float(closest[1])
+                                    strike_source = "Kraken (Closest Candle)"
                                     if verbose: print(f"   💰 Strike Price (Kraken Prox): ${strike_price:,.2f}")
             except Exception as e:
                 if verbose: print(f"   ⚠️  Strike fetch error: {e}")
@@ -1142,6 +1193,7 @@ def find_current_btc_15m_market(verbose=True):
             'time_remaining': time_remaining,
             'end_timestamp': market_end_timestamp,
             'strike_price': strike_price,
+            'strike_source': strike_source,
             'outcome_prices': outcome_prices,
             'clob_token_ids': clob_ids,
             'condition_id': condition_id
@@ -1393,7 +1445,9 @@ def run_advisor():
                 strike_price = extract_strike_from_question(question)
             
             if strike_price:
+                source_label = market_data.get('strike_source', 'Unknown')
                 print(f"   🎯 Strike Price (Price to Beat): ${strike_price:,.2f}")
+                print(f"   📡 Source: {source_label}")
             else:
                 print(f"   ❌ ALERT: Price to Beat not available. Skipping this market.")
                 time.sleep(30)
