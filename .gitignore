@@ -45,3 +45,4 @@ Thumbs.db
 # Backup files
 *-old.py
 *.bak
+.aider*

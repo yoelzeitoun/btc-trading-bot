@@ -405,10 +405,11 @@ def calculate_adx(highs, lows, closes, period=14):
         
         # ADX is the smoothed DX
         adx = np.mean(dx_values[-period:])
-        return adx
+        # Return ADX with latest +DI and -DI for trend direction
+        return adx, plus_di[-1] if plus_di else 50, minus_di[-1] if minus_di else 50
     except Exception as e:
         print(f"ADX calculation error: {e}")
-        return None
+        return None, 50, 50
 
 def calculate_ema(closes, period=20):
     """Calculate Exponential Moving Average"""
@@ -2061,89 +2062,117 @@ def run_advisor():
                         details = []
                         
                         # -----------------------------------------------------------
-                        # LOGIQUE "SAFETY FIRST" (RESTAURÉE)
+                        # LOGIQUE "SAFETY FIRST" - V2 (ATR:60 + BB:40 + Bonus extrême)
+                        # Stratégie: Être le plus loin possible du strike à l'expiration
+                        # Score max: 100 (ATR:60 + BB:40 avec bonus 10 pour position extrême)
                         # -----------------------------------------------------------
-                        
-                        # A. ATR DE SURVIE (Le "Coussin")
+
+                        # A. ATR DE SURVIE (Le "Coussin") - Score max: 60
                         # On calcule deux ATR pour ne pas se faire avoir par un calme temporaire
                         atr_fast = calculate_atr(highs, lows, closes, period=5)
                         atr_slow = calculate_atr(highs, lows, closes, period=14)
                         # On prend le pire des cas (le plus grand) pour la sécurité
                         safe_atr = max(atr_fast, atr_slow) if (atr_fast and atr_slow) else (atr_fast or atr_slow or 0)
-                        
-                        # Formule du "Mur de Sécurité" : ATR * sqrt(temps) * FACTEUR DE PEUR (2.5)
-                        # Si le prix est plus proche que ça, on refuse le trade.
-                        required_distance = safe_atr * math.sqrt(minutes_left) * 2.5
+
+                        # Récupérer ADX pour le multiplicateur dynamique (avant le calcul required_distance)
+                        adx_raw = calculate_adx(highs, lows, closes, period=14)
+                        adx = adx_raw[0] if isinstance(adx_raw, tuple) else adx_raw
+
+                        # Formule du "Mur de Sécurité" : ATR * sqrt(temps) * MULTIPLICATEUR ADX DYNAMIQUE
+                        # Multiplicateur: 1.2 (pas de tendance) à 4.0 (tendance forte)
+                        atr_multiplier = get_atr_multiplier(adx)
+                        required_distance = safe_atr * math.sqrt(minutes_left) * atr_multiplier
                         actual_distance = abs(real_price - strike_price)
-                        
+
                         score_b = 0
                         ratio_value = 0
-                        
+
                         if safe_atr and actual_distance < required_distance:
                             score_b = 0 # DANGER IMMÉDIAT
-                            atr_explain = f"⛔ DANGER: Dist {actual_distance:.2f} < Requise {required_distance:.2f} (ATR Safe: {safe_atr:.2f})"
+                            atr_explain = f"⛔ DANGER: Dist {actual_distance:.2f} < Requise {required_distance:.2f} (ATR Safe: {safe_atr:.2f}, Mult: {atr_multiplier:.1f}x)"
                         elif safe_atr:
-                            # Plus on est loin au-delà du requis, meilleur est le score (max 50)
+                            # Plus on est loin au-delà du requis, meilleur est le score (max 60)
                             cushion = actual_distance / required_distance
-                            score_b = min(50, int(30 * cushion)) 
+                            score_b = min(60, int(40 * cushion))
                             ratio_value = cushion
-                            atr_explain = f"✅ SAFE: Marge x{cushion:.1f} (Dist {actual_distance:.2f} > Req {required_distance:.2f})"
+                            atr_explain = f"✅ SAFE: Marge x{cushion:.1f} (Dist {actual_distance:.2f} > Req {required_distance:.2f}, Mult: {atr_multiplier:.1f}x)"
 
-                        # B. BOLLINGER "ANTI-SQUEEZE"
+                        # B. BOLLINGER "ANTI-SQUEEZE" - Score max: 40 (30 base + 10 bonus extrême)
                         # On refuse la volatilité qui explose (Squeeze)
                         upper_bb, middle_bb, lower_bb = calculate_bollinger_bands(closes, period=20, std_dev=2.0)
-                        
+
                         score_a = 0
                         bb_explain = "N/A"
-                        
+                        extreme_bonus = 0
+
                         if upper_bb and lower_bb:
                             bandwidth = upper_bb - lower_bb
-                            
+
                             # 1. Check Anti-Squeeze : Si les bandes sont trop serrées par rapport à l'ATR, ça va exploser.
                             if bandwidth < (safe_atr * 2):
                                 score_a = 0
                                 bb_explain = "⛔ REJET: Squeeze détecté (Explosion imminente)"
                             else:
-                                # 2. Check Position "Safe Half"
-                                # Si on joue UP, on veut être dans la moitié HAUTE des bandes (loin du bas)
-                                # Si on joue DOWN, on veut être dans la moitié BASSE (loin du haut)
+                                # 2. Check Position "Safe Half" - Threshold dynamique selon temps restant
+                                # Plus on est proche de l'expiration, plus on doit être strict sur la distance
+                                if minutes_left <= 3:
+                                    safe_threshold = 0.25  # TOP 25% pour UP, BOTTOM 25% pour DOWN
+                                elif minutes_left <= 7:
+                                    safe_threshold = 0.35  # TOP 35% / BOTTOM 35%
+                                else:
+                                    safe_threshold = 0.40  # TOP 40% / BOTTOM 40%
+
+                                # Threshold pour bonus extrême (10% les plus extrêmes)
+                                extreme_threshold = 0.10
+
                                 is_safe_side = False
+                                is_extreme = False
                                 trade_direction_check = 'UP' if real_price > strike_price else 'DOWN'
-                                
+
                                 if trade_direction_check == 'UP':
-                                    # On vérifie si on est plus proche de la bande haute que de la basse
+                                    # Position dans les bandes (0 = bas, 1 = haut)
                                     pos = (real_price - lower_bb) / bandwidth
-                                    if pos > 0.4: is_safe_side = True # Tolérance légère
+                                    if pos > (1 - safe_threshold):  # Dans la zone sûre haute
+                                        is_safe_side = True
+                                        if pos > (1 - extreme_threshold):  # Dans les 10% les plus hauts
+                                            is_extreme = True
                                 else:
                                     pos = (upper_bb - real_price) / bandwidth
-                                    if pos > 0.4: is_safe_side = True
+                                    if pos > (1 - safe_threshold):  # Dans la zone sûre basse
+                                        is_safe_side = True
+                                        if pos > (1 - extreme_threshold):  # Dans les 10% les plus bas
+                                            is_extreme = True
 
-                                if is_safe_side:
-                                    score_a = 40
-                                    bb_explain = "✅ Position Confortable dans les bandes"
+                                if is_extreme:
+                                    score_a = 30 + 10  # Base 30 + Bonus 10
+                                    extreme_bonus = 10
+                                    bb_explain = f"✅ Position EXTRÊME ({pos:.0%}) - Bonus +10!"
+                                elif is_safe_side:
+                                    score_a = 30
+                                    bb_explain = f"✅ Position Confortable ({pos:.0%}, seuil: {1-safe_threshold:.0%})"
                                 else:
-                                    score_a = 10
-                                    bb_explain = "⚠️ Risqué (Trop proche du milieu/opposé)"
+                                    score_a = 0  # Trop proche du milieu = rejet
+                                    bb_explain = f"⛔ Trop proche du centre ({pos:.0%} < {1-safe_threshold:.0%})"
 
-                        # C. VETO ADX (Tendance Contraire)
+                        # C. VETO ADX (Tendance Contraire) - Seuil 40 avec +DI/-DI
                         # Si une tendance FORTE existe CONTRE nous, on annule tout (Veto)
-                        adx = calculate_adx(highs, lows, closes, period=14)
-                        # Note: Idéalement ta fonction ADX doit retourner (adx, +DI, -DI), mais faisons simple :
+                        # adx_raw déjà calculé dans section ATR
+                        plus_di = minus_di = 50
+                        if isinstance(adx_raw, tuple) and len(adx_raw) == 3:
+                            _, plus_di, minus_di = adx_raw
+
                         trend_penalty = 0
                         trade_direction_check = 'UP' if real_price > strike_price else 'DOWN'
-                        ema_fast = calculate_ema(closes, 20) if 'calculate_ema' in dir() else None
-                        
-                        if adx and adx > 30: # Tendance forte
-                             if ema_fast:
-                                  # Si on est UP mais que le prix baisse fort récemment (approximé)
-                                  if real_price < ema_fast:
-                                      if trade_direction_check == 'UP':
-                                          trend_penalty = 100
-                                          details.append("⛔ VETO: Tendance Baissière Forte (ADX>30)")
-                                  elif real_price > ema_fast:
-                                      if trade_direction_check == 'DOWN':
-                                          trend_penalty = 100
-                                          details.append("⛔ VETO: Tendance Haussière Forte (ADX>30)")
+
+                        if adx and adx > 40:  # Seuil plus haut: tendance FORTE uniquement
+                            if trade_direction_check == 'UP' and minus_di > plus_di:
+                                # Tendance baissière confirmée contre notre position UP
+                                trend_penalty = 100
+                                details.append(f"⛔ VETO: Tendance Baissière Forte (ADX>{adx:.0f}, -DI>{plus_di:.0f})")
+                            elif trade_direction_check == 'DOWN' and plus_di > minus_di:
+                                # Tendance haussière confirmée contre notre position DOWN
+                                trend_penalty = 100
+                                details.append(f"⛔ VETO: Tendance Haussière Forte (ADX>{adx:.0f}, +DI>{minus_di:.0f})")
 
                         # CALCUL FINAL
                         trade_score = score_a + score_b - trend_penalty
@@ -2152,14 +2181,14 @@ def run_advisor():
                         entry_logging_stats = {
                             "total_score": max(0, trade_score),
                             "bb_score": f"{score_a}/40",
-                            "atr_score": f"{score_b}/50",
+                            "atr_score": f"{score_b}/60",
                             "atr_ratio": f"x{ratio_value:.1f}" if ratio_value else "N/A",
                             "minutes_left": minutes_left
                         }
                         # --- END CAPTURE ---
 
-                        details.append(f"BB:  {score_a}/40 - {bb_explain}")
-                        details.append(f"ATR: {score_b}/50 - {atr_explain}")
+                        details.append(f"BB:  {score_a}/40 (30 base + {extreme_bonus} bonus) - {bb_explain}")
+                        details.append(f"ATR: {score_b}/60 - {atr_explain}")
                         if trend_penalty > 0:
                             details.append(f"ADX VETO: -{trend_penalty} (Tendance Forte Opposée)")
                         
